@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALeGoClash YT</title>
 
-<!-- خطوط مزخرفة وفخمة -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -22,7 +21,6 @@
     align-items:center;
     z-index:2000;
 }
-
 .loader{
     width:60px;
     height:60px;
@@ -31,7 +29,6 @@
     border-radius:50%;
     animation:spin 1s linear infinite;
 }
-
 @keyframes spin{
     100%{transform:rotate(360deg);}
 }
@@ -43,15 +40,12 @@
     box-sizing:border-box;
     scroll-behavior:smooth;
 }
-
 body{
-    font-family:'Poppins', sans-serif; /* النصوص العادية */
+    font-family:'Poppins', sans-serif;
     background:#0b0b0f;
     color:#fff;
     overflow-x:hidden;
 }
-
-/* PARTICLE BACKGROUND */
 #particles-js{
     position:fixed;
     width:100%;
@@ -65,7 +59,6 @@ nav{
     width:100%;
     padding:20px 10%;
     display:flex;
-    justify-content:space-between;
     align-items:center;
     background:rgba(0,0,0,0.6);
     backdrop-filter:blur(10px);
@@ -73,42 +66,46 @@ nav{
 }
 
 .logo{
-    font-family:'Orbitron', sans-serif; /* فخم للوجو */
+    font-family:'Orbitron', sans-serif;
     font-weight:700;
     color:#00f2ff;
     text-shadow:0 0 20px #00f2ff;
+}
+
+/* يمين الناف بالكامل */
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:30px;
+    margin-left:auto;
 }
 
 nav ul{
     list-style:none;
     display:flex;
     gap:30px;
-    margin-left: 220px;
-    
-    
 }
 
-/* NAVBAR LINKS - متوهجة وفاتحة */
 nav ul li a{
     color:#ffffff;
     font-weight:500;
     text-decoration:none;
     text-shadow: 0 0 8px #00f2ff, 0 0 15px #00f2ff;
     transition:0.3s;
-    font-family:'Poppins', sans-serif; /* أنيق للباقي */
 }
-
 nav ul li a:hover{
     color:#00f2ff;
     text-shadow:0 0 15px #00f2ff, 0 0 25px #00f2ff;
 }
 
-/* SOCIAL ICONS - كبرتها وفصلتها شوي */
+.social-icons{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
 .social-icons a{
     color:#fff;
-    margin-left:25px; /* مسافة بينهم أكبر */
-    font-size:28px; /* كبرت الأيقونات */
-    margin-left: 20px;
+    font-size:28px;
 }
 
 .menu-toggle{
@@ -121,41 +118,33 @@ nav ul li a:hover{
 section{
     padding:120px 10%;
 }
-
 .hero{
     display:flex;
     justify-content:space-between;
     align-items:center;
     min-height:100vh;
+    flex-wrap:wrap;
 }
-
 .hero img{
-    width:330px;
+    width:100%;
+    max-width:330px;
     border-radius:40px;
     box-shadow:0 0 40px #00f2ff;
-    margin-right: 250px;
- margin-left: -20px;
-  
 }
-
 .hero-text{
     max-width:600px;
 }
-
 .hero-text h1{
-    font-family:'Orbitron', sans-serif; /* فخم للعنوان الكبير */
+    font-family:'Orbitron', sans-serif;
     font-size:45px;
     color:#00f2ff;
     text-shadow:0 0 20px #00f2ff;
 }
-
 .typing{
     color:#ccc;
     margin:20px 0;
     font-size:18px;
-    font-family:'Poppins', sans-serif; /* باقي النصوص */
 }
-
 .btn{
     display:inline-block;
     padding:12px 25px;
@@ -165,9 +154,7 @@ section{
     color:#00f2ff;
     margin-right:15px;
     transition:0.3s;
-    font-family:'Poppins', sans-serif;
 }
-
 .btn:hover{
     background:#00f2ff;
     color:#000;
@@ -178,21 +165,19 @@ section{
 .video-section{
     text-align:center;
 }
-
 .video-section h2{
     color:#00f2ff;
     text-shadow:0 0 15px #00f2ff;
     margin-bottom:40px;
-    font-family:'Poppins', sans-serif;
 }
-
 video{
-    width:80%;
+    width:100%;
+    max-width:800px;
     border-radius:20px;
     box-shadow:0 0 40px #00f2ff;
 }
 
-/* MOBILE */
+/* ===== RESPONSIVE ===== */
 @media(max-width:900px){
     .hero{
         flex-direction:column;
@@ -201,15 +186,12 @@ video{
     nav ul{
         position:absolute;
         top:70px;
-        right:0;
+        right:10%;
         background:#111;
         flex-direction:column;
         width:200px;
         display:none;
         padding:20px;
-      
-        
-        
     }
     nav ul.active{
         display:flex;
@@ -219,14 +201,34 @@ video{
     }
 }
 
+@media(max-width:600px){
+    .logo{
+        font-size:22px;
+    }
+    .nav-right{
+        gap:15px;
+    }
+    nav ul{
+        width:150px;
+        top:60px;
+    }
+    .social-icons a{
+        font-size:22px;
+    }
+}
+
 </style>
 </head>
 
 <body>
 
 <div id="preloader"><div class="loader"></div></div>
-<div id="particles-js"></div><nav>
+<div id="particles-js"></div>
+
+<nav>
 <div class="logo">ALeGoClash YT</div>
+
+<div class="nav-right">
 
 <ul id="menu">
 <li><a href="#home">Home</a></li>
@@ -235,13 +237,13 @@ video{
 <li><a href="#extra">Calisthenics</a></li>
 </ul>
 
-<div>
-<span class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></span>
-<span class="social-icons">
+<div class="social-icons">
 <a href="https://youtube.com/@alego.yt.1?si=XtP1cVgfQVzOeWl0"><i class="fab fa-youtube"></i></a>
 <a href="https://www.facebook.com/share/1C4XhCpoLL/"><i class="fab fa-facebook"></i></a>
 <a href="#"><i class="fab fa-tiktok"></i></a>
-</span>
+<span class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></span>
+</div>
+
 </div>
 </nav>
 
@@ -265,16 +267,13 @@ video{
 <section id="projects"><h2>Projects - Coming Soon</h2></section>
 <section id="extra"><h2>Contact Me</h2></section>
 
-<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
 <script>
-
-/* PRELOADER */
 window.addEventListener("load",()=>{
 document.getElementById("preloader").style.display="none";
 });
 
-/* PARTICLES */
 particlesJS("particles-js",{
 "particles":{"number":{"value":80},"color":{"value":"#00f2ff"},
 "shape":{"type":"circle"},
@@ -284,7 +283,6 @@ particlesJS("particles-js",{
 "move":{"enable":true,"speed":3}}
 });
 
-/* TYPING EFFECT */
 const text="Video Editor | Designer | Content Creator";
 let i=0;
 function typing(){
@@ -296,11 +294,9 @@ setTimeout(typing,60);
 }
 typing();
 
-/* MOBILE MENU */
 function toggleMenu(){
 document.getElementById("menu").classList.toggle("active");
 }
-
 </script>
 
 </body>
