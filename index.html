@@ -57,7 +57,7 @@ body{
 nav{
     position:fixed;
     width:100%;
-    padding:20px 10%;
+    padding:20px 20px;
     display:flex;
     align-items:center;
     background:rgba(0,0,0,0.6);
@@ -72,7 +72,6 @@ nav{
     text-shadow:0 0 20px #00f2ff;
 }
 
-/* يمين الناف بالكامل */
 .nav-right{
     display:flex;
     align-items:center;
@@ -124,6 +123,7 @@ section{
     align-items:center;
     min-height:100vh;
     flex-wrap:wrap;
+    text-align:center;
 }
 .hero img{
     width:100%;
@@ -133,18 +133,41 @@ section{
 }
 .hero-text{
     max-width:600px;
+    margin:auto;
 }
 .hero-text h1{
     font-family:'Orbitron', sans-serif;
     font-size:45px;
     color:#00f2ff;
     text-shadow:0 0 20px #00f2ff;
+    margin-bottom:10px;
 }
-.typing{
-    color:#ccc;
-    margin:20px 0;
-    font-size:18px;
+.main-tagline{
+    font-size:20px;
+    margin-bottom:20px;
 }
+
+/* ===== ROLES (ثابت في سطر واحد) ===== */
+.roles{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    width:100%;
+    max-width:500px; /* عرض أكبر ليكفي الجمل */
+    margin:0 auto 20px auto;
+    flex-wrap:nowrap; /* منع الكسر */
+}
+
+.roles span{
+    display:inline-block;
+    white-space:nowrap; /* يمنع الكسر */
+    font-weight:bold;
+    font-size:16px;
+    color:#00f2ff;
+    text-shadow:0 0 8px #00f2ff;
+}
+
+/* BUTTONS */
 .btn{
     display:inline-block;
     padding:12px 25px;
@@ -177,8 +200,8 @@ video{
     box-shadow:0 0 40px #00f2ff;
 }
 
-/* ===== RESPONSIVE ===== */
-@media(max-width:900px){
+/* RESPONSIVE - Desktop to Mobile Scaling */
+@media (max-width:900px){
     .hero{
         flex-direction:column;
         text-align:center;
@@ -201,12 +224,32 @@ video{
     }
 }
 
-@media(max-width:600px){
-    .logo{
-        font-size:22px;
+@media (max-width:600px){
+    /* Scaling all elements proportionally */
+    .hero{
+        flex-direction:column;
+        text-align:center;
     }
-    .nav-right{
-        gap:15px;
+    .hero img{
+        max-width:200px; /* صغر الصورة */
+    }
+    .hero-text h1{
+        font-size:28px; /* صغر العنوان */
+    }
+    .main-tagline{
+        font-size:16px; /* صغر التاجلاين */
+    }
+    .roles{
+        max-width:300px; /* صغر الحاوية */
+        gap:10px;
+    }
+    .roles span{
+        font-size:14px; /* تصغير النصوص */
+    }
+    .btn{
+        padding:8px 18px;
+        font-size:14px;
+        margin-right:10px;
     }
     nav ul{
         width:150px;
@@ -215,8 +258,10 @@ video{
     .social-icons a{
         font-size:22px;
     }
+    .logo{
+        font-size:20px;
+    }
 }
-
 </style>
 </head>
 
@@ -229,7 +274,6 @@ video{
 <div class="logo">ALeGoClash YT</div>
 
 <div class="nav-right">
-
 <ul id="menu">
 <li><a href="#home">Home</a></li>
 <li><a href="#videos">Videos</a></li>
@@ -243,15 +287,22 @@ video{
 <a href="#"><i class="fab fa-tiktok"></i></a>
 <span class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></span>
 </div>
-
 </div>
 </nav>
 
 <section class="hero" id="home">
-<img src="anaspic.jpg">
+<img src="anaspic.jpg" alt="ALeGo Image">
+
 <div class="hero-text">
-<h1>Welcome To Anas Website </h1>
-<div class="typing"></div>
+<h1>Welcome To ALeGO World</h1>
+<div class="main-tagline">Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥</div>
+
+<div class="roles">
+    <span>Video Editor</span>
+    <span>Content Creator</span>
+    <span>Designer</span>
+</div>
+
 <a href="#videos" class="btn">See Videos</a>
 <a href="#extra" class="btn">Contact</a>
 </div>
@@ -282,17 +333,6 @@ particlesJS("particles-js",{
 "line_linked":{"enable":true,"distance":150,"color":"#00f2ff","opacity":0.4,"width":1},
 "move":{"enable":true,"speed":3}}
 });
-
-const text="Video Editor | Designer | Content Creator";
-let i=0;
-function typing(){
-if(i<text.length){
-document.querySelector(".typing").innerHTML+=text.charAt(i);
-i++;
-setTimeout(typing,60);
-}
-}
-typing();
 
 function toggleMenu(){
 document.getElementById("menu").classList.toggle("active");
