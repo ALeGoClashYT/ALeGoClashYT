@@ -9,334 +9,166 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-
 /* ===== PRELOADER ===== */
-#preloader{
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:#000;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:2000;
-}
-.loader{
-    width:60px;
-    height:60px;
-    border:5px solid #111;
-    border-top:5px solid #00f2ff;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-}
-@keyframes spin{
-    100%{transform:rotate(360deg);}
-}
+#preloader{position:fixed;width:100%;height:100%;background:#000;display:flex;justify-content:center;align-items:center;z-index:2000;}
+.loader{width:60px;height:60px;border:5px solid #111;border-top:5px solid #00f2ff;border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{100%{transform:rotate(360deg);}}
 
 /* ===== GENERAL ===== */
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    scroll-behavior:smooth;
-}
-body{
-    font-family:'Poppins', sans-serif;
-    background:#0b0b0f;
-    color:#fff;
-    overflow-x:hidden;
-}
-#particles-js{
-    position:fixed;
-    width:100%;
-    height:100%;
-    z-index:-1;
-}
+*{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
+body{font-family:'Poppins', sans-serif;background:#0b0b0f;color:#fff;overflow-x:hidden;}
+#particles-js{position:fixed;width:100%;height:100%;z-index:-1;}
 
 /* NAVBAR */
-nav{
-    position:fixed;
-    width:100%;
-    padding:20px 20px;
-    display:flex;
-    align-items:center;
-    background:rgba(0,0,0,0.6);
-    backdrop-filter:blur(10px);
-    z-index:1000;
-}
+nav{position:fixed;width:100%;padding:20px 20px;display:flex;align-items:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(10px);z-index:1000;justify-content:space-between;}
+.logo-container{display:flex;align-items:center;gap:10px;}
+.logo{font-family:'Orbitron', sans-serif;font-weight:700;color:#00f2ff;text-shadow:0 0 20px #00f2ff;font-size:24px;}
+.logo-container img{width:80px;height:80px;object-fit:contain;}
+.nav-right{display:flex;align-items:center;gap:30px;}
+nav ul{list-style:none;display:flex;gap:30px;}
+nav ul li{cursor:pointer;}
+nav ul li a{color:#ffffff;font-weight:500;text-decoration:none;text-shadow:0 0 8px #00f2ff,0 0 15px #00f2ff;transition:0.3s;}
+nav ul li a:hover{color:#00f2ff;text-shadow:0 0 15px #00f2ff,0 0 25px #00f2ff;}
+.social-icons{display:flex;align-items:center;gap:15px;}
+.social-icons a{color:#fff;font-size:28px;}
+.menu-toggle{display:none;font-size:25px;cursor:pointer;}
 
-.logo{
-    font-family:'Orbitron', sans-serif;
-    font-weight:700;
-    color:#00f2ff;
-    text-shadow:0 0 20px #00f2ff;
-}
+/* HERO & SECTIONS */
+section{padding:120px 10%;display:none;}
+section.active{display:block;}
+.hero{display:flex;justify-content:space-between;align-items:center;min-height:100vh;flex-wrap:wrap;text-align:center;}
+.hero img{width:100%;max-width:330px;border-radius:40px;box-shadow:0 0 40px #00f2ff;}
+.hero-text{max-width:600px;margin:auto;}
+.hero-text h1{font-family:'Orbitron', sans-serif;font-size:45px;color:#00f2ff;text-shadow:0 0 20px #00f2ff;margin-bottom:10px;}
+.main-tagline{font-size:20px;margin-bottom:20px;}
 
-.nav-right{
-    display:flex;
-    align-items:center;
-    gap:30px;
-    margin-left:auto;
-}
-
-nav ul{
-    list-style:none;
-    display:flex;
-    gap:30px;
-}
-
-nav ul li a{
-    color:#ffffff;
-    font-weight:500;
-    text-decoration:none;
-    text-shadow: 0 0 8px #00f2ff, 0 0 15px #00f2ff;
-    transition:0.3s;
-}
-nav ul li a:hover{
-    color:#00f2ff;
-    text-shadow:0 0 15px #00f2ff, 0 0 25px #00f2ff;
-}
-
-.social-icons{
-    display:flex;
-    align-items:center;
-    gap:15px;
-}
-.social-icons a{
-    color:#fff;
-    font-size:28px;
-}
-
-.menu-toggle{
-    display:none;
-    font-size:25px;
-    cursor:pointer;
-}
-
-/* HERO */
-section{
-    padding:120px 10%;
-}
-.hero{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    min-height:100vh;
-    flex-wrap:wrap;
-    text-align:center;
-}
-.hero img{
-    width:100%;
-    max-width:330px;
-    border-radius:40px;
-    box-shadow:0 0 40px #00f2ff;
-}
-.hero-text{
-    max-width:600px;
-    margin:auto;
-}
-.hero-text h1{
-    font-family:'Orbitron', sans-serif;
-    font-size:45px;
-    color:#00f2ff;
-    text-shadow:0 0 20px #00f2ff;
-    margin-bottom:10px;
-}
-.main-tagline{
-    font-size:20px;
-    margin-bottom:20px;
-}
-
-/* ===== ROLES (ثابت في سطر واحد) ===== */
-.roles{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    width:100%;
-    max-width:500px; /* عرض أكبر ليكفي الجمل */
-    margin:0 auto 20px auto;
-    flex-wrap:nowrap; /* منع الكسر */
-}
-
-.roles span{
-    display:inline-block;
-    white-space:nowrap; /* يمنع الكسر */
-    font-weight:bold;
-    font-size:16px;
-    color:#00f2ff;
-    text-shadow:0 0 8px #00f2ff;
-}
+/* ===== ROLES ===== */
+.roles{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:500px;margin:0 auto 20px auto;flex-wrap:nowrap;}
+.roles span{display:inline-block;white-space:nowrap;font-weight:bold;font-size:16px;color:#00f2ff;text-shadow:0 0 8px #00f2ff;}
 
 /* BUTTONS */
-.btn{
-    display:inline-block;
-    padding:12px 25px;
-    border:2px solid #00f2ff;
-    border-radius:30px;
-    text-decoration:none;
-    color:#00f2ff;
-    margin-right:15px;
-    transition:0.3s;
-}
-.btn:hover{
-    background:#00f2ff;
-    color:#000;
-    box-shadow:0 0 20px #00f2ff;
-}
+.btn{display:inline-block;padding:12px 25px;border:2px solid #00f2ff;border-radius:30px;text-decoration:none;color:#00f2ff;margin-right:15px;transition:0.3s;}
+.btn:hover{background:#00f2ff;color:#000;box-shadow:0 0 20px #00f2ff;}
 
 /* VIDEO */
-.video-section{
-    text-align:center;
-}
-.video-section h2{
-    color:#00f2ff;
-    text-shadow:0 0 15px #00f2ff;
-    margin-bottom:40px;
-}
-video{
-    width:100%;
-    max-width:800px;
-    border-radius:20px;
-    box-shadow:0 0 40px #00f2ff;
-}
+.video-section{text-align:center;margin-top:30px;}
+.video-section h2{color:#00f2ff;text-shadow:0 0 15px #00f2ff;margin-bottom:20px;}
+video{width:100%;max-width:800px;border-radius:20px;box-shadow:0 0 40px #00f2ff;}
 
-/* RESPONSIVE - Desktop to Mobile Scaling */
-@media (max-width:900px){
-    .hero{
-        flex-direction:column;
-        text-align:center;
-    }
-    nav ul{
-        position:absolute;
-        top:70px;
-        right:10%;
-        background:#111;
-        flex-direction:column;
-        width:200px;
-        display:none;
-        padding:20px;
-    }
-    nav ul.active{
-        display:flex;
-    }
-    .menu-toggle{
-        display:block;
-    }
-}
-
-@media (max-width:600px){
-    /* Scaling all elements proportionally */
-    .hero{
-        flex-direction:column;
-        text-align:center;
-    }
-    .hero img{
-        max-width:200px; /* صغر الصورة */
-    }
-    .hero-text h1{
-        font-size:28px; /* صغر العنوان */
-    }
-    .main-tagline{
-        font-size:16px; /* صغر التاجلاين */
-    }
-    .roles{
-        max-width:300px; /* صغر الحاوية */
-        gap:10px;
-    }
-    .roles span{
-        font-size:14px; /* تصغير النصوص */
-    }
-    .btn{
-        padding:8px 18px;
-        font-size:14px;
-        margin-right:10px;
-    }
-    nav ul{
-        width:150px;
-        top:60px;
-    }
-    .social-icons a{
-        font-size:22px;
-    }
-    .logo{
-        font-size:20px;
-    }
-}
+/* RESPONSIVE */
+@media(max-width:900px){.hero{flex-direction:column;text-align:center;}nav ul{position:absolute;top:70px;right:10%;background:#111;flex-direction:column;width:200px;display:none;padding:20px;}nav ul.active{display:flex;}.menu-toggle{display:block;}}
+@media(max-width:600px){.hero img{max-width:200px;}.hero-text h1{font-size:28px;}.main-tagline{font-size:16px;}.roles{max-width:300px;gap:10px;}.roles span{font-size:14px;}.btn{padding:8px 18px;font-size:14px;margin-right:10px;}.social-icons a{font-size:22px;}.logo{font-size:20px;}.logo-container img{width:60px;height:60px;}}
 </style>
 </head>
 
 <body>
-
 <div id="preloader"><div class="loader"></div></div>
 <div id="particles-js"></div>
 
+<!-- ===== NAVBAR ===== -->
 <nav>
-<div class="logo">ALeGoClash YT</div>
+  <div class="logo-container">
+    <div class="logo">ALeGoClash YT</div>
+    <img src="AG-logo.png" alt="ALeGo Logo" onerror="this.style.display='none'; console.warn('Logo image not found!')">
+  </div>
 
-<div class="nav-right">
-<ul id="menu">
-<li><a href="#home">Home</a></li>
-<li><a href="#videos">Videos</a></li>
-<li><a href="#projects">Projects</a></li>
-<li><a href="#extra">Calisthenics</a></li>
-</ul>
-
-<div class="social-icons">
-<a href="https://youtube.com/@alego.yt.1?si=XtP1cVgfQVzOeWl0"><i class="fab fa-youtube"></i></a>
-<a href="https://www.facebook.com/share/1C4XhCpoLL/"><i class="fab fa-facebook"></i></a>
-<a href="#"><i class="fab fa-tiktok"></i></a>
-<span class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></span>
-</div>
-</div>
+  <div class="nav-right">
+    <ul id="menu">
+      <li data-section="home"><a>Home</a></li>
+      <li data-section="gaming"><a>Gaming</a></li>
+      <li data-section="anime"><a>Anime</a></li>
+      <li data-section="marvel"><a>Marvel</a></li>
+      <li data-section="states"><a>States</a></li>
+    </ul>
+    <div class="social-icons">
+      <a href="https://youtube.com/@alego.yt.1?si=XtP1cVgfQVzOeWl0"><i class="fab fa-youtube"></i></a>
+      <a href="https://www.facebook.com/share/1C4XhCpoLL/"><i class="fab fa-facebook"></i></a>
+      <a href="#"><i class="fab fa-tiktok"></i></a>
+      <span class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></span>
+    </div>
+  </div>
 </nav>
 
-<section class="hero" id="home">
+<!-- ===== SECTIONS ===== -->
+<section id="home" class="active">
+<div class="hero">
 <img src="anaspic.jpg" alt="ALeGo Image">
-
 <div class="hero-text">
 <h1>Welcome To ALeGO World</h1>
 <div class="main-tagline">Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥</div>
-
 <div class="roles">
-    <span>Video Editor</span>
-    <span>Content Creator</span>
-    <span>Designer</span>
+<span>Video Editor</span>
+<span>Content Creator</span>
+<span>Designer</span>
 </div>
-
-<a href="#videos" class="btn">See Videos</a>
-<a href="#extra" class="btn">Contact</a>
+<a href="#" class="btn">See Videos</a>
+<a href="#" class="btn">Contact</a>
+</div>
 </div>
 </section>
 
-<section class="video-section" id="videos">
-<h2>Featured Video</h2>
+<section id="gaming">
+<h2>Gaming Section</h2>
+<div class="video-section">
 <video controls>
 <source src="" type="video/mp4">
 </video>
+</div>
 </section>
 
-<section id="projects"><h2>Projects - Coming Soon</h2></section>
-<section id="extra"><h2>Contact Me</h2></section>
+<section id="anime">
+<h2>Anime Section</h2>
+<div class="video-section">
+<video controls>
+<source src="" type="video/mp4">
+</video>
+</div>
+</section>
+
+<section id="marvel">
+<h2>Marvel Section</h2>
+<div class="video-section">
+<video controls>
+<source src="" type="video/mp4">
+</video>
+</div>
+</section>
+
+<section id="states">
+<h2>States Section</h2>
+<div class="video-section">
+<video controls>
+<source src="" type="video/mp4">
+</video>
+</div>
+</section>
 
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-
 <script>
 window.addEventListener("load",()=>{
-document.getElementById("preloader").style.display="none";
+  document.getElementById("preloader").style.display="none";
 });
 
 particlesJS("particles-js",{
-"particles":{"number":{"value":80},"color":{"value":"#00f2ff"},
-"shape":{"type":"circle"},
-"opacity":{"value":0.5},
-"size":{"value":3},
-"line_linked":{"enable":true,"distance":150,"color":"#00f2ff","opacity":0.4,"width":1},
-"move":{"enable":true,"speed":3}}
+"particles":{"number":{"value":80},"color":{"value":"#00f2ff"},"shape":{"type":"circle"},"opacity":{"value":0.5},"size":{"value":3},"line_linked":{"enable":true,"distance":150,"color":"#00f2ff","opacity":0.4,"width":1},"move":{"enable":true,"speed":3}}
 });
 
 function toggleMenu(){
-document.getElementById("menu").classList.toggle("active");
+  document.getElementById("menu").classList.toggle("active");
 }
+
+// ===== Switch Sections =====
+const tabs = document.querySelectorAll('#menu li');
+const sections = document.querySelectorAll('section');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.getAttribute('data-section');
+    sections.forEach(sec => sec.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
+    window.scrollTo(0,0);
+  });
+});
 </script>
 
 </body>
