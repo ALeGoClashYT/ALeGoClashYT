@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ALeGoClash YT Creative</title>
+<title>ALeGoClash YT</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -26,7 +26,7 @@ nav{position:fixed;width:100%;padding:15px 20px;display:flex;align-items:center;
 @keyframes navDrop{to{transform:translateY(0);opacity:1;}}
 .logo-container{display:flex;align-items:center;gap:10px;transform:scale(0.8);opacity:0;animation:logoPop 1s ease forwards;animation-delay:0.6s;}
 @keyframes logoPop{to{transform:scale(1);opacity:1;}}
-.logo{font-family:'Orbitron', sans-serif;font-weight:700;color:#00f2ff;text-shadow:0 0 15px #00f2ff;font-size:18px;animation:logoGlow 2s ease-in-out infinite alternate;}
+.logo{font-family:'Orbitron', sans-serif;font-weight:860;color:#00f2ff;text-shadow:0 0 15px #00f2ff;font-size:18px;animation:logoGlow 2s ease-in-out infinite alternate;}
 @keyframes logoGlow{from{text-shadow:0 0 8px #00f2ff;} to{text-shadow:0 0 20px #00f2ff;}}
 .logo-container img{width:40px;height:40px;object-fit:contain;}
 .nav-right{display:flex;align-items:center;gap:20px;}
@@ -93,6 +93,11 @@ section.active{display:block;}
   font-size:30px;color:#00f2ff;cursor:pointer;user-select:none;
   background:rgba(0,0,0,0.5);padding:10px;border-radius:50%;transition:0.3s;
 }
+img[alt="Logo"] {
+  width: 80px;      /* كبر الرقم زي ما تحب */
+  height: auto;
+  vertical-align: middle;
+}
 .modal-nav:hover{background:rgba(0,0,0,0.8);}
 #prevVideo{left:-60px;}
 #nextVideo{right:-60px;}
@@ -114,6 +119,8 @@ section.active{display:block;}
   .video-grid{grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));}
   .modal-content iframe{height:60vh;}
 }
+
+
 @media(max-width:600px){
   .hero img{max-width:80%;height:auto;}
   .hero-text h1{font-size:24px;}
@@ -134,8 +141,8 @@ section.active{display:block;}
 
 <nav>
   <div class="logo-container">
-    <div class="logo">ALeGoClash</div>
-    <img src="AG-logo.png" alt="Logo">
+    <div class="logo">ALeGoClash YT</div>
+    <img  src="AG-logo.png" alt="Logo">
   </div>
   <div class="nav-right">
     <ul id="menu">
