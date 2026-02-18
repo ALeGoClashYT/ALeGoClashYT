@@ -21,19 +21,19 @@ body{font-family:'Poppins', sans-serif;background:#0b0b0f;color:#fff;overflow-x:
 #particles-js{position:fixed;width:100%;height:100%;z-index:-1;}
 
 /* ===== NAVBAR ===== */
-nav{position:fixed;width:100%;padding:20px 20px;display:flex;align-items:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(10px);z-index:1000;justify-content:space-between;transform:translateY(-80px);opacity:0;animation:navDrop 1s ease forwards;animation-delay:0.3s;}
+nav{position:fixed;width:100%;padding:15px 20px;display:flex;align-items:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(10px);z-index:1000;justify-content:space-between;transform:translateY(-80px);opacity:0;animation:navDrop 1s ease forwards;animation-delay:0.3s;}
 @keyframes navDrop{to{transform:translateY(0);opacity:1;}}
 .logo-container{display:flex;align-items:center;gap:10px;transform:scale(0.8);opacity:0;animation:logoPop 1s ease forwards;animation-delay:0.6s;}
 @keyframes logoPop{to{transform:scale(1);opacity:1;}}
-.logo{font-family:'Orbitron', sans-serif;font-weight:700;color:#00f2ff;text-shadow:0 0 20px #00f2ff;font-size:24px;}
-.logo-container img{width:80px;height:80px;object-fit:contain;}
-.nav-right{display:flex;align-items:center;gap:30px;}
-nav ul{list-style:none;display:flex;gap:30px;}
+.logo{font-family:'Orbitron', sans-serif;font-weight:700;color:#00f2ff;text-shadow:0 0 15px #00f2ff;font-size:18px;}
+.logo-container img{width:40px;height:40px;object-fit:contain;}
+.nav-right{display:flex;align-items:center;gap:20px;}
+nav ul{list-style:none;display:flex;gap:25px;}
 nav ul li{cursor:pointer;}
 nav ul li a{color:#fff;font-weight:500;text-decoration:none;text-shadow:0 0 8px #00f2ff,0 0 15px #00f2ff;transition:0.3s;}
 nav ul li a:hover{color:#00f2ff;text-shadow:0 0 15px #00f2ff,0 0 25px #00f2ff;}
 .social-icons{display:flex;align-items:center;gap:15px;}
-.social-icons a{color:#fff;font-size:28px;}
+.social-icons a{color:#fff;font-size:24px;}
 .menu-toggle{display:none;font-size:25px;cursor:pointer;}
 
 /* ===== SECTIONS ===== */
@@ -108,8 +108,33 @@ section.active{display:block;}
 #fullscreenBtn:hover{background:rgba(0,0,0,0.9);}
 
 /* ===== RESPONSIVE ===== */
-@media(max-width:900px){.hero{flex-direction:column;text-align:center;}nav ul{position:absolute;top:70px;right:10%;background:#111;flex-direction:column;width:200px;display:none;padding:20px;}.menu-toggle{display:block;}.video-grid{grid-template-columns:repeat(2,1fr);}.modal-content iframe{height:300px;}}
-@media(max-width:600px){.hero img{max-width:200px;}.hero-text h1{font-size:28px;}.main-tagline{font-size:16px;}.roles{max-width:300px;gap:10px;}.roles span{font-size:14px;}.btn{padding:8px 18px;font-size:14px;margin-right:10px;}.social-icons a{font-size:22px;}.logo{font-size:20px;}.logo-container img{width:60px;height:60px;}}
+@media(max-width:1200px){
+  .video-grid{grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:15px;}
+}
+
+@media(max-width:900px){
+  nav{flex-wrap:nowrap; justify-content:space-between;align-items:center;}
+  .nav-right{flex-wrap:nowrap; justify-content:flex-end; width:auto; margin-top:0;}
+  nav ul{position:absolute;top:60px;right:10px;background:#111;flex-direction:column;width:180px;display:none;padding:10px;z-index:1001;}
+  nav ul.active{display:flex;}
+  .social-icons{display:flex;align-items:center;gap:15px;}
+  .menu-toggle{display:block;}
+  .hero{flex-direction:column;text-align:center;}
+  .video-grid{grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));}
+  .modal-content iframe{height:300px;}
+}
+
+@media(max-width:600px){
+  .hero img{max-width:80%;height:auto;}
+  .hero-text h1{font-size:24px;}
+  .main-tagline{font-size:14px;}
+  .roles{max-width:100%;gap:8px;flex-wrap:wrap;justify-content:center;}
+  .roles span{font-size:12px;}
+  .btn{padding:6px 12px;font-size:12px;margin-right:8px;}
+  .social-icons a{font-size:20px;}
+  .logo{font-size:16px;}
+  .logo-container img{width:35px;height:35px;}
+}
 </style>
 </head>
 <body>
@@ -119,7 +144,7 @@ section.active{display:block;}
 
 <nav>
   <div class="logo-container">
-    <div class="logo">ALeGoClash YT</div>
+    <div class="logo">ALeGoClash</div>
     <img src="AG-logo.png" alt="Logo">
   </div>
   <div class="nav-right">
@@ -194,7 +219,11 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 window.addEventListener("load",()=>{document.getElementById("preloader").style.display="none";});
 particlesJS("particles-js",{"particles":{"number":{"value":80},"color":{"value":"#00f2ff"},"shape":{"type":"circle"},"opacity":{"value":0.5},"size":{"value":3},"line_linked":{"enable":true,"distance":150,"color":"#00f2ff","opacity":0.4,"width":1},"move":{"enable":true,"speed":3}}});
 
-function toggleMenu(){document.getElementById("menu").classList.toggle("active");}
+function toggleMenu(){
+  document.getElementById("menu").classList.toggle("active");
+}
+
+/* ===== TABS ===== */
 const tabs=document.querySelectorAll('#menu li');
 const sections=document.querySelectorAll('section');
 tabs.forEach(tab=>{
@@ -202,6 +231,7 @@ tabs.forEach(tab=>{
     const target=tab.getAttribute('data-section');
     sections.forEach(sec=>sec.classList.remove('active'));
     document.getElementById(target).classList.add('active');
+    document.getElementById("menu").classList.remove("active");
     window.scrollTo(0,0);
   });
 });
@@ -216,7 +246,6 @@ let gamingVideos = [
 let animeVideos = [
   {id:'9zIor5qP7b0', desc:'Anime Video 1'},
   {id:'SMDKFtTVgGI', desc:'Anime Video 2'}
-  
 ];
 let marvelVideos = [
   {id:'70pHukpTyhk', desc:'Spider-Man'},
@@ -227,13 +256,10 @@ let marvelVideos = [
   {id:'WsLyDwMoZE8', desc:'Marvel Video 6'},
   {id:'4YoXzgGhqkw', desc:'Marvel Video 7'},
   {id:'Q09LJCp8MYk', desc:'Marvel Video 8'},
-  {id:'VkAhflXyVtk', desc:'Marvel Video 9'},
-  {id:'IUCWWXf2j5g', desc:'Marvel Video 8'},
-  {id:'8tMQbwnGzMI', desc:'Marvel Video 8'},
-  {id:'HHRREQpht2g', desc:'Marvel Video 8'}
+  {id:'VkAhflXyVtk', desc:'Marvel Video 9'}
 ];
 
-/* ===== CREATE GRID AUTOMATICALLY (4 VIDEOS PER ROW) ===== */
+/* ===== CREATE VIDEO GRID ===== */
 function createVideoGrid(videos, gridId){
   const grid = document.getElementById(gridId);
   grid.innerHTML = "";
@@ -245,8 +271,6 @@ function createVideoGrid(videos, gridId){
     grid.appendChild(div);
   });
 }
-
-/* ===== GENERATE ALL GRIDS ===== */
 createVideoGrid(gamingVideos,'gaming-grid');
 createVideoGrid(animeVideos,'anime-grid');
 createVideoGrid(marvelVideos,'marvel-grid');
@@ -266,15 +290,10 @@ function closeVideo(){
 const fullscreenBtn = document.getElementById('fullscreenBtn');
 fullscreenBtn.addEventListener('click', () => {
   const modal = document.querySelector('.video-modal');
-  if (modal.requestFullscreen) {
-    modal.requestFullscreen();
-  } else if (modal.mozRequestFullScreen) {
-    modal.mozRequestFullScreen();
-  } else if (modal.webkitRequestFullscreen) {
-    modal.webkitRequestFullscreen();
-  } else if (modal.msRequestFullscreen) {
-    modal.msRequestFullscreen();
-  }
+  if (modal.requestFullscreen) modal.requestFullscreen();
+  else if (modal.mozRequestFullScreen) modal.mozRequestFullScreen();
+  else if (modal.webkitRequestFullscreen) modal.webkitRequestFullscreen();
+  else if (modal.msRequestFullscreen) modal.msRequestFullscreen();
 });
 </script>
 
