@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ALeGoClash YT</title>
+<title>ALeGoClash YT Creative</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"/>
 
 <style>
 /* ===== PRELOADER ===== */
@@ -25,7 +26,8 @@ nav{position:fixed;width:100%;padding:15px 20px;display:flex;align-items:center;
 @keyframes navDrop{to{transform:translateY(0);opacity:1;}}
 .logo-container{display:flex;align-items:center;gap:10px;transform:scale(0.8);opacity:0;animation:logoPop 1s ease forwards;animation-delay:0.6s;}
 @keyframes logoPop{to{transform:scale(1);opacity:1;}}
-.logo{font-family:'Orbitron', sans-serif;font-weight:700;color:#00f2ff;text-shadow:0 0 15px #00f2ff;font-size:18px;}
+.logo{font-family:'Orbitron', sans-serif;font-weight:700;color:#00f2ff;text-shadow:0 0 15px #00f2ff;font-size:18px;animation:logoGlow 2s ease-in-out infinite alternate;}
+@keyframes logoGlow{from{text-shadow:0 0 8px #00f2ff;} to{text-shadow:0 0 20px #00f2ff;}}
 .logo-container img{width:40px;height:40px;object-fit:contain;}
 .nav-right{display:flex;align-items:center;gap:20px;}
 nav ul{list-style:none;display:flex;gap:25px;}
@@ -33,7 +35,8 @@ nav ul li{cursor:pointer;}
 nav ul li a{color:#fff;font-weight:500;text-decoration:none;text-shadow:0 0 8px #00f2ff,0 0 15px #00f2ff;transition:0.3s;}
 nav ul li a:hover{color:#00f2ff;text-shadow:0 0 15px #00f2ff,0 0 25px #00f2ff;}
 .social-icons{display:flex;align-items:center;gap:15px;}
-.social-icons a{color:#fff;font-size:24px;}
+.social-icons a{color:#fff;font-size:24px;transition:0.3s;}
+.social-icons a:hover{color:#00f2ff;text-shadow:0 0 10px #00f2ff;}
 .menu-toggle{display:none;font-size:25px;cursor:pointer;}
 
 /* ===== SECTIONS ===== */
@@ -42,10 +45,10 @@ section.active{display:block;}
 
 /* ===== HERO ===== */
 .hero{display:flex;justify-content:space-between;align-items:center;min-height:calc(100vh - 100px);flex-wrap:wrap;text-align:center;}
-.hero img{width:100%;max-width:330px;border-radius:40px;box-shadow:0 0 40px #00f2ff;transform:translateX(-80px);opacity:0;animation:imageSlide 1.2s ease forwards;animation-delay:0.8s;}
-@keyframes imageSlide{to{transform:translateX(0);opacity:1;}}
-.hero-text{max-width:600px;margin:auto;transform:translateX(80px);opacity:0;animation:textSlide 1.2s ease forwards;animation-delay:1s;}
-@keyframes textSlide{to{transform:translateX(0);opacity:1;}}
+.hero img{width:100%;max-width:330px;border-radius:40px;box-shadow:0 0 40px #00f2ff;transform:scale(0.5);opacity:0;animation:heroImgEnter 1.2s forwards;}
+@keyframes heroImgEnter{0%{opacity:0;transform:scale(0.5) translateX(-50px);}100%{opacity:1;transform:scale(1) translateX(0);}}
+.hero-text{max-width:600px;margin:auto;opacity:0;transform:translateX(50px);animation:heroTextEnter 1.2s forwards;animation-delay:0.5s;}
+@keyframes heroTextEnter{0%{opacity:0;transform:translateX(50px);}100%{opacity:1;transform:translateX(0);}}
 .hero-text h1{font-family:'Orbitron', sans-serif;font-size:45px;color:#00f2ff;text-shadow:0 0 20px #00f2ff;margin-bottom:10px;}
 .main-tagline{font-size:20px;margin-bottom:20px;}
 .roles{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:500px;margin:0 auto 20px auto;flex-wrap:nowrap;}
@@ -63,8 +66,6 @@ section.active{display:block;}
 .video-card{cursor:pointer;border-radius:15px;overflow:hidden;box-shadow:0 0 20px #00f2ff;transition:0.3s;position:relative;}
 .video-card img{width:100%;display:block;}
 .video-card:hover{transform:scale(1.05);}
-
-/* ===== VIDEO DESCRIPTION TOOLTIP ===== */
 .video-card span.desc{
   position:absolute;
   bottom:5px;
@@ -73,57 +74,46 @@ section.active{display:block;}
   background:rgba(0,0,0,0.8);
   padding:5px 8px;
   border-radius:5px;
-  font-size:12px;
+  font-size:10px;
   display:none;
-  max-width:90%;
+  max-width:100%;
   text-align:center;
 }
 .video-card:hover span.desc{display:block;}
 
-/* ===== MODAL ===== */
-.video-modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:3000;opacity:0;pointer-events:none;transition:0.3s;}
+/* ===== MODAL FULLSCREEN ===== */
+.video-modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:3000;opacity:0;pointer-events:none;transition:0.4s;}
 .video-modal.active{opacity:1;pointer-events:auto;}
-.modal-content{width:90%;max-width:900px;position:relative;}
-.modal-content iframe{width:100%;height:500px;border-radius:15px;}
-.close-modal{position:absolute;top:-40px;right:0;font-size:30px;cursor:pointer;}
-
-/* Fullscreen button */
+.modal-content{width:90%;max-width:1200px;position:relative;transition:0.5s;transform:scale(0.7);}
+.modal-content.active-scale{transform:scale(1);}
+.modal-content iframe{width:100%;height:80vh;border-radius:15px;}
+.close-modal{position:absolute;top:15px;right:15px;font-size:30px;cursor:pointer;z-index:10;}
+.modal-nav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  font-size:30px;color:#00f2ff;cursor:pointer;user-select:none;
+  background:rgba(0,0,0,0.5);padding:10px;border-radius:50%;transition:0.3s;
+}
+.modal-nav:hover{background:rgba(0,0,0,0.8);}
+#prevVideo{left:-60px;}
+#nextVideo{right:-60px;}
 #fullscreenBtn{
-  position:absolute;
-  bottom:10px;
-  right:10px;
-  width:40px;
-  height:40px;
-  border:none;
-  border-radius:50%;
-  background:rgba(0,0,0,0.6);
-  color:#fff;
-  font-size:18px;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:4000;
+  position:absolute;bottom:10px;right:10px;width:40px;height:40px;border:none;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:4000;
 }
 #fullscreenBtn:hover{background:rgba(0,0,0,0.9);}
 
 /* ===== RESPONSIVE ===== */
-@media(max-width:1200px){
-  .video-grid{grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:15px;}
-}
-
+@media(max-width:1200px){.video-grid{grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:15px;}}
 @media(max-width:900px){
-  nav{flex-wrap:nowrap; justify-content:space-between;align-items:center;}
-  .nav-right{flex-wrap:nowrap; justify-content:flex-end; width:auto; margin-top:0;}
+  nav{flex-wrap:nowrap;justify-content:space-between;align-items:center;}
+  .nav-right{flex-wrap:nowrap;justify-content:flex-end;width:auto;margin-top:0;}
   nav ul{position:absolute;top:60px;right:10px;background:#111;flex-direction:column;width:180px;display:none;padding:10px;z-index:1001;}
   nav ul.active{display:flex;}
   .social-icons{display:flex;align-items:center;gap:15px;}
   .menu-toggle{display:block;}
   .hero{flex-direction:column;text-align:center;}
   .video-grid{grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));}
-  .modal-content iframe{height:300px;}
+  .modal-content iframe{height:60vh;}
 }
-
 @media(max-width:600px){
   .hero img{max-width:80%;height:auto;}
   .hero-text h1{font-size:24px;}
@@ -164,10 +154,10 @@ section.active{display:block;}
   </div>
 </nav>
 
-<section id="home" class="active">
+<section id="home" class="active" data-aos="fade-up" data-aos-duration="1000">
 <div class="hero">
-<img src="anaspic.jpg" alt="Image">
-<div class="hero-text">
+<img src="anaspic.jpg" alt="Image" data-aos="fade-right" data-aos-duration="1000">
+<div class="hero-text" data-aos="fade-left" data-aos-duration="1000">
 <h1>Welcome To ALeGO World</h1>
 <div class="main-tagline">
 Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
@@ -183,22 +173,22 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 </div>
 </section>
 
-<section id="gaming">
+<section id="gaming" data-aos="fade-up" data-aos-duration="1000">
 <h2>Gaming Section</h2>
 <div class="video-grid" id="gaming-grid"></div>
 </section>
 
-<section id="anime">
+<section id="anime" data-aos="fade-up" data-aos-duration="1000">
 <h2>Anime Section</h2>
 <div class="video-grid" id="anime-grid"></div>
 </section>
 
-<section id="marvel">
+<section id="marvel" data-aos="fade-up" data-aos-duration="1000">
 <h2>Marvel Section</h2>
 <div class="video-grid" id="marvel-grid"></div>
 </section>
 
-<section id="states">
+<section id="states" data-aos="fade-up" data-aos-duration="1000">
 <h2>States Section</h2>
 <p>Content for States goes here...</p>
 </section>
@@ -210,92 +200,155 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
     <iframe id="videoFrame" src="" frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen></iframe>
+    <div id="prevVideo" class="modal-nav">&#10094;</div>
+    <div id="nextVideo" class="modal-nav">&#10095;</div>
     <button id="fullscreenBtn"><i class="fas fa-expand"></i></button>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
-window.addEventListener("load",()=>{document.getElementById("preloader").style.display="none";});
-particlesJS("particles-js",{"particles":{"number":{"value":80},"color":{"value":"#00f2ff"},"shape":{"type":"circle"},"opacity":{"value":0.5},"size":{"value":3},"line_linked":{"enable":true,"distance":150,"color":"#00f2ff","opacity":0.4,"width":1},"move":{"enable":true,"speed":3}}});
+AOS.init();
 
-function toggleMenu(){
+/* ===== PRELOADER ===== */
+window.addEventListener("load", () => {
+  document.getElementById("preloader").style.display = "none";
+});
+
+/* ===== PARTICLES BACKGROUND ===== */
+particlesJS("particles-js", {
+  "particles": {
+    "number": {"value":80},
+    "color":{"value":"#00f2ff"},
+    "shape":{"type":"circle"},
+    "opacity":{"value":0.5},
+    "size":{"value":3},
+    "line_linked":{"enable":true,"distance":150,"color":"#00f2ff","opacity":0.4,"width":1},
+    "move":{"enable":true,"speed":3}
+  }
+});
+
+/* ===== NAVBAR MENU TOGGLE ===== */
+function toggleMenu() {
   document.getElementById("menu").classList.toggle("active");
 }
 
-/* ===== TABS ===== */
-const tabs=document.querySelectorAll('#menu li');
-const sections=document.querySelectorAll('section');
-tabs.forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    const target=tab.getAttribute('data-section');
-    sections.forEach(sec=>sec.classList.remove('active'));
+/* ===== TABS SWITCHING ===== */
+const tabs = document.querySelectorAll('#menu li');
+const sections = document.querySelectorAll('section');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.getAttribute('data-section');
+    sections.forEach(sec => sec.classList.remove('active'));
     document.getElementById(target).classList.add('active');
-    document.getElementById("menu").classList.remove("active");
     window.scrollTo(0,0);
+    if(window.innerWidth <= 900){
+      document.getElementById("menu").classList.remove("active");
+    }
   });
 });
 
-/* ===== DYNAMIC VIDEO ARRAYS ===== */
+/* ===== VIDEO ARRAYS ===== */
 let gamingVideos = [
-  {id:'HK6r1G6wQwI', desc:'Gaming Video 1'},
-  {id:'V6U8kK0fGHQ', desc:'Gaming Video 2'},
-  {id:'qB_RgP1JN9k', desc:'Gaming Video 3'},
-  {id:'41Z1uNFNbzA', desc:'Gaming Video 4'}
+  {id:'HK6r1G6wQwI', desc:'Free Fire'},
+  {id:'V6U8kK0fGHQ', desc:'Free Fire'},
+  {id:'qB_RgP1JN9k', desc:'Free Fire'},
+  {id:'41Z1uNFNbzA', desc:'Free Fire'}
 ];
 let animeVideos = [
-  {id:'9zIor5qP7b0', desc:'Anime Video 1'},
-  {id:'SMDKFtTVgGI', desc:'Anime Video 2'}
+  {id:'9zIor5qP7b0', desc:'GOJO <BR> VS <BR> Miguel'},
+  {id:'SMDKFtTVgGI', desc:'GOJO <BR> VS <BR> JOGO'}
 ];
 let marvelVideos = [
-  {id:'70pHukpTyhk', desc:'Spider-Man'},
-  {id:'GoockRFyx_4', desc:'Marvel Video 2'},
-  {id:'KzMRavXCe9o', desc:'Marvel Video 3'},
-  {id:'NtwCLlILiPc', desc:'Marvel Video 4'},
-  {id:'moVZnIMCm7w', desc:'Marvel Video 5'},
-  {id:'WsLyDwMoZE8', desc:'Marvel Video 6'},
-  {id:'4YoXzgGhqkw', desc:'Marvel Video 7'},
-  {id:'Q09LJCp8MYk', desc:'Marvel Video 8'},
-  {id:'VkAhflXyVtk', desc:'Marvel Video 9'}
+  {id:'70pHukpTyhk', desc:'SPIDER-MAN <br> VS <br> DR.STRANGE '},
+  {id:'GoockRFyx_4', desc:'DR.STRANGE BEST AURA'},
+  {id:'KzMRavXCe9o', desc:'"I HAVE COME TO BARGAIN"'},
+  {id:'NtwCLlILiPc', desc:'TOM HOLLAND DANCE <br>  ON BEATS 😂'},
+  {id:'moVZnIMCm7w', desc:'SPIDER-MAN <br> VS <br> GREEN-GOBLIN '},
+  {id:'WsLyDwMoZE8', desc:'THOR VS HULK'},
+  {id:'4YoXzgGhqkw', desc:'SPIDER-MAN <br> VS <br> CAP-AMERICA'},
+  {id:'Q09LJCp8MYk', desc:'IRON-MAN BEST AURA'},
+  {id:'VkAhflXyVtk', desc:'THE STRENGHT OF<BR> SPIDER-MAN'}
 ];
 
 /* ===== CREATE VIDEO GRID ===== */
 function createVideoGrid(videos, gridId){
   const grid = document.getElementById(gridId);
   grid.innerHTML = "";
-  videos.forEach(v => {
+  videos.forEach((v,index) => {
     const div = document.createElement('div');
     div.className = 'video-card';
     div.innerHTML = `<img src="https://img.youtube.com/vi/${v.id}/0.jpg" title="${v.desc}"><span class="desc">${v.desc}</span>`;
-    div.onclick = () => openVideo(`https://www.youtube.com/watch?v=${v.id}`);
+    div.onclick = () => openVideo(videos, index);
     grid.appendChild(div);
   });
 }
+
+/* ===== GENERATE GRIDS ===== */
 createVideoGrid(gamingVideos,'gaming-grid');
 createVideoGrid(animeVideos,'anime-grid');
 createVideoGrid(marvelVideos,'marvel-grid');
 
-/* ===== MODAL FUNCTIONS ===== */
-function openVideo(link){
-  const embedLink = link.replace("watch?v=","embed/");
-  document.getElementById("videoFrame").src = embedLink+"?autoplay=1";
-  document.getElementById("videoModal").classList.add("active");
+/* ===== FULLSCREEN VIDEO MODAL ===== */
+let currentVideos = [];
+let currentIndex = 0;
+const modal = document.getElementById("videoModal");
+const modalContent = modal.querySelector(".modal-content");
+const videoFrame = document.getElementById("videoFrame");
+
+function openVideo(videos, index){
+  currentVideos = videos;
+  currentIndex = index;
+  const embedLink = `https://www.youtube.com/embed/${videos[index].id}?autoplay=1&modestbranding=1`;
+  videoFrame.src = embedLink;
+
+  modal.classList.add("active");
+  modalContent.classList.add("active-scale");
+
+  // اجعل الفيديو يأخذ كامل الشاشة مع padding صغير للـ desktop
+  videoFrame.style.height = window.innerWidth <= 900 ? "100vh" : "90vh";
 }
+
+/* ===== CLOSE VIDEO ===== */
 function closeVideo(){
-  document.getElementById("videoModal").classList.remove("active");
-  document.getElementById("videoFrame").src="";
+  modalContent.classList.remove("active-scale");
+  setTimeout(()=>{
+    modal.classList.remove("active");
+    videoFrame.src="";
+  }, 300);
 }
+
+/* ===== CLICK OUTSIDE TO CLOSE ===== */
+modal.addEventListener("click", (e)=>{
+  if(e.target === modal) closeVideo();
+});
+
+/* ===== NEXT / PREV VIDEO ===== */
+document.getElementById("nextVideo").addEventListener("click", (e)=>{
+  e.stopPropagation();
+  if(currentVideos.length === 0) return;
+  currentIndex = (currentIndex + 1) % currentVideos.length;
+  videoFrame.src = `https://www.youtube.com/embed/${currentVideos[currentIndex].id}?autoplay=1&modestbranding=1`;
+});
+document.getElementById("prevVideo").addEventListener("click", (e)=>{
+  e.stopPropagation();
+  if(currentVideos.length === 0) return;
+  currentIndex = (currentIndex - 1 + currentVideos.length) % currentVideos.length;
+  videoFrame.src = `https://www.youtube.com/embed/${currentVideos[currentIndex].id}?autoplay=1&modestbranding=1`;
+});
 
 /* ===== FULLSCREEN BUTTON ===== */
 const fullscreenBtn = document.getElementById('fullscreenBtn');
-fullscreenBtn.addEventListener('click', () => {
-  const modal = document.querySelector('.video-modal');
-  if (modal.requestFullscreen) modal.requestFullscreen();
-  else if (modal.mozRequestFullScreen) modal.mozRequestFullScreen();
-  else if (modal.webkitRequestFullscreen) modal.webkitRequestFullscreen();
-  else if (modal.msRequestFullscreen) modal.msRequestFullscreen();
+fullscreenBtn.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  if(modal.requestFullscreen) modal.requestFullscreen();
+  else if(modal.webkitRequestFullscreen) modal.webkitRequestFullscreen();
+  else if(modal.mozRequestFullScreen) modal.mozRequestFullScreen();
+  else if(modal.msRequestFullscreen) modal.msRequestFullscreen();
+});
+
+/* ===== ADJUST VIDEO HEIGHT ON RESIZE ===== */
+window.addEventListener("resize", ()=>{
+  videoFrame.style.height = window.innerWidth <= 900 ? "100vh" : "90vh";
 });
 </script>
-
-</body>
-</html>
