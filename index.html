@@ -67,7 +67,10 @@ nav ul li a:hover{color:#00f2ff;text-shadow:0 0 15px #00f2ff,0 0 25px #00f2ff;}
 .menu-toggle{display:none;font-size:25px;cursor:pointer;}
 
 /* ===== SECTIONS ===== */
-section{padding:100px 10% 60px;display:none;}
+section{
+  padding:140px 10% 80px; /* مسافة أكبر تحت الناف */
+  display:none;
+}
 section.active{display:block;}
 
 /* ===== HERO ===== */
@@ -89,25 +92,38 @@ section.active{display:block;}
 
 /* ===== ANIME VIDEO GRID ===== */
 #anime .video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;}
-.video-item{background:#111;border-radius:15px;overflow:hidden;box-shadow:0 0 20px #00f2ff;display:flex;flex-direction:column;position:relative;}
+.video-item{background:#111;border-radius:15px;overflow:hidden;box-shadow:0 0 20px #00f2ff;display:flex;flex-direction:column;}
 .video-item video{width:100%;border-radius:15px 15px 0 0;}
 .video-info{padding:10px;display:flex;flex-direction:column;}
 .video-desc{max-height:50px;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px;transition:max-height 0.3s;}
 .video-desc.expanded{max-height:500px;}
 .toggle-desc{cursor:pointer;color:#00f2ff;font-size:14px;text-align:right;margin-bottom:5px;}
-.reactions{display:flex;gap:5px;margin-bottom:5px;flex-wrap:wrap;position:relative;}
-.reactions span{cursor:pointer;font-size:20px;position:relative;}
-.show-more-emoji{cursor:pointer;color:#00f2ff;font-size:14px;display:block;margin-left:5px;}
-.comment-box{margin-top:5px;display:flex;flex-direction:column;max-height:40vh;}
-.comment-box input{width:100%;padding:5px;border-radius:5px;border:none;outline:none;margin-bottom:5px;}
-.comment-list{max-height:40vh;overflow-y:auto;background:#111;padding:5px;border-radius:5px;}
 
 /* ===== VIDEO SECTION HEADERS ===== */
-.video-section h2{color:#00f2ff;text-shadow:0 0 15px #00f2ff;margin-bottom:20px;}
+#anime h2{
+  color:#00f2ff;
+  text-shadow:0 0 15px #00f2ff;
+  margin-bottom:40px;
+  margin-top:20px;
+}
 
 /* ===== RESPONSIVE ===== */
-@media(max-width:900px){.hero{flex-direction:column;text-align:center;}nav ul{position:absolute;top:70px;right:10%;background:#111;flex-direction:column;width:200px;display:none;padding:20px;}.menu-toggle{display:block;}}
-@media(max-width:600px){.hero img{max-width:200px;}.hero-text h1{font-size:28px;}.main-tagline{font-size:16px;}.roles{max-width:300px;gap:10px;}.roles span{font-size:14px;}.btn{padding:8px 18px;font-size:14px;margin-right:10px;}.social-icons a{font-size:22px;}.logo{font-size:20px;}.logo-container img{width:60px;height:60px;}}
+@media(max-width:900px){
+  .hero{flex-direction:column;text-align:center;}
+  nav ul{position:absolute;top:70px;right:10%;background:#111;flex-direction:column;width:200px;display:none;padding:20px;}
+  .menu-toggle{display:block;}
+}
+@media(max-width:600px){
+  .hero img{max-width:200px;}
+  .hero-text h1{font-size:28px;}
+  .main-tagline{font-size:16px;}
+  .roles{max-width:300px;gap:10px;}
+  .roles span{font-size:14px;}
+  .btn{padding:8px 18px;font-size:14px;margin-right:10px;}
+  .social-icons a{font-size:22px;}
+  .logo{font-size:20px;}
+  .logo-container img{width:60px;height:60px;}
+}
 </style>
 </head>
 <body>
@@ -130,8 +146,8 @@ section.active{display:block;}
       <li data-section="states"><a>States</a></li>
     </ul>
     <div class="social-icons">
-      <a href="#"><i class="fab fa-youtube"></i></a>
-      <a href="#"><i class="fab fa-facebook"></i></a>
+      <a href="https://youtube.com/@alego.yt.1?si=1Z3qtFv2LeMa7kKB"><i class="fab fa-youtube"></i></a>
+      <a href="https://www.facebook.com/share/1C4XhCpoLL/"><i class="fab fa-facebook"></i></a>
       <a href="#"><i class="fab fa-tiktok"></i></a>
       <span class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></span>
     </div>
@@ -162,80 +178,6 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 <div class="video-grid" id="anime-grid"></div>
 </section>
 
-<!-- Firebase SDK -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDHa6ehG1vQoodbxNDfJuEN0UUg2Ymv-1s",
-  authDomain: "alegoclashyt.firebaseapp.com",
-  projectId: "alegoclashyt",
-  storageBucket: "alegoclashyt.appspot.com",
-  messagingSenderId: "199878543888",
-  appId: "1:199878543888:web:1d964fa5a1830111925895",
-  measurementId: "G-15ZKJXPSWS"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const animeGrid = document.getElementById("anime-grid");
-const emojis=["😂","🤩","🥲","🤨","😬","😐","😔","🥶","🤯","🥳","😎","😭","😈","💀","☠️","😤","❤️‍🔥","💔","🤍","💯","👌","👍","🤲","👏","👀","🔥","♥️"];
-
-async function loadVideos(){
-  const q = query(collection(db,"videos"),orderBy("timestamp"));
-  const snapshot = await getDocs(q);
-  snapshot.forEach(docSnap=>{
-    const v = docSnap.data();
-    const item = document.createElement('div');
-    item.className='video-item';
-    item.innerHTML=`
-      <video src="${v.src}" controls></video>
-      <div class="video-info">
-        <div class="video-desc">${v.desc}</div>
-        <div class="toggle-desc">Show More ▼</div>
-        <div class="reactions"></div>
-        <div class="show-more-emoji">▼ More</div>
-        <div class="comment-box">
-          <input type="text" placeholder="Add a comment...">
-          <div class="comment-list"></div>
-        </div>
-      </div>
-    `;
-    animeGrid.appendChild(item);
-
-    // Toggle description
-    const toggle = item.querySelector('.toggle-desc');
-    const desc = item.querySelector('.video-desc');
-    toggle.addEventListener('click',()=>{desc.classList.toggle('expanded');toggle.textContent=desc.classList.contains('expanded')?'Show Less ▲':'Show More ▼';});
-
-    // Reactions
-    const reactionsDiv = item.querySelector('.reactions');
-    emojis.slice(0,3).forEach(e=>{
-      const span = document.createElement('span');
-      span.textContent=e;
-      span.addEventListener('click',async ()=>{
-        await addDoc(collection(db,"reactions"),{video:v.src,emoji:e,timestamp:Date.now()});
-      });
-      reactionsDiv.appendChild(span);
-    });
-
-    // Comments
-    const input = item.querySelector('.comment-box input');
-    const commentList = item.querySelector('.comment-list');
-    input.addEventListener('keypress',async e=>{
-      if(e.key==='Enter' && input.value.trim()!==''){
-        await addDoc(collection(db,"comments"),{video:v.src,text:input.value,timestamp:Date.now()});
-        const div=document.createElement('div');div.textContent=input.value;commentList.appendChild(div);
-        input.value='';
-      }
-    });
-  });
-}
-loadVideos();
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script>
 window.addEventListener("load",()=>{
@@ -246,11 +188,54 @@ particlesJS("particles-js",{
 "particles":{"number":{"value":80},"color":{"value":"#00f2ff"},"shape":{"type":"circle"},"opacity":{"value":0.5},"size":{"value":3},"line_linked":{"enable":true,"distance":150,"color":"#00f2ff","opacity":0.4,"width":1},"move":{"enable":true,"speed":3}}
 });
 
+function toggleMenu(){document.getElementById("menu").classList.toggle("active");}
 const tabs=document.querySelectorAll('#menu li');
 const sections=document.querySelectorAll('section');
-tabs.forEach(tab=>{tab.addEventListener('click',()=>{const target=tab.getAttribute('data-section');sections.forEach(sec=>sec.classList.remove('active'));document.getElementById(target).classList.add('active');window.scrollTo(0,0);});});
+tabs.forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    const target=tab.getAttribute('data-section');
+    sections.forEach(sec=>sec.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
+    window.scrollTo(0,0);
+  });
+});
 
-function toggleMenu(){document.getElementById("menu").classList.toggle("active");}
+/* ===== ANIME VIDEOS DYNAMIC GRID ===== */
+const animeVideos=[
+  {src:'video1.mp4',desc:'Description for video 1'},
+  {src:'video2.mp4',desc:'Description for video 2'},
+  {src:'video3.mp4',desc:'Description for video 3'},
+  {src:'video4.mp4',desc:'Description for video 4'},
+  {src:'video5.mp4',desc:'Description for video 5'},
+  {src:'video6.mp4',desc:'Description for video 6'}
+];
+
+const animeGrid=document.getElementById('anime-grid');
+
+animeVideos.forEach((v,i)=>{
+  const item=document.createElement('div');
+  item.className='video-item';
+
+  item.innerHTML=`
+    <video src="${v.src}" controls></video>
+    <div class="video-info">
+      <div class="video-desc">${v.desc}</div>
+      <div class="toggle-desc">Show More ▼</div>
+    </div>
+  `;
+  animeGrid.appendChild(item);
+});
+
+/* Toggle descriptions */
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('toggle-desc')){
+    const desc=e.target.previousElementSibling;
+    desc.classList.toggle('expanded');
+    e.target.textContent=
+      desc.classList.contains('expanded')?
+      'Show Less ▲':'Show More ▼';
+  }
+});
 </script>
 
 </body>
