@@ -144,6 +144,28 @@ img[alt="Logo"] {
   border:none;
   display:block;
 }
+
+.stat-card h3{
+  font-family:'Orbitron', sans-serif;
+  font-size:18px;
+  color:#00f2ff;
+  margin-bottom:10px;
+  text-shadow:0 0 10px #00f2ff;
+}
+.counter{
+  font-size:22px;
+  font-weight:bold;
+  color:#fff;
+  text-shadow:0 0 8px #00f2ff;
+}
+#channel-name{
+  font-size:16px;
+  font-weight:bold;
+  color:#00f2ff;
+  margin-top:5px;
+  text-shadow:0 0 8px #00f2ff;
+}
+
 </style>
 </head>
 <body>
@@ -215,10 +237,27 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 </section>
 
 <section id="states" data-aos="fade-up" data-aos-duration="1000">
-<h2>States Section</h2>
-<p>Content for States goes here...</p>
+  <h2>Channel Stats</h2>
+  <div class="stats-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; max-width:1000px; margin:30px auto;">
+    <div class="stat-card" style="background:#1e1e1e; padding:20px; border-radius:15px; text-align:center; box-shadow:0 0 20px #00f2ff;">
+      <h3>Subscribers</h3>
+      <p class="counter" id="subs-count">0</p>
+    </div>
+    <div class="stat-card" style="background:#1e1e1e; padding:20px; border-radius:15px; text-align:center; box-shadow:0 0 20px #00f2ff;">
+      <h3>Total Views</h3>
+      <p class="counter" id="views-count">0</p>
+    </div>
+    <div class="stat-card" style="background:#1e1e1e; padding:20px; border-radius:15px; text-align:center; box-shadow:0 0 20px #00f2ff;">
+      <h3>Videos</h3>
+      <p class="counter" id="videos-count">0</p>
+    </div>
+    <div class="stat-card" style="background:#1e1e1e; padding:20px; border-radius:15px; text-align:center; box-shadow:0 0 20px #00f2ff;">
+      <h3>Channel</h3>
+      <img id="channel-thumb" src="" alt="Channel Logo" style="width:60px;height:60px;border-radius:50%;margin-bottom:5px;box-shadow:0 0 15px #00f2ff;">
+      <p id="channel-name">Loading...</p>
+    </div>
+  </div>
 </section>
-
 <!-- ===== MODAL ===== -->
 <div class="video-modal" id="videoModal">
   <div class="modal-content">
@@ -313,6 +352,7 @@ let gamingCategories = {
 };
 let animeVideos = [
   {id:'9zIor5qP7b0', desc:'GOJO <BR> VS <BR> Miguel'},
+  {id:'-75h1pyYHsc', desc:'When GOJO <BR> Gets Serious 💀'},
   {id:'SMDKFtTVgGI', desc:'GOJO <BR> VS <BR> JOGO'}
 ];
 let marvelVideos = [
@@ -432,10 +472,49 @@ fullscreenBtn.addEventListener('click', (e)=>{
   else if(modal.msRequestFullscreen) modal.msRequestFullscreen();
 });
 
+
 /* ===== ADJUST VIDEO HEIGHT ON RESIZE ===== */
 window.addEventListener("resize", ()=>{
   videoFrame.style.height = window.innerWidth <= 900 ? "100vh" : "90vh";
 });
+
+const API_KEY = "AIzaSyBTvModFdFi3k4HmHgQ19ZuHihYyArRvk8";
+const VIDEO_ID = "lRV7RbyxXcg";
+
+// عداد متحرك
+function animateCounter(element, target){
+  let count = 0;
+  const increment = target/100;
+  const interval = setInterval(()=>{
+    count += increment;
+    if(count >= target) count = target;
+    element.innerText = Math.floor(count).toLocaleString();
+    if(count >= target) clearInterval(interval);
+  },20);
+}
+
+// 1️⃣ جلب Channel ID من Video ID
+fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${VIDEO_ID}&key=${API_KEY}`)
+.then(res => res.json())
+.then(data => {
+  const channelId = data.items[0].snippet.channelId;
+
+  // 2️⃣ جلب إحصائيات القناة
+  fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=${channelId}&key=${API_KEY}`)
+  .then(res => res.json())
+  .then(data => {
+    const stats = data.items[0].statistics;
+    const snippet = data.items[0].snippet;
+
+    document.getElementById("channel-name").innerText = snippet.title;
+    document.getElementById("channel-thumb").src = snippet.thumbnails.default.url;
+
+    animateCounter(document.getElementById("subs-count"), parseInt(stats.subscriberCount));
+    animateCounter(document.getElementById("views-count"), parseInt(stats.viewCount));
+    animateCounter(document.getElementById("videos-count"), parseInt(stats.videoCount));
+  });
+});
+
 </script>
 </body>
 </html>
