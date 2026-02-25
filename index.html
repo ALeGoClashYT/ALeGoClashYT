@@ -251,6 +251,7 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
   </iframe>
 </div>
 </div>
+</div>
 </section>
 
 <section id="gaming" data-aos="fade-up" data-aos-duration="1000">
@@ -342,6 +343,12 @@ tabs.forEach(tab => {
     if(window.innerWidth <= 900){
       document.getElementById("menu").classList.remove("active");
     }
+    
+    if(target === 'home'){
+  const homeVideo = section.querySelector('iframe');
+  const src = homeVideo.getAttribute('src');
+  homeVideo.setAttribute('src', src);
+}
   });
 });
 
@@ -446,24 +453,58 @@ createGamingSection();
 createVideoGrid(animeVideos,'anime-grid');
 createVideoGrid(marvelVideos,'marvel-grid');
 
-/* ===== FULLSCREEN VIDEO MODAL ===== */
+
+
+/* ===== FULLSCREEN VIDEO MODAL WITH END THUMBNAIL ===== */
 let currentVideos = [];
 let currentIndex = 0;
 const modal = document.getElementById("videoModal");
 const modalContent = modal.querySelector(".modal-content");
 const videoFrame = document.getElementById("videoFrame");
+const thumbWrapper = document.getElementById('videoThumbWrapper');
 
 function openVideo(videos, index){
   currentVideos = videos;
   currentIndex = index;
-  const embedLink = `https://www.youtube.com/embed/${videos[index].id}?autoplay=1&modestbranding=1`;
+
+  // رابط الفيديو مع autoplay و mute
+  const embedLink = `https://www.youtube.com/embed/${videos[index].id}?autoplay=1&mute=1&modestbranding=1&rel=0&playsinline=1`;
   videoFrame.src = embedLink;
 
   modal.classList.add("active");
   modalContent.classList.add("active-scale");
 
-  // اجعل الفيديو يأخذ كامل الشاشة مع padding صغير للـ desktop
+  // اظهار الفيديو مباشرة
+  videoFrame.style.display = "block";
+  thumbWrapper.style.display = "none";
   videoFrame.style.height = window.innerWidth <= 900 ? "100vh" : "90vh";
+
+  // أضف listener لنهاية الفيديو لإظهار الـ thumbnail
+  videoFrame.onload = () => {
+    const player = new YT.Player(videoFrame, {
+      events: {
+        'onStateChange': (event) => {
+          if(event.data === YT.PlayerState.ENDED){
+            // لما الفيديو يخلص
+            showThumbnail(videos[index].id);
+          }
+        }
+      }
+    });
+  }
+}
+
+function showThumbnail(videoId){
+  thumbWrapper.style.backgroundImage = `url('https://img.youtube.com/vi/${videoId}/0.jpg')`;
+  thumbWrapper.style.display = "block";
+  videoFrame.style.display = "none";
+
+  // لو ضغط المستخدم على الصورة يبدأ الفيديو من جديد
+  thumbWrapper.onclick = () => {
+    videoFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
+    videoFrame.style.display = "block";
+    thumbWrapper.style.display = "none";
+  }
 }
 
 /* ===== CLOSE VIDEO ===== */
@@ -471,7 +512,8 @@ function closeVideo(){
   modalContent.classList.remove("active-scale");
   setTimeout(()=>{
     modal.classList.remove("active");
-    videoFrame.src="";
+    videoFrame.src = "";
+    thumbWrapper.style.display = "none";
   }, 300);
 }
 
@@ -485,13 +527,14 @@ document.getElementById("nextVideo").addEventListener("click", (e)=>{
   e.stopPropagation();
   if(currentVideos.length === 0) return;
   currentIndex = (currentIndex + 1) % currentVideos.length;
-  videoFrame.src = `https://www.youtube.com/embed/${currentVideos[currentIndex].id}?autoplay=1&modestbranding=1`;
+  openVideo(currentVideos, currentIndex);
 });
+
 document.getElementById("prevVideo").addEventListener("click", (e)=>{
   e.stopPropagation();
   if(currentVideos.length === 0) return;
   currentIndex = (currentIndex - 1 + currentVideos.length) % currentVideos.length;
-  videoFrame.src = `https://www.youtube.com/embed/${currentVideos[currentIndex].id}?autoplay=1&modestbranding=1`;
+  openVideo(currentVideos, currentIndex);
 });
 
 /* ===== FULLSCREEN BUTTON ===== */
@@ -503,7 +546,6 @@ fullscreenBtn.addEventListener('click', (e)=>{
   else if(modal.mozRequestFullScreen) modal.mozRequestFullScreen();
   else if(modal.msRequestFullscreen) modal.msRequestFullscreen();
 });
-
 
 /* ===== ADJUST VIDEO HEIGHT ON RESIZE ===== */
 window.addEventListener("resize", ()=>{
@@ -541,9 +583,37 @@ fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${VIDEO_ID}&
     document.getElementById("channel-name").innerText = snippet.title;
     document.getElementById("channel-thumb").src = snippet.thumbnails.default.url;
 
-    animateCounter(document.getElementById("subs-count"), parseInt(stats.subscriberCount));
-    animateCounter(document.getElementById("views-count"), parseInt(stats.viewCount));
-    animateCounter(document.getElementById("videos-count"), parseInt(stats.videoCount));
+  // ===== تشغيل العدادات كل مرة يظهر section "states" =====
+function animateStatesCounters() {
+  const counters = document.querySelectorAll('#states .counter');
+  counters.forEach(counter => {
+    const target = parseInt(counter.getAttribute('data-target'));
+    let count = 0;
+    const increment = target / 100;
+    const interval = setInterval(() => {
+      count += increment;
+      if (count >= target) count = target;
+      counter.innerText = Math.floor(count).toLocaleString();
+      if (count >= target) clearInterval(interval);
+    }, 20);
+  });
+}
+
+// ضبط القيم النهائية في data-target
+document.getElementById("subs-count").setAttribute('data-target', stats.subscriberCount);
+document.getElementById("views-count").setAttribute('data-target', stats.viewCount);
+document.getElementById("videos-count").setAttribute('data-target', stats.videoCount);
+
+// مراقبة ظهور section كل مرة
+const statesSection = document.getElementById('states');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      animateStatesCounters();
+    }
+  });
+}, {threshold: 0.5}); // لما نصف section يظهر
+observer.observe(statesSection);
   });
   
   const scrollBtn = document.getElementById("scrollTopBtn");
