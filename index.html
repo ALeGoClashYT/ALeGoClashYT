@@ -330,26 +330,31 @@ particlesJS("particles-js", {
 function toggleMenu() {
   document.getElementById("menu").classList.toggle("active");
 }
-
 /* ===== TABS SWITCHING ===== */
 const tabs = document.querySelectorAll('#menu li');
 const sections = document.querySelectorAll('section');
+
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
     const target = tab.getAttribute('data-section');
+
     sections.forEach(sec => sec.classList.remove('active'));
-    document.getElementById(target).classList.add('active');
+    const section = document.getElementById(target);
+    section.classList.add('active');
+
     window.scrollTo(0,0);
+
+    // 🔥 إعادة تحميل فيديو الهوم كل مرة ندوس Home
+    if(target === 'home'){
+      const homeVideo = document.querySelector('#home iframe');
+      homeVideo.src = homeVideo.src;
+    }
+
     if(window.innerWidth <= 900){
       document.getElementById("menu").classList.remove("active");
     }
-    
-    if(target === 'home'){
-  const homeVideo = section.querySelector('iframe');
-  const src = homeVideo.getAttribute('src');
-  homeVideo.setAttribute('src', src);
-}
   });
+
 });
 
 /* ===== VIDEO ARRAYS ===== */
