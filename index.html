@@ -321,8 +321,8 @@ particlesJS("particles-js", {
     "shape":{"type":"triangle"},
     "opacity":{"value":0.5},
     "size":{"value":2},
-    "line_linked":{"enable":true,"distance":150,"color":"#00f2ff","opacity":0.4,"width":1},
-    "move":{"enable":true,"speed":2}
+    "line_linked":{"enable":true,"distance":180,"color":"#00f2ff","opacity":0.4,"width":0.8},
+    "move":{"enable":true,"speed":4}
   }
 });
 
@@ -589,13 +589,13 @@ function animateStatesCounters() {
   counters.forEach(counter => {
     const target = parseInt(counter.getAttribute('data-target'));
     let count = 0;
-    const increment = target / 100;
+    const increment = target / 50;
     const interval = setInterval(() => {
       count += increment;
       if (count >= target) count = target;
       counter.innerText = Math.floor(count).toLocaleString();
       if (count >= target) clearInterval(interval);
-    }, 20);
+    }, 10);
   });
 }
 
