@@ -266,14 +266,14 @@ img[alt="Logo"] {
 
 .signature-text .small {
   font-family: 'Ballet', cursive;
-  font-size: 20px;
+  font-size: 26px;
   color: #fff; /* ذهب ناعم */
   text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff;
 }
 
 .signature-text .big {
   font-family: 'Ballet', cursive;
-  font-size: 44px;
+  font-size: 46px;
   color: #FFD873; /* ذهب ناعم */
   text-transform: capitalize;
   letter-spacing: 1px;
@@ -313,7 +313,7 @@ img[alt="Logo"] {
 <img src="anaspic.jpg" alt="Image" data-aos="fade-right" data-aos-duration="1000" loading="lazy">
 <div class="hero-text" data-aos="fade-left" data-aos-duration="1000">
     <div class="signature-text">
-    <span class="small">Made by :</span>
+    <span class="small">Made &nbsp; by&nbsp;  :&nbsp; </span>
     <span class="big">Anas</span>
   </div>
 
@@ -710,7 +710,7 @@ function animateStatesCounters() {
   counters.forEach(counter => {
     const target = parseInt(counter.getAttribute('data-target'));
     let count = 0;
-    const increment = target / 50;
+    const increment = target / 70;
     const interval = setInterval(() => {
       count += increment;
       if (count >= target) count = target;
