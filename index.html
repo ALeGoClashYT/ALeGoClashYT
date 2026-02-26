@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 
 <style>
 /* ===== PRELOADER ===== */
@@ -198,6 +199,86 @@ img[alt="Logo"] {
   box-shadow:0 0 35px #00f2ff;
 }
 
+/* ===== CONTACT MODAL ===== */
+.contact-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:6000;
+}
+
+.contact-box{
+  background:#111;
+  padding:30px;
+  border-radius:20px;
+  text-align:center;
+  box-shadow:0 0 30px #00f2ff;
+  animation:fadeContact 0.3s ease;
+}
+
+@keyframes fadeContact{
+  from{transform:scale(0.7);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+
+.contact-item{
+  margin:20px 0;
+}
+
+.contact-item a{
+  text-decoration:none;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  transition:0.3s;
+}
+
+.contact-item img{
+  width:60px;
+  margin-bottom:8px;
+  transition:0.3s;
+}
+
+.contact-item a:hover img{
+  transform:scale(1.15);
+}
+
+.contact-item a:hover{
+  color:#00f2ff;
+}
+
+.contact-close{
+  position:absolute;
+  margin-top:-15px;
+  margin-left:120px;
+  font-size:25px;
+  cursor:pointer;
+}
+
+.signature-text {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.signature-text .small {
+  font-family: 'Ballet', cursive;
+  font-size: 30px;
+  color: #FFD873; /* ذهب ناعم */
+  text-shadow: 0 0 5px #FFD873, 0 0 10px #FFD873, 0 0 15px #FFD873;
+}
+
+.signature-text .big {
+  font-family: 'Ballet', cursive;
+  font-size: 40px;
+  color: #FFD873; /* ذهب ناعم */
+  text-transform: capitalize;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px #FFD873, 0 0 10px #FFD873, 0 0 20px #FFD873, 0 0 30px #FFD873;
+}
 </style>
 </head>
 <body>
@@ -221,7 +302,7 @@ img[alt="Logo"] {
     <div class="social-icons">
       <a href="https://youtube.com/@alego.yt.1?si=1Z3qtFv2LeMa7kKB"><i class="fab fa-youtube"></i></a>
       <a href="https://www.facebook.com/share/1C4XhCpoLL/"><i class="fab fa-facebook"></i></a>
-      <a href="#"><i class="fab fa-tiktok"></i></a>
+      <a href="https://vm.tiktok.com/ZS9eqAbKmbprC-OUw1C/"><i class="fab fa-tiktok"></i></a>
       <span class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></span>
     </div>
   </div>
@@ -231,6 +312,11 @@ img[alt="Logo"] {
 <div class="hero">
 <img src="anaspic.jpg" alt="Image" data-aos="fade-right" data-aos-duration="1000" loading="lazy">
 <div class="hero-text" data-aos="fade-left" data-aos-duration="1000">
+    <div class="signature-text">
+    <span class="small">Made by :</span>
+    <span class="big">Anas</span>
+  </div>
+
 <h1>Welcome To ALeGO World</h1>
 <div class="main-tagline">
 Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
@@ -240,8 +326,8 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 <span>Content Creator</span>
 <span>Designer</span>
 </div>
-<a href="#" class="btn">See Videos</a>
-<a href="#" class="btn">Contact</a>
+<a href="#" class="btn">Enter Arena</a>
+<a href="javascript:void(0)" class="btn" onclick="openContact()">Contact</a>
 </div>
 <div class="home-video-wrapper">
   <iframe 
@@ -307,6 +393,29 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
     <button id="fullscreenBtn"><i class="fas fa-expand"></i></button>
   </div>
 </div>
+<!-- ===== CONTACT MODAL ===== -->
+<div id="contactModal" class="contact-modal">
+  <div class="contact-box">
+
+    <span class="contact-close" onclick="closeContact()">&times;</span>
+
+    <div class="contact-item">
+      <a href="https://m.me/anas.magdyalyy" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968764.png">
+        <p>Messenger</p>
+      </a>
+    </div>
+
+    <div class="contact-item">
+      <a href="mailto:anas312royal@gmail.com">
+        <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png">
+        <p>Email</p>
+      </a>
+    </div>
+
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
@@ -639,6 +748,19 @@ scrollBtn.addEventListener("click", ()=>{
 });
 });
 
+function openContact(){
+  document.getElementById("contactModal").style.display = "flex";
+}
+
+function closeContact(){
+  document.getElementById("contactModal").style.display = "none";
+}
+
+document.getElementById("contactModal").addEventListener("click", function(e){
+  if(e.target === this){
+    closeContact();
+  }
+});
 </script>
 
 <button id="scrollTopBtn">⬆</button>
