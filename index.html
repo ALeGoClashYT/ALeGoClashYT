@@ -117,7 +117,7 @@ img[alt="Logo"] {
   .menu-toggle{display:block;}
   .hero{flex-direction:column;text-align:center;}
   .video-grid{grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));}
-  ..modal-content iframe {
+  .modal-content iframe {
   width: 100%;
   height: 100vh; /* على الموبايل */
   border-radius: 15px;
@@ -294,10 +294,14 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 <!-- ===== MODAL ===== -->
 <div class="video-modal" id="videoModal">
   <div class="modal-content">
+    
     <span class="close-modal" onclick="closeVideo()">&times;</span>
     <iframe id="videoFrame" src="" frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen></iframe>
+      <div id="videoThumbWrapper" 
+     style="display:none;width:100%;height:90vh;background-size:cover;background-position:center;border-radius:15px;cursor:pointer;">
+</div>
     <div id="prevVideo" class="modal-nav">&#10094;</div>
     <div id="nextVideo" class="modal-nav">&#10095;</div>
     <button id="fullscreenBtn"><i class="fas fa-expand"></i></button>
@@ -305,6 +309,9 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 </div>
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+
 <script>
 AOS.init();
 
@@ -482,8 +489,8 @@ function openVideo(videos, index){
   // اظهار الفيديو مباشرة
   videoFrame.style.display = "block";
   thumbWrapper.style.display = "none";
-  videoFrame.style.height = window.innerWidth <= 900 ? "100vh" : "90vh";
-
+  videoFrame.style.height = window.innerWidth <= 900 ? "85vh" : "90vh";
+  
   // أضف listener لنهاية الفيديو لإظهار الـ thumbnail
   videoFrame.onload = () => {
     const player = new YT.Player(videoFrame, {
