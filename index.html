@@ -710,7 +710,7 @@ function animateStatesCounters() {
   counters.forEach(counter => {
     const target = parseInt(counter.getAttribute('data-target'));
     let count = 0;
-    const increment = target / 200;
+    const increment = target / 140;
     const interval = setInterval(() => {
       count += increment;
       if (count >= target) count = target;
