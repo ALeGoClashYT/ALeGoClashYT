@@ -279,6 +279,61 @@ img[alt="Logo"] {
   letter-spacing: 1px;
   text-shadow: 0 0 5px #FFD873, 0 0 10px #FFD873, 0 0 20px #FFD873, 0 0 30px #FFD873;
 }
+
+/* ===== QUIZ ANIMATIONS ===== */
+
+.fade-in{
+  animation:fadeIn 0.4s ease;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(15px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.timer-bar{
+  height:8px;
+  background:#00f2ff;
+  margin-bottom:20px;
+  border-radius:5px;
+  transition:width 1s linear;
+}
+
+.combo-text{
+  text-align:center;
+  color:#FFD873;
+  margin-bottom:10px;
+  font-weight:bold;
+  text-shadow:0 0 10px #FFD873;
+}
+
+.shake{
+  animation:shake 0.3s;
+}
+@keyframes shake{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-5px);}
+  50%{transform:translateX(5px);}
+  75%{transform:translateX(-5px);}
+  100%{transform:translateX(0);}
+}
+
+#puzzleButtons {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  flex-wrap: nowrap !important;
+  justify-content: center;
+  gap: 15px;
+}
+
+#puzzleButtons .btn {
+  display: flex;              /* يحوّل الزر لصندوق مرن */
+  align-items: center;        /* يمركز النص عموديًا */
+  justify-content: center;    /* يمركز النص أفقيًا */
+  white-space: nowrap;        /* يمنع النص من النزول لسطر جديد */
+  padding: 10px 22px;         /* مساحة داخلية حسب الرغبة */
+  font-size: 16px;            /* حجم النص */
+  text-align: center;         /* يضمن أن أي نص أطول يكون في المنتصف */
+}
 </style>
 </head>
 <body>
@@ -326,7 +381,7 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 <span>Content Creator</span>
 <span>Designer</span>
 </div>
-<a href="#" class="btn">Enter Arena</a>
+<a href="javascript:void(0)" class="btn" onclick="openArena()">Enter Arena</a>
 <a href="javascript:void(0)" class="btn" onclick="openContact()">Contact</a>
 </div>
 <div class="home-video-wrapper">
@@ -377,6 +432,48 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
     </div>
   </div>
 </section>
+<!-- ===== ARENA SECTION ===== -->
+<section id="arena">
+  <h1 style="text-align:center;font-family:'Orbitron';color:#00f2ff;text-shadow:0 0 20px #00f2ff;">
+    Welcome in the Arena
+  </h1>
+
+  <div style="text-align:center;margin-top:40px;">
+    
+    <a class="btn">Coming soon </a>
+    <a class="btn" onclick="openPuzzle()">Solve Puzzles</a>
+    <a class="btn">Coming soon</a>
+  </div>
+
+  <div style="position:absolute;bottom:30px;right:40px;">
+    <a class="btn" onclick="goBack()">Back</a>
+  </div>
+</section>
+
+
+<!-- ===== PUZZLE MENU ===== -->
+<section id="puzzleMenu">
+  <h2 style="text-align:center;color:#00f2ff;">Choose a category</h2>
+
+  <div id="puzzleButtons" 
+       style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:600px;margin:40px auto;">
+  </div>
+
+  <div style="position:absolute;bottom:30px;right:40px;">
+    <a class="btn" onclick="goBack()">Back</a>
+  </div>
+</section>
+
+
+<!-- ===== QUIZ SECTION ===== -->
+<section id="quizSection">
+  <div id="quizContainer" style="max-width:700px;margin:auto;"></div>
+
+  <div style="position:absolute;bottom:30px;right:40px;">
+    <a class="btn" onclick="goBack()">Back</a>
+  </div>
+</section>
+
 <!-- ===== MODAL ===== -->
 <div class="video-modal" id="videoModal">
   <div class="modal-content">
@@ -761,6 +858,397 @@ document.getElementById("contactModal").addEventListener("click", function(e){
     closeContact();
   }
 });
+
+/* =========================
+   ARENA SYSTEM V2
+========================= */
+
+const puzzleButtonNames = [
+  "Anime questions",
+  "Mathimatical problems",
+  "Generl information",
+  "معلومات دينية",
+  "أسئلة انمي",
+  "فوازير والغاز",
+  "Brain test",
+  "معلومات عامة",
+  "still thinking",
+];
+
+
+let historyStack = [];
+let currentQuiz = [];
+let currentQuestionIndex = 0;
+let score = 0;
+let combo = 0;
+let timer;
+let timeLeft = 20;
+
+/* ===== SOUNDS ===== */
+const correctSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3");
+const wrongSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-tone-2876.mp3");
+const winSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3");
+
+/* ===== SECTION CONTROL ===== */
+function showSection(id){
+  document.querySelectorAll("section").forEach(sec=>sec.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function openArena(){
+  historyStack.push("home");
+  showSection("arena");
+}
+
+function openPuzzle(){
+  historyStack.push("arena");
+  showSection("puzzleMenu");
+  generatePuzzleButtons();
+}
+
+function goBack(){
+  clearInterval(timer);
+  score = 0;
+  combo = 0;
+  if(historyStack.length === 0) return;
+  let prev = historyStack.pop();
+  showSection(prev);
+}
+
+/* ===== BUTTONS ===== */
+
+function generatePuzzleButtons(){
+  const container = document.getElementById("puzzleButtons");
+  container.innerHTML = "";
+  for(let i=1;i<=9;i++){
+    const btn = document.createElement("a");
+    btn.className="btn";
+    btn.innerText = puzzleButtonNames[i-1];
+    btn.onclick=()=>startQuiz(i);
+    container.appendChild(btn);
+  }
+}
+
+const quizData = {
+ 1:[
+  {question:"In One Piece, what is Luffy's Devil Fruit?", basePoints:100, answers:[
+    {text:"Gomu Gomu no Mi", correct:true},
+    {text:"Mera Mera no Mi", correct:false},
+    {text:"Hito Hito no Mi", correct:false},
+    {text:"Ope Ope no Mi", correct:false}
+  ]},
+  {question:"Who killed Hisoka in Hunter x Hunter?", basePoints:120, answers:[
+    {text:"Gon", correct:false},
+    {text:"Chrollo", correct:true},
+    {text:"Killua", correct:false},
+    {text:"Leorio", correct:false}
+  ]},
+  {question:"What is the name of the first sword Zoro uses in One Piece?", basePoints:150, answers:[
+    {text:"Wado Ichimonji", correct:true},
+    {text:"Sandai Kitetsu", correct:false},
+    {text:"Shusui", correct:false},
+    {text:"Yubashiri", correct:false}
+  ]},
+  {question:"In Death Note, who is the second Kira?", basePoints:80, answers:[
+    {text:"Light Yagami", correct:false},
+    {text:"Misa Amane", correct:true},
+    {text:"L", correct:false},
+    {text:"Near", correct:false}
+  ]},
+  {question:"What is Naruto's mother's name?", basePoints:60, answers:[
+    {text:"Kushina Uzumaki", correct:true},
+    {text:"Hinata Hyuga", correct:false},
+    {text:"Tsunade", correct:false},
+    {text:"Sakura Haruno", correct:false}
+  ]},
+  {question:"Who taught Goku the Kamehameha?", basePoints:80, answers:[
+    {text:"Master Roshi", correct:true},
+    {text:"King Kai", correct:false},
+    {text:"Gohan", correct:false},
+    {text:"Piccolo", correct:false}
+  ]},
+  {question:"In Attack on Titan, what is the original name of the Founding Titan?", basePoints:130, answers:[
+    {text:"Eren Jaeger", correct:false},
+    {text:"Ymir Fritz", correct:true},
+    {text:"Zeke Jaeger", correct:false},
+    {text:"Historia Reiss", correct:false}
+  ]},
+  {question:"Who killed Itachi Uchiha in Naruto?", basePoints:100, answers:[
+    {text:"Kakashi", correct:false},
+    {text:"Sasuke", correct:true},
+    {text:"Orochimaru", correct:false},
+    {text:"Madara", correct:false}
+  ]},
+  {question:"What is Gohan's ultimate transformation?", basePoints:170, answers:[
+    {text:"Super Saiyan 2", correct:true},
+    {text:"Super Saiyan 3", correct:false},
+    {text:"Mystic Gohan", correct:false},
+    {text:"Super Saiyan God", correct:false}
+  ]},
+  {question:"In My Hero Academia, what is Deku's real name?", basePoints:80, answers:[
+    {text:"Izuku Midoriya", correct:true},
+    {text:"Katsuki Bakugo", correct:false},
+    {text:"Shoto Todoroki", correct:false},
+    {text:"Tenya Iida", correct:false}
+  ]},
+  {question:"Who is the main antagonist in Naruto Shippuden?", basePoints:100, answers:[
+    {text:"Madara Uchiha", correct:true},
+    {text:"Pain", correct:false},
+    {text:"Orochimaru", correct:false},
+    {text:"Kabuto", correct:false}
+  ]},
+  {question:"What is the name of the Hokage before Naruto?", basePoints:120, answers:[
+    {text:"Tsunade", correct:true},
+    {text:"Hiruzen Sarutobi", correct:false},
+    {text:"Kakashi", correct:false},
+    {text:"Minato", correct:false}
+  ]},
+  {question:"In Dragon Ball, who first kills Frieza?", basePoints:200, answers:[
+    {text:"Goku", correct:false},
+    {text:"Future Trunks", correct:true},
+    {text:"Vegeta", correct:false},
+    {text:"Piccolo", correct:false}
+  ]},
+  {question:"In One Punch Man, what is Saitama's hero name?", basePoints:70, answers:[
+    {text:"Caped Bald", correct:true},
+    {text:"Bald Hero", correct:false},
+    {text:"Strong Man", correct:false},
+    {text:"Punch King", correct:false}
+  ]},
+  {question:"Which country is Luffy from?", basePoints:50, answers:[
+    {text:"East Blue", correct:true},
+    {text:"West Blue", correct:false},
+    {text:"North Blue", correct:false},
+    {text:"South Blue", correct:false}
+  ]},
+  {question:"What is the name of Tanjiro's sword style?", basePoints:100, answers:[
+    {text:"Water Breathing", correct:true},
+    {text:"Flame Breathing", correct:false},
+    {text:"Thunder Breathing", correct:false},
+    {text:"Stone Breathing", correct:false}
+  ]},
+  {question:"Who was the first Titan Eren fought?", basePoints:150, answers:[
+    {text:"Armored Titan", correct:false},
+    {text:"Colossal Titan", correct:true},
+    {text:"Beast Titan", correct:false},
+    {text:"Female Titan", correct:false}
+  ]},
+  {question:"In Attack on Titan, what is Levi known for?", basePoints:80, answers:[
+    {text:"Cooking abilities", correct:false},
+    {text:"His speed and skill", correct:true},
+    {text:"Being the main titan", correct:false},
+    {text:"Healing powers", correct:false}
+  ]},
+  {question:"Which anime features the Phantom Troupe?", basePoints:50, answers:[
+    {text:"Naruto", correct:false},
+    {text:"One Piece", correct:false},
+    {text:"Hunter x Hunter", correct:true},
+    {text:"Bleach", correct:false}
+  ]},
+  {question:" In Tokyo Revengers, what gang does Takemichi try to save?", basePoints:110, answers:[
+    {text:"Black Dragon", correct:false},
+    {text:"Kanto Alliance", correct:false},
+    {text:"White Snake", correct:false},
+    {text:"Tokyo Manji", correct:true}
+  ]},
+  {question:"Who trained Luffy to use Haki?", basePoints:140, answers:[
+    {text:"Rayleigh", correct:true},
+    {text:"Shanks", correct:false},
+    {text:"Roger", correct:false},
+    {text:"Sanji", correct:false}
+  ]},
+  {question:"What is the name of Naruto's father?", basePoints:80, answers:[
+    {text:"Kakashi Hatake", correct:false},
+    {text:"Hiruzen Sarutobi", correct:false},
+    {text:"Minato Namikaze", correct:true},
+    {text:"Jiraiya", correct:false}
+  ]},
+  {question:"Who is the strongest Saiyan?", basePoints:100, answers:[
+    {text:"Goku", correct:true},
+    {text:"Vegeta", correct:false},
+    {text:"Broly", correct:false},
+    {text:"Gohan", correct:false}
+  ]},
+  {question:"In Attack on Titan, who is revealed to have the Coordinate power besides Eren?", basePoints:180, answers:[
+    {text:"Historia Reiss", correct:false},
+    {text:"Zeke Yeager", correct:true},
+    {text:"Armin Arlert", correct:false},
+    {text:"Levi Ackerman", correct:false}
+  ]},
+  {question:"In Naruto, who is the first Jinchūriki of the Nine-Tails before Kushina?", basePoints:200, answers:[
+    {text:"Rin Nohara", correct:false},
+    {text:"Minato Namikaze", correct:false},
+    {text:"Uzumaki Naruto", correct:false},
+    {text:"Mito Uzumaki", correct:true}
+  ]},
+  {question:"In Hunter x Hunter, what is the primary ability of Hisoka’s Bungee Gum?", basePoints:200, answers:[
+    {text:"Generating illusionsn", correct:false},
+    {text:"NStretchable and sticky like gum", correct:true},
+    {text:"Transforming objects into cards", correct:false},
+    {text:"Controlling puppets", correct:false}
+  ]},
+  {question:"In One Piece, what is the real reason why Vegapunk created the Pacifista cyborgs?", basePoints:180, answers:[
+    {text:"To experiment with Artificial Devil Fruits", correct:true},
+    {text:"To protect marine bases", correct:false},
+    {text:"To hunt down Devil Fruit usersi", correct:false},
+    {text:"To replace the Shichibukai", correct:false}
+  ]},
+  {question:"In Attack on Titan, what is the real reason Historia Reiss becomes queen?", basePoints:150, answers:[
+    {text:"To unify Marley and Paradis", correct:false},
+    {text:"To protect her friends", correct:false},
+    {text:"To lead a rebellion", correct:false},
+    {text:"To inherit the Founding Titan’s power", correct:true}
+  ]},
+  {question:"In Code Geass, what is the power of Geass given to Lelouch?", basePoints:60, answers:[
+    {text:"Mind reading", correct:false},
+    {text:"Time manipulation", correct:false},
+    {text:"Absolute obedience to his command", correct:true},
+    {text:"Super speed", correct:false}
+  ]}
+],
+2: [
+    {question:"Question 1 - Button 2", basePoints:100, answers:[
+      {text:"Answer A",correct:true},
+      {text:"Answer B",correct:false},
+      {text:"Answer C",correct:false},
+      {text:"Answer D",correct:false}
+    ]}
+  ],
+  3: [],
+  4: [],
+  5: [],
+  6: [],
+  7: [],
+  8: [],
+  9: []
+};
+/* ===== QUIZ ===== */
+
+function startQuiz(level){
+  historyStack.push("puzzleMenu");
+  showSection("quizSection");
+
+  score=0;
+  combo=0;
+  currentQuestionIndex=0;
+
+  currentQuiz = quizData[level] || [];
+
+  shuffle(currentQuiz);
+  currentQuiz.forEach(q => shuffle(q.answers));
+
+  showQuestion();
+}
+
+
+function showQuestion(){
+  const container=document.getElementById("quizContainer");
+  const q=currentQuiz[currentQuestionIndex];
+
+  timeLeft=20;
+
+  container.innerHTML=`
+    <div class="combo-text">Combo x${combo}</div>
+    <div class="timer-bar" id="timerBar"></div>
+    <h3 class="fade-in">${q.question}</h3>
+    <div id="answers"></div>
+    <br>
+    <a class="btn" onclick="nextQuestion()">Next</a>
+  `;
+
+  startTimer(q);
+
+  const answersDiv=document.getElementById("answers");
+
+  q.answers.forEach(ans=>{
+    const btn=document.createElement("div");
+    btn.className="btn fade-in";
+    btn.style.display="block";
+    btn.style.margin="10px 0";
+    btn.innerText=ans.text;
+
+    btn.onclick=()=>{
+      if(btn.classList.contains("answered")) return;
+
+      document.querySelectorAll("#answers .btn").forEach(b=>b.classList.add("answered"));
+
+      clearInterval(timer);
+
+      if(ans.correct){
+        correctSound.play();
+        combo++;
+        let speedBonus=timeLeft*2;
+        let comboBonus=q.basePoints*(combo*0.1);
+        score+=q.basePoints+speedBonus+comboBonus;
+        btn.style.background="green";
+      }else{
+        wrongSound.play();
+        combo=0;
+        btn.style.background="red";
+        btn.classList.add("shake");
+      }
+    };
+
+    answersDiv.appendChild(btn);
+  });
+}
+
+/* ===== TIMER ===== */
+
+function startTimer(q){
+  const bar=document.getElementById("timerBar");
+  bar.style.width="100%";
+
+  timer=setInterval(()=>{
+    timeLeft--;
+    bar.style.width=(timeLeft/20*100)+"%";
+
+    if(timeLeft<=0){
+      clearInterval(timer);
+      combo=0;
+    }
+  },1000);
+}
+
+/* ===== NEXT ===== */
+
+function nextQuestion(){
+  if(currentQuestionIndex<currentQuiz.length-1){
+    currentQuestionIndex++;
+    showQuestion();
+  }else{
+    showResult();
+  }
+}
+
+/* ===== RESULT ===== */
+
+function showResult(){
+  winSound.play();
+
+  const totalBase=currentQuiz.length*100;
+  const percent=Math.round((score/(totalBase))*100);
+
+  const container=document.getElementById("quizContainer");
+
+  container.innerHTML=`
+    <h2 class="fade-in">Final Score: ${Math.floor(score)}</h2>
+    <h3>${percent}%</h3>
+    <br>
+    <a class="btn" onclick="startQuiz(1)">Retry</a>
+    <a class="btn" onclick="showSection('home')">Home</a>
+  `;
+}
+
+/* ===== SHUFFLE ===== */
+
+function shuffle(array){
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
+  }
+}
+
 </script>
 
 <button id="scrollTopBtn">⬆</button>
