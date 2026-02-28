@@ -466,7 +466,11 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 
 <!-- ===== QUIZ SECTION ===== -->
 <section id="quizSection">
+  
   <div id="quizContainer" style="max-width:700px;margin:auto;"></div>
+  <div style="text-align:center;margin-top:20px;">
+  <a class="btn" id="finishBtn" onclick="finishQuiz()">Finish</a>
+</div>
   
   <div style="position:absolute;bottom:30px;right:40px;">
     <a class="btn" onclick="goBack()">Back</a>
@@ -874,6 +878,9 @@ const puzzleButtonNames = [
   "still thinking",
 ];
 
+
+let answeredQuestions = 0;
+let correctAnswers = 0;
 let currentLevel = 1;
 let historyStack = [];
 let currentQuiz = [];
@@ -1356,6 +1363,7 @@ const quizData = {
 /* ===== QUIZ ===== */
 
 function startQuiz(level){
+  document.getElementById("finishBtn").style.display = "inline-block";
   
   currentLevel = level;
   historyStack.push("puzzleMenu");
@@ -1420,6 +1428,8 @@ function showQuestion(){
 
     btn.onclick=()=>{
       if(btn.classList.contains("answered")) return;
+      answeredQuestions++;
+      
 
       document.querySelectorAll("#answers .btn").forEach(b=>b.classList.add("answered"));
 
@@ -1427,6 +1437,7 @@ function showQuestion(){
 
       if(ans.correct){
         correctSound.play();
+        correctAnswers++;
         combo++;
         let speedBonus=timeLeft*2;
         let comboBonus=q.basePoints*(combo*0.1);
@@ -1437,7 +1448,16 @@ function showQuestion(){
         combo=0;
         btn.style.background="red";
         btn.classList.add("shake");
+      
+        // 👇 نور الإجابة الصح
+  document.querySelectorAll("#answers .btn").forEach((b,i)=>{
+    if(q.answers[i].correct){
+      b.style.background="green";
+    }
+  });
+        
       }
+      
 
       // 🔥 بعد اختيار الإجابة ينتقل للسؤال اللي بعده تلقائي بعد 2 ثواني
       setTimeout(() => {
@@ -1447,7 +1467,7 @@ function showQuestion(){
         }else{
           showResult();
         }
-      }, 600); // 2000ms = 2 ثواني
+      }, 1600); // 2000ms = 2 ثواني
     };
 
     answersDiv.appendChild(btn);
@@ -1504,21 +1524,52 @@ function nextQuestion(){
 /* ===== RESULT ===== */
 
 function showResult(){
-  winSound.play();
+  document.getElementById("finishBtn").style.display = "none";
+  
+  let percent = 0;
 
-  const totalBase = currentQuiz.reduce((sum,q)=>sum+q.basePoints,0);
-  const percent=Math.round((score/(totalBase))*100);
+  if(answeredQuestions > 0){
+    percent = Math.round((correctAnswers / answeredQuestions) * 100);
+    
+  }
 
-  const container=document.getElementById("quizContainer");
+  document.getElementById("quizContainer").innerHTML = `
+    <div style="
+      background:#111;
+      padding:30px;
+      border-radius:20px;
+      text-align:center;
+      box-shadow:0 0 30px #00f2ff;
+      animation:fadeIn 0.5s;
+    ">
+      <h2 style="color:#00f2ff">Quiz Finished!</h2>
 
-  container.innerHTML=`
-    <h2 class="fade-in">Final Score: ${Math.floor(score)}</h2>
-    <h3>${percent}%</h3>
-    <br>
-    <a class="btn" onclick="startQuiz(currentLevel)">Retry</a>
-    <a class="btn" onclick="showSection('home')">Home</a>
+      <p style="margin-top:15px;font-size:18px;">
+        You got <span style="color:#FFD873">${correctAnswers}</span>
+        correct answers
+      </p>
+
+      <p>
+        From <span style="color:#FFD873">${answeredQuestions}</span>
+        answered questions
+      </p>
+
+      <h3 style="margin-top:20px;color:#00ff88;">
+        ${percent}% Accuracy
+      </h3>
+
+      <div style="margin-top:25px;">
+        <a class="btn" onclick="restartQuiz()">Restart</a>
+        <a class="btn" onclick="openPuzzle()">Back To Menu</a>
+      </div>
+    </div>
   `;
+
+  winSound.play();
+  
+  
 }
+
 
 /* ===== SHUFFLE ===== */
 
@@ -1527,6 +1578,19 @@ function shuffle(array){
     const j=Math.floor(Math.random()*(i+1));
     [array[i],array[j]]=[array[j],array[i]];
   }
+}
+
+function finishQuiz(){
+  clearInterval(timer);
+  showResult();
+}
+
+function restartQuiz(){
+  score = 0;
+  correctAnswers = 0;
+  answeredQuestions = 0;
+  currentQuestionIndex = 0;
+  startQuiz(currentLevel);
 }
 
 </script>
