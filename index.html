@@ -45,7 +45,7 @@ section{padding:140px 10% 80px;display:none;}
 section.active{display:block;}
 
 /* ===== HERO ===== */
-.hero{display:flex;justify-content:space-between;align-items:center;min-height:calc(100vh - 100px);flex-wrap:wrap;text-align:center;}
+.hero{display:flex; gap:40px;justify-content:space-between;align-items:center;min-height:calc(100vh - 100px);flex-wrap:wrap;text-align:center;}
 .hero img{width:100%;max-width:330px;border-radius:40px;box-shadow:0 0 40px #00f2ff;transform:scale(0.5);opacity:0;animation:heroImgEnter 1.2s forwards;}
 @keyframes heroImgEnter{0%{opacity:0;transform:scale(0.5) translateX(-50px);}100%{opacity:1;transform:scale(1) translateX(0);}}
 .hero-text{max-width:600px;margin:auto;opacity:0;transform:translateX(50px);animation:heroTextEnter 1.2s forwards;animation-delay:0.5s;}
@@ -145,11 +145,16 @@ img[alt="Logo"] {
 
 .home-video-wrapper iframe{
   width:100%;
-  height:70vh; /* الطول مش مهم قوي زي ما قلت */
+  height:60vh; /* الطول مش مهم قوي زي ما قلت */
   border:none;
   display:block;
 }
 
+@media(max-width:768px){
+  .home-video-wrapper iframe{
+    height:40vh;
+  }
+}
 .stat-card h3{
   font-family:'Orbitron', sans-serif;
   font-size:18px;
@@ -333,6 +338,102 @@ img[alt="Logo"] {
   font-size: 16px;            /* حجم النص */
   text-align: center;         /* يضمن أن أي نص أطول يكون في المنتصف */
 }
+
+/* ===== MOBILE FIX ARENA & QUIZ ===== */
+.back-wrapper{
+  margin-top:40px;
+  text-align:center;
+}
+
+.back-btn{
+  width:100%;
+  max-width:300px;
+}
+
+/* Puzzle Buttons Mobile */
+@media(max-width:768px){
+
+  #puzzleButtons{
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+  }
+
+  #puzzleButtons .btn{
+    width:100%;
+    font-size:14px;
+    padding:10px;
+  }
+
+  #quizContainer{
+    padding:10px;
+  }
+
+  #quizContainer .btn{
+    width:100%;
+    margin:8px 0;
+    font-size:15px;
+    padding:12px;
+  }
+
+  #arena .btn{
+    width:100%;
+    margin:10px 0;
+  }
+
+}
+/* ===== ARENA RESPONSIVE ===== */
+@media(max-width:600px){
+  /* العنوان يكون مناسب */
+  #arena h1 {
+    font-size: 22px;       /* حجم مناسب للموبايل */
+    text-align: center;
+    margin-bottom: 25px;   /* مسافة تحت العنوان */
+  }
+
+  /* زرار الأرينا */
+  #arena > div {
+    display: flex;
+    flex-direction: column; /* عمودي */
+    align-items: center;    /* يكون في الوسط */
+    gap: 15px;              /* مسافة بين كل زرار */
+  }
+
+  /* كل زرار لوحده */
+  #arena > div a.btn {
+    width: 80%;             /* ملء معظم الشاشة */
+    max-width: 250px;       /* مش كبير قوي */
+    text-align: center;
+    padding: 10px 0;
+    font-size: 16px;        /* مناسب للموبايل */
+  }
+
+  /* زرار العودة */
+  #arena > div + div { /* هذا Div اللي فيه Back */
+    position: relative;     /* يبقى في مكانه العادي */
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;       /* مسافة فوق الزرار */
+  }
+}
+
+/* ===== PUZZLE BUTTONS RESPONSIVE ===== */
+@media(max-width:600px){
+  #puzzleButtons {
+    grid-template-columns: 1fr !important; /* كل زرار في صفه */
+    gap: 15px;                              /* مسافة بين كل زرار */
+    max-width: 90%;                          /* مساحة مظبوطة على الشاشة */
+    margin: 30px auto;                       /* يبقى في الوسط */
+  }
+
+  #puzzleButtons .btn {
+    width: 100%;          /* ياخد كامل الصف */
+    text-align: center;
+    padding: 12px 0;      /* مسافة داخلية مناسبة */
+    font-size: 16px;      /* حجم مناسب للموبايل */
+    border-radius: 25px;  /* شكل الزرار مرتب */
+  }
+}
+
 </style>
 </head>
 <body>
@@ -444,9 +545,10 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
     <a class="btn">Coming soon</a>
   </div>
 
-  <div style="position:absolute;bottom:30px;right:40px;">
-    <a class="btn" onclick="goBack()">Back</a>
-  </div>
+ <div class="back-wrapper">
+  <a class="btn back-btn" onclick="goBack()">Back</a>
+</div>
+
 </section>
 
 
@@ -458,9 +560,9 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
        style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:600px;margin:40px auto;">
   </div>
 
-  <div style="position:absolute;bottom:30px;right:40px;">
-    <a class="btn" onclick="goBack()">Back</a>
-  </div>
+  <div class="back-wrapper">
+  <a class="btn back-btn" onclick="goBack()">Back</a>
+</div> 
 </section>
 
 
@@ -472,9 +574,9 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
   <a class="btn" id="finishBtn" onclick="finishQuiz()">Finish</a>
 </div>
   
-  <div style="position:absolute;bottom:30px;right:40px;">
-    <a class="btn" onclick="goBack()">Back</a>
-  </div>
+  <div class="back-wrapper">
+  <a class="btn back-btn" onclick="goBack()">Back</a>
+</div> 
 </section>
 
 <!-- ===== MODAL ===== -->
@@ -810,7 +912,7 @@ function animateStatesCounters() {
   counters.forEach(counter => {
     const target = parseInt(counter.getAttribute('data-target'));
     let count = 0;
-    const increment = target / 140;
+    const increment = target / 100;
     const interval = setInterval(() => {
       count += increment;
       if (count >= target) count = target;
@@ -1467,7 +1569,7 @@ function showQuestion(){
         }else{
           showResult();
         }
-      }, 1600); // 2000ms = 2 ثواني
+      }, 1000); // 2000ms = 2 ثواني
     };
 
     answersDiv.appendChild(btn);
