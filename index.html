@@ -473,7 +473,7 @@ body * {
 /* responsiveness للموبايل */
 @media (max-width: 768px) {
   #scoreCircle {
-    top: 850px; /* تبقى فوق شوي */
+    top: 100px; /* تبقى فوق شوي */
     right: 10px; /* على اليمين */
     width: 80px; /* أصغر شوي */
     height: 80px;
@@ -2542,11 +2542,18 @@ function nextQuestion(){
 function showResult(){
   document.getElementById("finishBtn").style.display = "none";
   
-  let percent = 0;
+  // 🔹 مجموع النقاط اللي المستخدم جابها
+  const pointsSoFar = score;
 
-  if(answeredQuestions > 0){
-    percent = Math.round((correctAnswers / answeredQuestions) * 100);
-    
+  // 🔹 مجموع النقاط للأسئلة اللي جاوبها المستخدم
+  const totalPointsSoFar = currentQuiz
+    .slice(0, currentQuestionIndex + 1)
+    .reduce((sum, q) => sum + q.basePoints, 0);
+
+  // 🔹 النسبة المئوية من النقاط اللي جاوبها المستخدم
+  let percent = 0;
+  if(totalPointsSoFar > 0){
+    percent = Math.round((pointsSoFar / totalPointsSoFar) * 100);
   }
 
   document.getElementById("quizContainer").innerHTML = `
@@ -2561,13 +2568,12 @@ function showResult(){
       <h2 style="color:#00f2ff">Quiz Finished!</h2>
 
       <p style="margin-top:15px;font-size:18px;">
-        You got <span style="color:#FFD873">${correctAnswers}</span>
-        correct answers
+        You scored <span style="color:#FFD873">${pointsSoFar}</span>
+        points
       </p>
 
       <p>
-        From <span style="color:#FFD873">${answeredQuestions}</span>
-        answered questions
+        Out of <span style="color:#FFD873">${totalPointsSoFar}</span> possible points
       </p>
 
       <h3 style="margin-top:20px;color:#00ff88;">
@@ -2582,10 +2588,7 @@ function showResult(){
   `;
 
   winSound.play();
-  
-  
 }
-
 
 /* ===== SHUFFLE ===== */
 
