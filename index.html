@@ -264,6 +264,10 @@ img[alt="Logo"] {
   cursor:pointer;
 }
 
+/* أو لو عايز لكل العناصر داخل الـ body */
+body * {
+    cursor: default;
+}
 .signature-text {
   text-align: center;
   margin-bottom: 22px;
@@ -342,12 +346,26 @@ img[alt="Logo"] {
 /* ===== MOBILE FIX ARENA & QUIZ ===== */
 .back-wrapper{
   margin-top:40px;
-  text-align:center;
+  text-align:right;
 }
 
-.back-btn{
-  width:100%;
-  max-width:300px;
+./* افترض أن الزرار ليه id اسمه backBtn */
+#backBtn {
+    position: absolute;       /* يخليه يتحرك بحرية في الـ container */
+    bottom: 20px;             /* المسافة من الأسفل */
+    right: 20px;              /* المسافة من اليمين */
+    padding: 10px 20px;       /* حجم الزرار */
+    background-color: #00f2ff; /* لون خلفية */
+    color: #fff;              /* لون الخط */
+    border: none;             /* لو فيه حدود احذفها */
+    border-radius: 8px;       /* حواف مدورة */
+    cursor: pointer;          /* شكل الماوس */
+    font-weight: bold;
+}
+
+/* لو عايز Hover effect لطيف */
+#backBtn:hover {
+    background-color: #00d1ff;
 }
 
 /* Puzzle Buttons Mobile */
@@ -980,7 +998,8 @@ const puzzleButtonNames = [
   "still thinking",
 ];
 
-
+let userScore = 0;      // النقاط اللي المستخدم جابها لحد دلوقتي
+let totalScore = 0;     // مجموع النقاط الممكنة للأسئلة اللي جاوبها
 let answeredQuestions = 0;
 let correctAnswers = 0;
 let currentLevel = 1;
@@ -1216,12 +1235,126 @@ const quizData = {
   ]}
 ],
 2: [
-    {question:"Question 1 - Button 2", basePoints:100, answers:[
-      {text:"Answer A",correct:true},
-      {text:"Answer B",correct:false},
-      {text:"Answer C",correct:false},
-      {text:"Answer D",correct:false}
-    ]}
+  {question:"What is the derivative of f(x) = x^3 + 2x?", basePoints:50, answers:[
+    {text:"3x^2 + 2", correct:true},
+    {text:"x^2 + 2", correct:false},
+    {text:"3x^2", correct:false},
+    {text:"2x + 3", correct:false}
+  ]},
+  {question:"If 5x - 7 = 18, what is x?", basePoints:100, answers:[
+    {text:"5", correct:false},
+    {text:"6", correct:true},
+    {text:"7", correct:false},
+    {text:"8", correct:false}
+  ]},
+  {question:"Simplify: (2x^2)(3x^3)", basePoints:110, answers:[
+    {text:"6x^5", correct:true},
+    {text:"5x^6", correct:false},
+    {text:"6x^6", correct:false},
+    {text:"5x^5", correct:false}
+  ]},
+  {question:"What is the integral of ∫2x dx?", basePoints:40, answers:[
+    {text:"x^2 + C", correct:true},
+    {text:"2x + C", correct:false},
+    {text:"x^2/2 + C", correct:false},
+    {text:"4x + C", correct:false}
+  ]},
+  {question:"Solve for x: x^2 - 9 = 0", basePoints:40, answers:[
+    {text:"x = 3 or x = -3", correct:true},
+    {text:"x = 9", correct:false},
+    {text:"x = -9", correct:false},
+    {text:"x = 0", correct:false}
+  ]},
+  {question:"What is the sum of the first 10 positive integers?", basePoints:200, answers:[
+    {text:"55", correct:true},
+    {text:"45", correct:false},
+    {text:"50", correct:false},
+    {text:"60", correct:false}
+  ]},
+  {question:"If f(x) = 2x + 3, find f(5)", basePoints:70, answers:[
+    {text:"13", correct:true},
+    {text:"10", correct:false},
+    {text:"15", correct:false},
+    {text:"8", correct:false}
+  ]},
+  {question:"Simplify: (x^4)/(x^2)", basePoints:60, answers:[
+    {text:"x^2", correct:true},
+    {text:"x^6", correct:false},
+    {text:"2x^2", correct:false},
+    {text:"x^4", correct:false}
+  ]},
+  {question:"What is 15% of 200?", basePoints:80, answers:[
+    {text:"30", correct:true},
+    {text:"25", correct:false},
+    {text:"20", correct:false},
+    {text:"35", correct:false}
+  ]},
+  {question:"Find the next number in the sequence: .., 8, 13, 21, 34, ...", basePoints:110, answers:[
+    {text:"55", correct:true},
+    {text:"65", correct:false},
+    {text:"56", correct:false},
+    {text:"44", correct:false}
+  ]},
+  {question:"Solve: 3x + 5 = 20", basePoints:50, answers:[
+    {text:"x = 5", correct:true},
+    {text:"x = 10", correct:false},
+    {text:"x = 15", correct:false},
+    {text:"x = 20", correct:false}
+  ]},
+  {question:"What is the value of 2^5?", basePoints:60, answers:[
+    {text:"32", correct:true},
+    {text:"25", correct:false},
+    {text:"64", correct:false},
+    {text:"16", correct:false}
+  ]},
+  {question:"If y = 3x + 2 and x = 4, find y", basePoints:100, answers:[
+    {text:"14", correct:true},
+    {text:"12", correct:false},
+    {text:"10", correct:false},
+    {text:"16", correct:false}
+  ]},
+  {question:"Simplify: (x^3)^2", basePoints:70, answers:[
+    {text:"x^6", correct:true},
+    {text:"x^5", correct:false},
+    {text:"x^9", correct:false},
+    {text:"2x^3", correct:false}
+  ]},
+  {question:"What is the area of a rectangle with length 6 and width 9?", basePoints:50, answers:[
+    {text:"54", correct:true},
+    {text:"63", correct:false},
+    {text:"45", correct:false},
+    {text:"72", correct:false}
+  ]},
+  {question:"Factorize: x^2 - 16", basePoints:120, answers:[
+    {text:"(x - 4)(x + 4)", correct:true},
+    {text:"(x - 8)(x + 2)", correct:false},
+    {text:"(x - 2)(x + 8)", correct:false},
+    {text:"(x - 16)(x + 1)", correct:false}
+  ]},
+  {question:"Solve: 2x - 7 = 3", basePoints:70, answers:[
+    {text:"x = 5", correct:true},
+    {text:"x = 10", correct:false},
+    {text:"x = 7", correct:false},
+    {text:"x = 2", correct:false}
+  ]},
+  {question:"What is the square root of 144?", basePoints:60, answers:[
+    {text:"12", correct:true},
+    {text:"14", correct:false},
+    {text:"16", correct:false},
+    {text:"10", correct:false}
+  ]},
+  {question:"If f(x) = x^2, find f(3)", basePoints:30, answers:[
+    {text:"9", correct:true},
+    {text:"6", correct:false},
+    {text:"12", correct:false},
+    {text:"8", correct:false}
+  ]},
+  {question:"Solve: 4x + 1 = 9", basePoints:20, answers:[
+    {text:"x = 2", correct:true},
+    {text:"x = 3", correct:false},
+    {text:"x = 1", correct:false},
+    {text:"x = 4", correct:false}
+  ]}
   ],
   3: [],
   4: [
@@ -1457,7 +1590,128 @@ const quizData = {
 ],
     
     
-  6: [],
+  6: [
+  {question:"ما الشيء الذي كلما أخذت منه يكبر؟", basePoints:100, answers:[
+    {text:"الحفرة", correct:true},
+    {text:"الوقت", correct:false},
+    {text:"العمر", correct:false},
+    {text:"الظل", correct:false}
+  ]},
+  {question:"ما الشيء الذي يمشي بلا أرجل؟", basePoints:90, answers:[
+    {text:"السيارة", correct:false},
+    {text:"القطار", correct:false},
+    {text:"الطائرة", correct:false},
+    {text:"الساعة", correct:true} // مثال لغز مع حرف
+  ]},
+  {question:"له أوراق وليس شجرة، ما هو؟", basePoints:80, answers:[
+    {text:"الكتاب", correct:true},
+    {text:"النبات", correct:false},
+    {text:"الورقة النقدية", correct:false},
+    {text:"الصندوق", correct:false}
+  ]},
+  {question:"ما هو الشيء الذي كلما جف زاد وزنه؟", basePoints:100, answers:[
+    {text:"الاسفنج", correct:true},
+    {text:"الحطب", correct:false},
+    {text:"الماء", correct:false},
+    {text:"الرمل", correct:false}
+  ]},
+  {question:"شيء تستطيع أن تكسره دون لمسه، ما هو؟", basePoints:70, answers:[
+    {text:"الوعد", correct:true},
+    {text:"الزجاج", correct:false},
+    {text:"العظم", correct:false},
+    {text:"القلب", correct:false}
+  ]},
+  {question:"له أسنان ولا يعض، ما هو؟", basePoints:80, answers:[
+    {text:"المشط", correct:true},
+    {text:"الفرشاة", correct:false},
+    {text:"السكين", correct:false},
+    {text:"الموس", correct:false}
+  ]},
+  {question:"يمشي بلا أرجل، ويصرخ بلا صوت، ما هو؟", basePoints:90, answers:[
+    {text:"الريح", correct:true},
+    {text:"المطر", correct:false},
+    {text:"الساعة", correct:false},
+    {text:"النهر", correct:false}
+  ]},
+  {question:"شيء لا يؤكل ولا يشرب لكن يمكن أن يموت، ما هو؟", basePoints:100, answers:[
+    {text:"الشمع", correct:true},
+    {text:"النار", correct:false},
+    {text:"النبات", correct:false},
+    {text:"الحجر", correct:false}
+  ]},
+  {question:"ما الشيء الذي يسمع بلا أذن ويتكلم بلا لسان؟", basePoints:90, answers:[
+    {text:"الهاتف", correct:true},
+    {text:"الراديو", correct:false},
+    {text:"التلفاز", correct:false},
+    {text:"الصدى", correct:false}
+  ]},
+  {question:"ما هو الشيء الذي يكتب ولا يقرأ؟", basePoints:70, answers:[
+    {text:"القلم", correct:true},
+    {text:"الورقة", correct:false},
+    {text:"الآلة الكاتبة", correct:false},
+    {text:"الكمبيوتر", correct:false}
+  ]},
+  {question:"شيء ليس حياً، لكنه ينمو، ما هو؟", basePoints:100, answers:[
+    {text:"البلورة", correct:true},
+    {text:"النبات", correct:false},
+    {text:"الجبن", correct:false},
+    {text:"العفن", correct:false}
+  ]},
+  {question:"له مفتاح لكنه لا يفتح باباً، ما هو؟", basePoints:80, answers:[
+    {text:"البيانو", correct:true},
+    {text:"السيارة", correct:false},
+    {text:"الخزانة", correct:false},
+    {text:"الكمبيوتر", correct:false}
+  ]},
+  {question:"شيء كلما زاد نقص، ما هو؟", basePoints:90, answers:[
+    {text:"العمر", correct:true},
+    {text:"الوزن", correct:false},
+    {text:"الماء", correct:false},
+    {text:"المال", correct:false}
+  ]},
+  {question:"له عين ولا يرى، ما هو؟", basePoints:80, answers:[
+    {text:"الإبرة", correct:true},
+    {text:"العاصفة", correct:false},
+    {text:"البصلة", correct:false},
+    {text:"الزر", correct:false}
+  ]},
+  {question:"شيء يوجد أمامك دائماً، لكن لا تراه، ما هو؟", basePoints:100, answers:[
+    {text:"المستقبل", correct:true},
+    {text:"الحاضر", correct:false},
+    {text:"الهواء", correct:false},
+    {text:"الظل", correct:false}
+  ]},
+  {question:"ما الشيء الذي يأكل ولا يشبع؟", basePoints:90, answers:[
+    {text:"النار", correct:true},
+    {text:"الماء", correct:false},
+    {text:"الحريق", correct:false},
+    {text:"الرمل", correct:false}
+  ]},
+  {question:"ما الشيء الذي يكسر بمجرد ذكر اسمه؟", basePoints:80, answers:[
+    {text:"الصمت", correct:true},
+    {text:"الزجاج", correct:false},
+    {text:"الخشب", correct:false},
+    {text:"االسكينة", correct:false}
+  ]},
+  {question:"شيء يسير بلا رجلين، ويبكي بلا عيون، ما هو؟", basePoints:100, answers:[
+    {text:"السحاب", correct:true},
+    {text:"النهر", correct:false},
+    {text:"الريح", correct:false},
+    {text:"المطر", correct:false}
+  ]},
+  {question:"ما هو الشيء الذي يجري ولكن لا يمشي؟", basePoints:90, answers:[
+    {text:"الماء", correct:true},
+    {text:"الدم", correct:false},
+    {text:"الزمن", correct:false},
+    {text:"الريح", correct:false}
+  ]},
+  {question:"شيء يمكنه الطيران بلا جناح، ما هو؟", basePoints:100, answers:[
+    {text:"الوقت", correct:true},
+    {text:"الريح", correct:false},
+    {text:"الظل", correct:false},
+    {text:"الطائرة", correct:false}
+  ]}
+    ],
   7: [],
   8: [],
   9: []
@@ -1484,15 +1738,15 @@ function startQuiz(level){
 
   // 🔥 تحديد وقت كل كاتيجوري
   const categoryTimers = {
-    1: 25,
-    2: 40,
-    3: 25,
-    4: 30,
-    5: 20,
-    6: 15,
-    7: 45,
-    8: 50,
-    9: 60
+    1: 12,
+    2: 17,
+    3: 15,
+    4: 10,
+    5: 10,
+    6: 8,
+    7: 40,
+    8: 20,
+    9: 40
   };
 
   categoryTime = categoryTimers[level] || 20;
@@ -1521,7 +1775,10 @@ function showQuestion(){
 
   const answersDiv=document.getElementById("answers");
 
-  q.answers.forEach(ans=>{
+  // 🔹 ده السطر المهم: نعمل shuffle للإجابات
+  const shuffledAnswers = shuffle(q.answers);
+
+  shuffledAnswers.forEach(ans=>{
     const btn=document.createElement("div");
     btn.className="btn fade-in";
     btn.style.display="block";
@@ -1532,9 +1789,7 @@ function showQuestion(){
       if(btn.classList.contains("answered")) return;
       answeredQuestions++;
       
-
       document.querySelectorAll("#answers .btn").forEach(b=>b.classList.add("answered"));
-
       clearInterval(timer);
 
       if(ans.correct){
@@ -1551,17 +1806,14 @@ function showQuestion(){
         btn.style.background="red";
         btn.classList.add("shake");
       
-        // 👇 نور الإجابة الصح
-  document.querySelectorAll("#answers .btn").forEach((b,i)=>{
-    if(q.answers[i].correct){
-      b.style.background="green";
-    }
-  });
-        
+        // نور الإجابة الصح
+        shuffledAnswers.forEach((a,i)=>{
+          if(a.correct){
+            document.querySelectorAll("#answers .btn")[i].style.background="green";
+          }
+        });
       }
       
-
-      // 🔥 بعد اختيار الإجابة ينتقل للسؤال اللي بعده تلقائي بعد 2 ثواني
       setTimeout(() => {
         if(currentQuestionIndex < currentQuiz.length-1){
           currentQuestionIndex++;
@@ -1569,7 +1821,7 @@ function showQuestion(){
         }else{
           showResult();
         }
-      }, 1000); // 2000ms = 2 ثواني
+      }, 1000);
     };
 
     answersDiv.appendChild(btn);
@@ -1675,12 +1927,15 @@ function showResult(){
 
 /* ===== SHUFFLE ===== */
 
-function shuffle(array){
-  for(let i=array.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [array[i],array[j]]=[array[j],array[i]];
+function shuffle(array) {
+  const arr = [...array]; // اعمل نسخة علشان ماتأثرش على الأصلية
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]]; // swap
   }
+  return arr; // رجع المصفوفة بعد الخلط
 }
+
 
 function finishQuiz(){
   clearInterval(timer);
@@ -1694,6 +1949,28 @@ function restartQuiz(){
   currentQuestionIndex = 0;
   startQuiz(currentLevel);
 }
+function resetQuiz() {
+    userScore = 0;
+    totalScore = 0;
+
+    // لو عندك متغيرات تانية زي combo أو timer أو أي حاجة في الكويز لازم ترجّعها للصفر هنا
+}
+homeBtn.addEventListener('click', () => {
+    resetQuiz(); // اعمل reset لكل البيانات
+
+    homeSection.style.display = 'block';
+    categoriesSection.style.display = 'none';
+    quizSection.style.display = 'none';
+    resultsSection.style.display = 'none';
+});
+
+backBtn.addEventListener('click', () => {
+    categoriesSection.style.display = 'block';
+    homeSection.style.display = 'none';
+    quizSection.style.display = 'none';
+    resultsSection.style.display = 'none';
+});
+
 
 </script>
 
