@@ -452,6 +452,24 @@ body * {
   }
 }
 
+#scoreCircle {
+  position: absolute;
+  top: 140px;
+  right: 70px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: #111;
+  border: 3px solid #00f2ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFD873;
+  box-shadow: 0 0 15px #00f2ff;
+}
+
 </style>
 </head>
 <body>
@@ -587,7 +605,11 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 <!-- ===== QUIZ SECTION ===== -->
 <section id="quizSection">
   
-  <div id="quizContainer" style="max-width:700px;margin:auto;"></div>
+  <div id="quizContainer" style="max-width:700px;margin:auto;">
+    <div id="pointsCircle">
+  <span id="currentPoints">0</span> / <span id="totalPoints">0</span>
+</div>
+</div>
   <div style="text-align:center;margin-top:20px;">
   <a class="btn" id="finishBtn" onclick="finishQuiz()">Finish</a>
 </div>
@@ -1756,56 +1778,61 @@ function startQuiz(level){
 
   showQuestion();
 }
-
 function showQuestion(){
-  const container=document.getElementById("quizContainer");
-  const q=currentQuiz[currentQuestionIndex];
+  const container = document.getElementById("quizContainer");
+  const q = currentQuiz[currentQuestionIndex];
 
   timeLeft = categoryTime;
 
-  container.innerHTML=`
+  // 👇 الدائرة موجودة هنا
+  container.innerHTML = `
     <div class="combo-text">Combo x${combo}</div>
     <div class="timer-bar" id="timerBar"></div>
     <h3 class="fade-in">${q.question}</h3>
     <div id="answers"></div>
+    <div id="scoreCircle">
+      <span id="scoreText">${score} / ${currentQuiz
+        .slice(0, currentQuestionIndex + 1)
+        .reduce((sum, q) => sum + q.basePoints, 0)}</span>
+    </div>
     <br>
   `;
 
   startTimer();
 
-  const answersDiv=document.getElementById("answers");
-
-  // 🔹 ده السطر المهم: نعمل shuffle للإجابات
+  const answersDiv = document.getElementById("answers");
+  
+  // 🔹 نعمل shuffle للإجابات
   const shuffledAnswers = shuffle(q.answers);
 
-  shuffledAnswers.forEach(ans=>{
-    const btn=document.createElement("div");
-    btn.className="btn fade-in";
-    btn.style.display="block";
-    btn.style.margin="10px 0";
-    btn.innerText=ans.text;
+  shuffledAnswers.forEach(ans => {
+    const btn = document.createElement("div");
+    btn.className = "btn fade-in";
+    btn.style.display = "block";
+    btn.style.margin = "10px 0";
+    btn.innerText = ans.text;
 
-    btn.onclick=()=>{
+    btn.onclick = () => {
       if(btn.classList.contains("answered")) return;
       answeredQuestions++;
-      
-      document.querySelectorAll("#answers .btn").forEach(b=>b.classList.add("answered"));
+
+      document.querySelectorAll("#answers .btn").forEach(b => b.classList.add("answered"));
       clearInterval(timer);
 
       if(ans.correct){
         correctSound.play();
         correctAnswers++;
         combo++;
-        let speedBonus=timeLeft*2;
-        let comboBonus=q.basePoints*(combo*0.1);
-        score+=q.basePoints+speedBonus+comboBonus;
-        btn.style.background="green";
-      }else{
+        let speedBonus = timeLeft * 2;
+        let comboBonus = q.basePoints * (combo * 0.1);
+        score += q.basePoints + speedBonus + comboBonus;
+        btn.style.background = "green";
+      } else {
         wrongSound.play();
-        combo=0;
-        btn.style.background="red";
+        combo = 0;
+        btn.style.background = "red";
         btn.classList.add("shake");
-      
+
         // نور الإجابة الصح
         shuffledAnswers.forEach((a,i)=>{
           if(a.correct){
@@ -1813,12 +1840,20 @@ function showQuestion(){
           }
         });
       }
-      
+
+      // 🔹 تحديث الدائرة بعد كل إجابة
+      const pointsSoFar = score;
+      const totalPointsSoFar = currentQuiz
+        .slice(0, currentQuestionIndex + 1)
+        .reduce((sum, q) => sum + q.basePoints, 0);
+
+      document.getElementById("scoreText").innerText = `${pointsSoFar} / ${totalPointsSoFar}`;
+
       setTimeout(() => {
         if(currentQuestionIndex < currentQuiz.length-1){
           currentQuestionIndex++;
           showQuestion();
-        }else{
+        } else {
           showResult();
         }
       }, 1000);
