@@ -473,7 +473,7 @@ body * {
 /* responsiveness للموبايل */
 @media (max-width: 768px) {
   #scoreCircle {
-    top: 10px; /* تبقى فوق شوي */
+    top: 40px; /* تبقى فوق شوي */
     right: 10px; /* على اليمين */
     width: 60px; /* أصغر شوي */
     height: 60px;
@@ -1027,7 +1027,7 @@ const puzzleButtonNames = [
   "فوازير والغاز",
   "Brain test",
   "معلومات عامة",
-  "still thinking",
+  "Programing",
 ];
 
 let userScore = 0;      // النقاط اللي المستخدم جابها لحد دلوقتي
@@ -1266,6 +1266,7 @@ const quizData = {
     {text:"Super speed", correct:false}
   ]}
 ],
+
 2: [
   {question:"What is the derivative of f(x) = x^3 + 2x?", basePoints:50, answers:[
     {text:"3x^2 + 2", correct:true},
@@ -1868,11 +1869,501 @@ const quizData = {
   ]}
     ],
     
-  7: [],
+  7: [
+  {question:"I speak without a mouth and hear without ears. What am I?", basePoints:100, answers:[
+    {text:"A ghost", correct:false},
+    {text:"An echo", correct:true},
+    {text:"A shadow", correct:false},
+    {text:"A thought", correct:false}
+  ]},
+  {question:"I have keys but no locks. What am I?", basePoints:80, answers:[
+    {text:"A map", correct:false},
+    {text:"A piano", correct:true},
+    {text:"A safe", correct:false},
+    {text:"A diary", correct:false}
+  ]},
+  {question:"What comes once in a minute, twice in a moment, but never in a thousand years?", basePoints:90, answers:[
+    {text:"The letter M", correct:true},
+    {text:"A second", correct:false},
+    {text:"A moon", correct:false},
+    {text:"A century", correct:false}
+  ]},
+  {question:"I’m tall when I’m young, and I’m short when I’m old. What am I?", basePoints:70, answers:[
+    {text:"A candle", correct:true},
+    {text:"A tree", correct:false},
+    {text:"A pencil", correct:false},
+    {text:"A mountain", correct:false}
+  ]},
+  {question:"The more of this you take, the more you leave behind. What is it?", basePoints:100, answers:[
+    {text:"Footsteps", correct:true},
+    {text:"Time", correct:false},
+    {text:"Memories", correct:false},
+    {text:"Shadows", correct:false}
+  ]},
+  {question:"I have cities but no houses, forests but no trees, and water but no fish. What am I?", basePoints:110, answers:[
+    {text:"A map", correct:true},
+    {text:"A painting", correct:false},
+    {text:"A dream", correct:false},
+    {text:"A book", correct:false}
+  ]},
+  {question:"What can travel around the world while staying in a corner?", basePoints:80, answers:[
+    {text:"A stamp", correct:true},
+    {text:"A shadow", correct:false},
+    {text:"A coin", correct:false},
+    {text:"An airplane", correct:false}
+  ]},
+  {question:"What has a heart that doesn’t beat?", basePoints:70, answers:[
+    {text:"An artichoke", correct:true},
+    {text:"A robot", correct:false},
+    {text:"A clock", correct:false},
+    {text:"A stone", correct:false}
+  ]},
+  {question:"What has hands but can’t clap?", basePoints:90, answers:[
+    {text:"A clock", correct:true},
+    {text:"A doll", correct:false},
+    {text:"A robot", correct:false},
+    {text:"A glove", correct:false}
+  ]},
+  {question:"What has one eye but cannot see?", basePoints:80, answers:[
+    {text:"A needle", correct:true},
+    {text:"A hurricane", correct:false},
+    {text:"A storm", correct:false},
+    {text:"A telescope", correct:false}
+  ]},
+  {question:"I am always hungry, I must always be fed. The finger I touch will soon turn red. What am I?", basePoints:100, answers:[
+    {text:"Fire", correct:true},
+    {text:"Water", correct:false},
+    {text:"Wind", correct:false},
+    {text:"Ice", correct:false}
+  ]},
+  {question:"The more you take from me, the bigger I get. What am I?", basePoints:90, answers:[
+    {text:"A hole", correct:true},
+    {text:"A shadow", correct:false},
+    {text:"A balloon", correct:false},
+    {text:"A cloud", correct:false}
+  ]},
+  {question:"What has a neck but no head?", basePoints:70, answers:[
+    {text:"A bottle", correct:true},
+    {text:"A giraffe", correct:false},
+    {text:"A shirt", correct:false},
+    {text:"A tree", correct:false}
+  ]},
+  {question:"What is always in front of you but can’t be seen?", basePoints:80, answers:[
+    {text:"The future", correct:true},
+    {text:"The past", correct:false},
+    {text:"Air", correct:false},
+    {text:"Time", correct:false}
+  ]},
+  {question:"I’m found in socks, scarves and mittens; and often in the paws of playful kittens. What am I?", basePoints:100, answers:[
+    {text:"Yarn", correct:true},
+    {text:"Cotton", correct:false},
+    {text:"Thread", correct:false},
+    {text:"Wool", correct:false}
+  ]},
+  {question:"What goes up but never comes down?", basePoints:90, answers:[
+    {text:"Age", correct:true},
+    {text:"Smoke", correct:false},
+    {text:"Balloon", correct:false},
+    {text:"Sun", correct:false}
+  ]},
+  {question:"What begins with T, ends with T, and has T in it?", basePoints:80, answers:[
+    {text:"A teapot", correct:true},
+    {text:"A tent", correct:false},
+    {text:"Time", correct:false},
+    {text:"Trust", correct:false}
+  ]},
+  {question:"I’m light as a feather, yet the strongest person can’t hold me for more than 5 minutes. What am I?", basePoints:100, answers:[
+    {text:"Breath", correct:true},
+    {text:"Air", correct:false},
+    {text:"Water", correct:false},
+    {text:"Fire", correct:false}
+  ]},
+  {question:"I have branches, but no fruit, trunk or leaves. What am I?", basePoints:70, answers:[
+    {text:"A bank", correct:true},
+    {text:"A tree", correct:false},
+    {text:"A library", correct:false},
+    {text:"A river", correct:false}
+  ]},
+  {question:"What can fill a room but takes up no space?", basePoints:80, answers:[
+    {text:"Light", correct:true},
+    {text:"Air", correct:false},
+    {text:"Sound", correct:false},
+    {text:"Heat", correct:false}
+  ]},
+  {question:"I am not alive, but I grow; I don’t have lungs, but I need air; I don’t have a mouth, but water kills me. What am I?", basePoints:110, answers:[
+    {text:"Fire", correct:true},
+    {text:"Rock", correct:false},
+    {text:"Shadow", correct:false},
+    {text:"Cloud", correct:false}
+  ]}
+    ],
   
-  8: [],
+  8: [
+  {question:"ما هو العنصر الكيميائي الذي يرمز له بـ Fe؟", basePoints:100, answers:[
+    {text:"فوسفور", correct:false},
+    {text:"حديد", correct:true},
+    {text:"فضة", correct:false},
+    {text:"فلور", correct:false}
+  ]},
+  {question:"من هو مؤلف رواية 'الحرب والسلم'؟", basePoints:100, answers:[
+    {text:"تولستوي", correct:true},
+    {text:"دوستويفسكي", correct:false},
+    {text:"شكسبير", correct:false},
+    {text:"نجيب محفوظ", correct:false}
+  ]},
+  {question:"أي دولة لديها أكبر عدد من البراكين النشطة؟", basePoints:90, answers:[
+    {text:"إندونيسيا", correct:true},
+    {text:"اليابان", correct:false},
+    {text:"الولايات المتحدة", correct:false},
+    {text:"إيطاليا", correct:false}
+  ]},
+  {question:"ما هو أسرع حيوان بري؟", basePoints:80, answers:[
+    {text:"الفهد", correct:true},
+    {text:"الظبي", correct:false},
+    {text:"الأسد", correct:false},
+    {text:"الجاموس", correct:false}
+  ]},
+  {question:"ما هو الكوكب الأقرب إلى الشمس؟", basePoints:70, answers:[
+    {text:"الزهرة", correct:false},
+    {text:"المريخ", correct:false},
+    {text:"عطارد", correct:true},
+    {text:"الأرض", correct:false}
+  ]},
+  {question:"ما هو أطول نهر في العالم؟", basePoints:90, answers:[
+    {text:"الأمازون", correct:false},
+    {text:"النيل", correct:true},
+    {text:"الكونغو", correct:false},
+    {text:"اليانغتسي", correct:false}
+  ]},
+  {question:"من هو مكتشف القوانين الأساسية للحركة؟", basePoints:100, answers:[
+    {text:"أينشتاين", correct:false},
+    {text:"نيوتن", correct:true},
+    {text:"جاليليو", correct:false},
+    {text:"كبلر", correct:false}
+  ]},
+  {question:"أي دولة اخترعت ورق الطباعة؟", basePoints:80, answers:[
+    {text:"مصر", correct:false},
+    {text:"الصين", correct:true},
+    {text:"اليابان", correct:false},
+    {text:"ألمانيا", correct:false}
+  ]},
+  {question:"ما هو العضو الذي يزن أكثر في جسم الإنسان؟", basePoints:70, answers:[
+    {text:"القلب", correct:false},
+    {text:"الدماغ", correct:false},
+    {text:"الكبد", correct:true},
+    {text:"الرئة", correct:false}
+  ]},
+  {question:"ما هو أسرع عنصر كيميائي في الجدول الدوري؟", basePoints:100, answers:[
+    {text:"الهيدروجين", correct:true},
+    {text:"الهيليوم", correct:false},
+    {text:"النيون", correct:false},
+    {text:"الذهب", correct:false}
+  ]},
+  {question:"ما هو أعمق محيط على الأرض؟", basePoints:90, answers:[
+    {text:"الأطلسي", correct:false},
+    {text:"الهادئ", correct:true},
+    {text:"الهندي", correct:false},
+    {text:"الشمالي", correct:false}
+  ]},
+  {question:"من هو مؤسس علم النفس الحديث؟", basePoints:100, answers:[
+    {text:"سيغموند فرويد", correct:true},
+    {text:"كارل يونغ", correct:false},
+    {text:"بافلوف", correct:false},
+    {text:"بيليغ", correct:false}
+  ]},
+  {question:"ما هو أكبر كوكب في المجموعة الشمسية؟", basePoints:80, answers:[
+    {text:"المشتري", correct:true},
+    {text:"زحل", correct:false},
+    {text:"الأرض", correct:false},
+    {text:"نبتون", correct:false}
+  ]},
+  {question:"أي لغة كانت لغة الإمبراطورية الرومانية؟", basePoints:70, answers:[
+    {text:"اليونانية", correct:false},
+    {text:"اللاتينية", correct:true},
+    {text:"الأرامية", correct:false},
+    {text:"العبرية", correct:false}
+  ]},
+  {question:"ما هو الكوكب الأحمر؟", basePoints:60, answers:[
+    {text:"المريخ", correct:true},
+    {text:"الزهرة", correct:false},
+    {text:"عطارد", correct:false},
+    {text:"المشتري", correct:false}
+  ]},
+  {question:"أي دولة لديها أكبر عدد من الأهرامات؟", basePoints:80, answers:[
+    {text:"مصر", correct:false},
+    {text:"السودان", correct:true},
+    {text:"المكسيك", correct:false},
+    {text:"العراق", correct:false}
+  ]},
+  {question:"ما هي أصغر وحدة في جسم الإنسان؟", basePoints:70, answers:[
+    {text:"الخلايا", correct:true},
+    {text:"الأنسجة", correct:false},
+    {text:"الأعضاء", correct:false},
+    {text:"العضلات", correct:false}
+  ]},
+  {question:"أي من هذه المعادن أثقل؟", basePoints:90, answers:[
+    {text:"الذهب", correct:true},
+    {text:"الحديد", correct:false},
+    {text:"الألمنيوم", correct:false},
+    {text:"النحاس", correct:false}
+  ]},
+  {question:"ما هو أسرع نوع من الطيور؟", basePoints:80, answers:[
+    {text:"الصقر", correct:true},
+    {text:"العقاب", correct:false},
+    {text:"النعامة", correct:false},
+    {text:"الحمامة", correct:false}
+  ]},
+  {question:"ما هي عاصمة أيسلندا؟", basePoints:60, answers:[
+    {text:"ريكيافيك", correct:true},
+    {text:"أوسلو", correct:false},
+    {text:"ستوكهولم", correct:false},
+    {text:"هلسنكي", correct:false}
+  ]},
+  {question:"ما هو الغاز الذي يشكل معظم الغلاف الجوي للأرض؟", basePoints:100, answers:[
+    {text:"الأكسجين", correct:false},
+    {text:"النيتروجين", correct:true},
+    {text:"الهيليوم", correct:false},
+    {text:"ثاني أكسيد الكربون", correct:false}
+  ]},
+  {question:"أي دولة اخترعت المصباح الكهربائي؟", basePoints:70, answers:[
+    {text:"الولايات المتحدة", correct:true},
+    {text:"ألمانيا", correct:false},
+    {text:"فرنسا", correct:false},
+    {text:"المملكة المتحدة", correct:false}
+  ]},
+  {question:"ما هو أول عنصر في الجدول الدوري؟", basePoints:90, answers:[
+    {text:"الهيدروجين", correct:true},
+    {text:"الليثيوم", correct:false},
+    {text:"الأكسجين", correct:false},
+    {text:"النيتروجين", correct:false}
+  ]},
+  {question:"من هو مكتشف الكهرباء؟", basePoints:100, answers:[
+    {text:"أليساندرو فولتا", correct:false},
+    {text:"بنيامين فرانكلين", correct:true},
+    {text:"مايكل فاراداي", correct:false},
+    {text:"توماس إديسون", correct:false}
+  ]},
+  {question:"ما هو أكبر حيوان على وجه الأرض؟", basePoints:80, answers:[
+    {text:"الحوت الأزرق", correct:true},
+    {text:"الفيل الأفريقي", correct:false},
+    {text:"القرش الأبيض", correct:false},
+    {text:"الزرافة", correct:false}
+  ]},
+  {question:"ما هو أسرع حيوان بحري؟", basePoints:70, answers:[
+    {text:"سمك أبو سيف", correct:true},
+    {text:"القرش الأبيض", correct:false},
+    {text:"الدلفين", correct:false},
+    {text:"الحنش", correct:false}
+  ]},
+  {question:"ما هي أصغر قارة في العالم؟", basePoints:60, answers:[
+    {text:"أستراليا", correct:true},
+    {text:"أوروبا", correct:false},
+    {text:"أمريكا الجنوبية", correct:false},
+    {text:"أنتاركتيكا", correct:false}
+  ]},
+  {question:"ما هو الكوكب الذي له أكبر حلقة؟", basePoints:90, answers:[
+    {text:"زحل", correct:true},
+    {text:"المشتري", correct:false},
+    {text:"أورانوس", correct:false},
+    {text:"نبتون", correct:false}
+  ]},
+  {question:"ما هي الدولة التي تسمى بلاد الألف بحيرة؟", basePoints:80, answers:[
+    {text:"فنلندا", correct:true},
+    {text:"كندا", correct:false},
+    {text:"روسيا", correct:false},
+    {text:"إيطاليا", correct:false}
+  ]}
+    ],
   
-  9: []
+  9: [
+  {question:"What does CSS stand for?", basePoints:100, answers:[
+    {text:"Computer Style Sheets", correct:false},
+    {text:"Creative Style Sheets", correct:false},
+    {text:"Cascading Style Sheets", correct:true},
+    {text:"Colorful Style Sheets", correct:false}
+  ]},
+  {question:"Which HTML tag is used for the largest heading?", basePoints:80, answers:[
+    {text:"<h1>", correct:true},
+    {text:"<heading>", correct:false},
+    {text:"<head>", correct:false},
+    {text:"<h6>", correct:false}
+  ]},
+  {question:"Which CSS property changes the text color?", basePoints:70, answers:[
+    {text:"font-style", correct:false},
+    {text:"text-color", correct:false},
+    {text:"color", correct:true},
+    {text:"background-color", correct:false}
+  ]},
+  {question:"Which HTML attribute is used to define inline styles?", basePoints:90, answers:[
+    {text:"class", correct:false},
+    {text:"style", correct:true},
+    {text:"font", correct:false},
+    {text:"styles", correct:false}
+  ]},
+  {question:"How do you select an element with id 'main' in CSS?", basePoints:100, answers:[
+    {text:".main", correct:false},
+    {text:"#main", correct:true},
+    {text:"main", correct:false},
+    {text:"*main", correct:false}
+  ]},
+  {question:"Which property is used to change the background color?", basePoints:80, answers:[
+    {text:"background-color", correct:true},
+    {text:"color", correct:false},
+    {text:"bgcolor", correct:false},
+    {text:"background-style", correct:false}
+  ]},
+  {question:"Which HTML tag is used to create a hyperlink?", basePoints:90, answers:[
+    {text:"<link>", correct:false},
+    {text:"<a>", correct:true},
+    {text:"<href>", correct:false},
+    {text:"<hyperlink>", correct:false}
+  ]},
+  {question:"Which CSS property controls the element's width?", basePoints:80, answers:[
+    {text:"width", correct:true},
+    {text:"size", correct:false},
+    {text:"length", correct:false},
+    {text:"max-width", correct:false}
+  ]},
+  {question:"Which HTML tag is used to display an image?", basePoints:100, answers:[
+    {text:"<img>", correct:true},
+    {text:"<image>", correct:false},
+    {text:"<pic>", correct:false},
+    {text:"<src>", correct:false}
+  ]},
+  {question:"Which CSS property is used to make text bold?", basePoints:70, answers:[
+    {text:"font-weight", correct:true},
+    {text:"text-style", correct:false},
+    {text:"font-style", correct:false},
+    {text:"bold", correct:false}
+  ]},
+  {question:"How do you select all <p> elements in CSS?", basePoints:80, answers:[
+    {text:"p", correct:true},
+    {text:".p", correct:false},
+    {text:"#p", correct:false},
+    {text:"*p", correct:false}
+  ]},
+  {question:"Which HTML tag is used for a paragraph?", basePoints:70, answers:[
+    {text:"<p>", correct:true},
+    {text:"<para>", correct:false},
+    {text:"<pg>", correct:false},
+    {text:"<text>", correct:false}
+  ]},
+  {question:"Which CSS property adds space inside an element?", basePoints:90, answers:[
+    {text:"margin", correct:false},
+    {text:"padding", correct:true},
+    {text:"spacing", correct:false},
+    {text:"gap", correct:false}
+  ]},
+  {question:"Which HTML tag is used for an unordered list?", basePoints:80, answers:[
+    {text:"<ol>", correct:false},
+    {text:"<ul>", correct:true},
+    {text:"<li>", correct:false},
+    {text:"<list>", correct:false}
+  ]},
+  {question:"Which CSS property sets the font of an element?", basePoints:90, answers:[
+    {text:"font-style", correct:false},
+    {text:"font-family", correct:true},
+    {text:"text-font", correct:false},
+    {text:"font-weight", correct:false}
+  ]},
+  {question:"How do you make a list item marker square instead of a disc?", basePoints:100, answers:[
+    {text:"list-style-type: square;", correct:true},
+    {text:"list: square;", correct:false},
+    {text:"marker: square;", correct:false},
+    {text:"bullet-shape: square;", correct:false}
+  ]},
+  {question:"Which HTML attribute specifies an alternate text for an image?", basePoints:90, answers:[
+    {text:"alt", correct:true},
+    {text:"title", correct:false},
+    {text:"src", correct:false},
+    {text:"text", correct:false}
+  ]},
+  {question:"Which CSS property changes the left margin of an element?", basePoints:80, answers:[
+    {text:"margin-left", correct:true},
+    {text:"padding-left", correct:false},
+    {text:"indent", correct:false},
+    {text:"left-margin", correct:false}
+  ]},
+  {question:"Which HTML element is used for a line break?", basePoints:70, answers:[
+    {text:"<break>", correct:false},
+    {text:"<lb>", correct:false},
+    {text:"<br>", correct:true},
+    {text:"<line>", correct:false}
+  ]},
+  {question:"Which CSS property is used to control the visibility of an element?", basePoints:90, answers:[
+    {text:"display", correct:false},
+    {text:"visibility", correct:true},
+    {text:"opacity", correct:false},
+    {text:"hidden", correct:false}
+  ]},
+  {question:"Which HTML tag defines a table row?", basePoints:80, answers:[
+    {text:"<tr>", correct:true},
+    {text:"<table-row>", correct:false},
+    {text:"<td>", correct:false},
+    {text:"<th>", correct:false}
+  ]},
+  {question:"Which CSS property controls the height of an element?", basePoints:80, answers:[
+    {text:"height", correct:true},
+    {text:"size", correct:false},
+    {text:"max-height", correct:false},
+    {text:"line-height", correct:false}
+  ]},
+  {question:"Which HTML tag is used for the table header?", basePoints:90, answers:[
+    {text:"<thead>", correct:true},
+    {text:"<th>", correct:false},
+    {text:"<header>", correct:false},
+    {text:"<table-head>", correct:false}
+  ]},
+  {question:"Which CSS property is used to change the spacing between letters?", basePoints:100, answers:[
+    {text:"letter-spacing", correct:true},
+    {text:"word-spacing", correct:false},
+    {text:"text-spacing", correct:false},
+    {text:"spacing", correct:false}
+  ]},
+  {question:"How do you insert a comment in HTML?", basePoints:70, answers:[
+    {text:"<!-- comment -->", correct:true},
+    {text:"// comment", correct:false},
+    {text:"/* comment */", correct:false},
+    {text:"# comment", correct:false}
+  ]},
+  {question:"Which CSS property is used to add a shadow to text?", basePoints:100, answers:[
+    {text:"text-shadow", correct:true},
+    {text:"shadow-text", correct:false},
+    {text:"box-shadow", correct:false},
+    {text:"font-shadow", correct:false}
+  ]},
+  {question:"Which HTML element is used to define the footer of a document?", basePoints:90, answers:[
+    {text:"<footer>", correct:true},
+    {text:"<bottom>", correct:false},
+    {text:"<foot>", correct:false},
+    {text:"<section>", correct:false}
+  ]},
+  {question:"Which CSS property is used to align text horizontally?", basePoints:80, answers:[
+    {text:"text-align", correct:true},
+    {text:"align-text", correct:false},
+    {text:"text-position", correct:false},
+    {text:"horizontal-align", correct:false}
+  ]},
+  {question:"Which HTML attribute is used to define the URL of a link?", basePoints:80, answers:[
+    {text:"href", correct:true},
+    {text:"src", correct:false},
+    {text:"link", correct:false},
+    {text:"url", correct:false}
+  ]},
+  {question:"Which CSS property is used to create rounded corners?", basePoints:100, answers:[
+    {text:"border-radius", correct:true},
+    {text:"radius-border", correct:false},
+    {text:"corner-radius", correct:false},
+    {text:"round-corners", correct:false}
+  ]},
+  {question:"Which HTML tag is used to create an ordered list?", basePoints:90, answers:[
+    {text:"<ol>", correct:true},
+    {text:"<ul>", correct:false},
+    {text:"<li>", correct:false},
+    {text:"<list>", correct:false}
+  ]},
+  
+    ]
 };
 /* ===== QUIZ ===== */
 
@@ -1900,11 +2391,11 @@ function startQuiz(level){
     2: 17,
     3: 15,
     4: 10,
-    5: 10,
+    5: 15,
     6: 8,
-    7: 40,
+    7: 30,
     8: 20,
-    9: 40
+    9: 25
   };
 
   categoryTime = categoryTimers[level] || 20;
