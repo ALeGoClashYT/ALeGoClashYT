@@ -613,6 +613,7 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 
   <div class="back-wrapper">
   <a class="btn back-btn" onclick="goBack()">Back</a>
+  
 </div> 
 </section>
 
@@ -1051,9 +1052,9 @@ let timeLeft = 20;
 let categoryTime = 20;
 
 /* ===== SOUNDS ===== */
-const correctSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3");
-const wrongSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-tone-2876.mp3");
-const winSound = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3");
+const correctSound = new Audio("correct.mp3");
+const wrongSound = new Audio("wrong.mp3");
+const winSound = new Audio("win.mp3");
 
 /* ===== SECTION CONTROL ===== */
 function showSection(id){
@@ -2531,13 +2532,13 @@ function showQuestion(){
       }
 
       // 🔹 تحديث الدائرة بعد كل إجابة
-      const pointsSoFar = score;
-      const totalPointsSoFar = currentQuiz
-  .filter(q => q.answered)
-  .reduce((sum, q) => sum + q.basePoints, 0);
-  
+    // نجيب كل الأسئلة اللي تم الإجابة عليها فقط
+const answeredQuestionsList = currentQuiz.slice(0, currentQuestionIndex + 1).filter((q, idx) => {
+  return document.querySelectorAll("#answers .btn")[idx]?.classList.contains("answered");
+});
 
-      document.getElementById("scoreText").innerText = `${pointsSoFar} / ${totalPointsSoFar}`;
+const maxPointsAnswered = answeredQuestionsList.reduce((sum, q) => sum + q.basePoints, 0);
+document.getElementById("scoreText").innerText = `${score} / ${maxPointsAnswered}`;
 
       setTimeout(() => {
         if(currentQuestionIndex < currentQuiz.length-1){
@@ -2546,7 +2547,7 @@ function showQuestion(){
         } else {
           showResult();
         }
-      }, 1000);
+      }, 450);
     };
 
     answersDiv.appendChild(btn);
@@ -2606,36 +2607,30 @@ function getComboMultiplier(){
   return 1;
 }
 
-function calculateBonus(q){
-
+function calculateBonus(q) {
   const diff = DIFFICULTY_SETTINGS[q.difficulty] || DIFFICULTY_SETTINGS.easy;
-
-  // نضرب النقاط حسب الصعوبة
   let base = q.basePoints * diff.multiplier;
 
   let halfTime = timeLeftStart / 2;
+  let perfectThreshold = timeLeftStart * 0.75;
 
-let perfectThreshold = timeLeftStart * 0.75;
+  if (timeLeft >= perfectThreshold) {
+    base *= 1.25;
+  }
 
-if(timeLeft >= perfectThreshold){
-  base *= 1.25; // 25% زيادة
-}
-  // لو جاوب قبل نص الوقت = فل نقاط
-  if(timeLeft >= halfTime){
-    
-    return Math.round(base * getComboMultiplier());
+  if (timeLeft >= halfTime) {
+    base = Math.min(base * getComboMultiplier(), q.basePoints); // 🔹 لا تتعدى basePoints
+    return Math.round(base);
   }
 
   let secondsAfterHalf = halfTime - timeLeft;
-
   let reductionPercent = secondsAfterHalf * diff.reduction;
-
-  // أقصى خصم 50%
   reductionPercent = Math.min(reductionPercent, 0.5);
 
   let finalPoints = base * (1 - reductionPercent);
+  finalPoints = Math.min(finalPoints * getComboMultiplier(), q.basePoints); // 🔹 لا تتعدى basePoints
 
-  return Math.round(finalPoints * getComboMultiplier());
+  return Math.round(finalPoints);
 }
 
 /* ===== RESULT ===== */
@@ -2664,10 +2659,11 @@ function showResult(){
   .reduce((sum, q) => sum + q.basePoints, 0);
 
   // 🔹 النسبة المئوية من النقاط اللي جاوبها المستخدم
-  let percent = 0;
-  if(totalPointsSoFar > 0){
-    percent = Math.round((pointsSoFar / totalPointsSoFar) * 100);
-  }
+ let percent = 0;
+if(totalPointsSoFar > 0){
+  percent = Math.round((pointsSoFar / totalPointsSoFar) * 100);
+  percent = Math.min(percent, 100); // 🔹 أقصى نسبة 100%
+}
 
 
   document.getElementById("quizContainer").innerHTML = `
@@ -2702,7 +2698,7 @@ function showResult(){
     </div>
   `;
 
-  winSound.play(c);
+  winSound.play();
 }
 
 /* ===== SHUFFLE ===== */
