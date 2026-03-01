@@ -377,6 +377,7 @@ body * {
   }
 
   #puzzleButtons .btn{
+    text-align: center;
     width:100%;
     font-size:14px;
     padding:10px;
@@ -384,9 +385,12 @@ body * {
 
   #quizContainer{
     padding:10px;
+    
   }
 
   #quizContainer .btn{
+
+   
     width:100%;
     margin:8px 0;
     font-size:15px;
@@ -480,6 +484,7 @@ body * {
     font-size: 14px;
   }
 }
+
 </style>
 </head>
 <body>
@@ -1030,6 +1035,7 @@ const puzzleButtonNames = [
   "Programing",
 ];
 
+let timeLeftStart = 0;
 let userScore = 0;      // النقاط اللي المستخدم جابها لحد دلوقتي
 let totalScore = 0;     // مجموع النقاط الممكنة للأسئلة اللي جاوبها
 let answeredQuestions = 0;
@@ -1575,17 +1581,53 @@ const quizData = {
     {text:"آل عمران ", correct:false},
     {text:"يوسف ", correct:false}
   ]},
+  {question:"من هو الصحابي الذي اهتز لموته عرش الرحمن؟", basePoints:250, answers:[
+    {text:"حمزة بن عبد المطلب", correct:false},
+    {text:"سعد بن معاذ ", correct:true},
+    {text:"مصعب بن عمير", correct:false},
+    {text:"جعفر بن أبي طالب", correct:false}
+  ]},
   {question:"من هو الصحابي الذي جمع القرآن بعد وفاة النبي ﷺ؟", basePoints:150, answers:[
     {text:"عمر بن الخطاب", correct:false},
     {text:"أبو بكر الصديق", correct:true},
     {text:"عثمان بن عفان", correct:false},
     {text:"علي بن أبي طالب", correct:false}
   ]},
+  {question:"من هو الصحابي الملقب بترجمان اقرآن ؟", basePoints:190, answers:[
+    {text:"عبد الله بن عمر", correct:false},
+    {text:"عبد الله بن عباس", correct:true},
+    {text:"زيد بن ثابت", correct:false},
+    {text:"أبيّ بن كعب", correct:false}
+  ]},
+  {question:"من هو أول سفير في الإسلام؟", basePoints:220, answers:[
+    {text:"عبد الله بن رواحة", correct:false},
+    {text:"مصعب بن عمير", correct:true},
+    {text:"معاذ بن جبل", correct:false},
+    {text:"عثمان بن عفان", correct:false}
+  ]},
   {question:"ما آخر سورة نزلت كاملة على النبي ﷺ؟", basePoints:100, answers:[
     {text:"النصر", correct:true},
     {text:"البقرة", correct:false},
     {text:"الكوثر", correct:false},
     {text:"يس", correct:false}
+  ]},
+  {question:"من هو الصحابي الذي أشار بحفر الخندق؟", basePoints:280, answers:[
+    {text:"سلمان الفارسي", correct:true},
+    {text:"أبو بكر الصديق", correct:false},
+    {text:"عمر بن الخطاب", correct:false},
+    {text:"سعد بن أبي وقاص", correct:false}
+  ]},
+  {question:"من قتل مسيلمة الكذاب؟", basePoints:300, answers:[
+    {text:"وحشيّ بن حرب", correct:true},
+    {text:"خالد بن الوليد", correct:false},
+    {text:"البراء بن مالك", correct:false},
+    {text:"أبو دجانة", correct:false}
+  ]},
+   {question:"من آخر من مات من العشرة المبشرين بالجنة؟", basePoints:350, answers:[
+    {text:"سعد بن أبي وقاص", correct:true},
+    {text:"طلحة بن عبيد الله", correct:false},
+    {text:"علي بن أبي طالب", correct:false},
+    {text:"عبد الرحمن بن عوف", correct:false}
   ]},
   {question: "ما هي السورة التي لا تبدأ بالبسملة؟",
   basePoints: 100,
@@ -1695,7 +1737,7 @@ const quizData = {
     {text:"جوهان", correct:false},
     {text:"برولي", correct:false}
   ]},
-  {question:"في أنمي ناروتو، ما اسم الفريق الذي كان يتألف من ناروتو وساسكي وساكورا؟", basePoint:100, answers:[
+  {question:"في أنمي ناروتو، ما اسم الفريق الذي كان يتألف من ناروتو وساسكي وساكورا؟", basePoints:100, answers:[
     {text:"الفريق العاشر", correct:false},
     {text:"فريق هاتاكي", correct:false},
     {text:"الفريق السابع", correct:true},
@@ -1736,7 +1778,7 @@ const quizData = {
     {text:"ليون", correct:false},
     {text:"كونيغا", correct:false},
     {text:"هيسوكا", correct:false},
-    {text:"لا يملك", correct:true},
+    {text:"لا يملك", correct:true}
     
   ]},
   {question:"في أنمي ديث نوت ، ما اسم المحقق الذي يحاول القبض على كيرا؟", basePoints:60, answers:[
@@ -2379,6 +2421,12 @@ const quizData = {
     ]
 };
 /* ===== QUIZ ===== */
+const DIFFICULTY_SETTINGS = {
+  easy:   { multiplier: 1,   reduction: 0.05 },
+  medium: { multiplier: 1.5, reduction: 0.08 },
+  hard:   { multiplier: 2,   reduction: 0.12 },
+  insane: { multiplier: 3,   reduction: 0.15 }
+};
 
 function startQuiz(level){
   document.getElementById("finishBtn").style.display = "inline-block";
@@ -2418,11 +2466,13 @@ function startQuiz(level){
 
   showQuestion();
 }
+
 function showQuestion(){
   const container = document.getElementById("quizContainer");
   const q = currentQuiz[currentQuestionIndex];
 
   timeLeft = categoryTime;
+  timeLeftStart = categoryTime;
 
   // 👇 الدائرة موجودة هنا
   container.innerHTML = `
@@ -2463,9 +2513,7 @@ function showQuestion(){
         correctSound.play();
         correctAnswers++;
         combo++;
-        let speedBonus = timeLeft * 2;
-        let comboBonus = q.basePoints * (combo * 0.1);
-        score += q.basePoints + speedBonus + comboBonus;
+        score += calculateBonus(q);
         btn.style.background = "green";
       } else {
         wrongSound.play();
@@ -2507,8 +2555,7 @@ function startTimer(){
 
   clearInterval(timer);
 
-  timeLeft = categoryTime; // 👈 ياخد وقت الكاتيجوري
-
+ 
   const bar = document.getElementById("timerBar");
   bar.style.width = "100%";
 
@@ -2550,7 +2597,54 @@ function nextQuestion(){
   }
 }
 
+function getComboMultiplier(){
+  if(combo >= 15) return 2.5;
+  if(combo >= 10) return 2;
+  if(combo >= 5)  return 1.5;
+  return 1;
+}
+
+function calculateBonus(q){
+
+  const diff = DIFFICULTY_SETTINGS[q.difficulty] || DIFFICULTY_SETTINGS.easy;
+
+  // نضرب النقاط حسب الصعوبة
+  let base = q.basePoints * diff.multiplier;
+
+  let halfTime = timeLeftStart / 2;
+
+let perfectThreshold = timeLeftStart * 0.75;
+
+if(timeLeft >= perfectThreshold){
+  base *= 1.25; // 25% زيادة
+}
+  // لو جاوب قبل نص الوقت = فل نقاط
+  if(timeLeft >= halfTime){
+    
+    return Math.round(base * getComboMultiplier());
+  }
+
+  let secondsAfterHalf = halfTime - timeLeft;
+
+  let reductionPercent = secondsAfterHalf * diff.reduction;
+
+  // أقصى خصم 50%
+  reductionPercent = Math.min(reductionPercent, 0.5);
+
+  let finalPoints = base * (1 - reductionPercent);
+
+  return Math.round(finalPoints * getComboMultiplier());
+}
+
 /* ===== RESULT ===== */
+
+function getRank(percent){
+  if(percent >= 95) return "S+ GOD MODE 🔥";
+  if(percent >= 85) return "S";
+  if(percent >= 70) return "A";
+  if(percent >= 50) return "B";
+  return "C";
+}
 
 function showResult(){
   document.getElementById("finishBtn").style.display = "none";
@@ -2569,6 +2663,7 @@ function showResult(){
     percent = Math.round((pointsSoFar / totalPointsSoFar) * 100);
   }
 
+
   document.getElementById("quizContainer").innerHTML = `
     <div style="
       background:#111;
@@ -2579,6 +2674,7 @@ function showResult(){
       animation:fadeIn 0.5s;
     ">
       <h2 style="color:#00f2ff">Quiz Finished!</h2>
+      <h2 style="color:#FFD873">${getRank(percent)}</h2>
 
       <p style="margin-top:15px;font-size:18px;">
         You scored <span style="color:#FFD873">${pointsSoFar}</span>
