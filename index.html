@@ -604,6 +604,7 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 
 
 <!-- ===== PUZZLE MENU ===== -->
+
 <section id="puzzleMenu">
   <h2 style="text-align:center;color:#00f2ff;">Choose a category</h2>
 
@@ -616,6 +617,7 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
   
 </div> 
 </section>
+
 
 
 <!-- ===== QUIZ SECTION ===== -->
@@ -2429,9 +2431,21 @@ const DIFFICULTY_SETTINGS = {
   insane: { multiplier: 3,   reduction: 0.15 }
 };
 
+
+/* ===== SHUFFLE ===== */
+function shuffle(array) {
+  const arr = [...array]; // نسخة لتجنب تعديل الأصلية
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]]; // swap
+  }
+  return arr;
+}
+
+/* ===== START QUIZ ===== */
 function startQuiz(level){
   document.getElementById("finishBtn").style.display = "inline-block";
-  
+
   currentLevel = level;
   historyStack.push("puzzleMenu");
   showSection("quizSection");
@@ -2439,13 +2453,26 @@ function startQuiz(level){
   score = 0;
   combo = 0;
   currentQuestionIndex = 0;
+  correctAnswers = 0;
+  answeredQuestions = 0;
 
-  currentQuiz = quizData[level] || [];
+  // جلب الأسئلة من مصدر البيانات
+  currentQuiz = quizData[level] ? [...quizData[level]] : [];
+
   if(currentQuiz.length === 0){
-  document.getElementById("quizContainer").innerHTML =
-    "<h2>No Questions Yet</h2><br><a class='btn' onclick='openPuzzle()'>Back</a>";
-  return;
-}
+    document.getElementById("quizContainer").innerHTML =
+      "<h2>No Questions Yet</h2><br><a class='btn' onclick='openPuzzle()'>Back</a>";
+    return;
+  }
+
+  // رجّع كل الأسئلة بدون answered
+  currentQuiz.forEach(q => q.answered = false);
+
+  // خلط الأسئلة عشوائي
+  currentQuiz = shuffle(currentQuiz);
+
+  // خلط إجابات كل سؤال مرة واحدة
+  currentQuiz.forEach(q => { if(q.answers) q.answers = shuffle(q.answers); });
 
   // 🔥 تحديد وقت كل كاتيجوري
   const categoryTimers = {
@@ -2459,15 +2486,12 @@ function startQuiz(level){
     8: 20,
     9: 25
   };
-
   categoryTime = categoryTimers[level] || 20;
-
-  shuffle(currentQuiz);
-  currentQuiz.forEach(q => shuffle(q.answers));
 
   showQuestion();
 }
 
+/* ===== SHOW QUESTION ===== */
 function showQuestion(){
   const container = document.getElementById("quizContainer");
   const q = currentQuiz[currentQuestionIndex];
@@ -2475,7 +2499,6 @@ function showQuestion(){
   timeLeft = categoryTime;
   timeLeftStart = categoryTime;
 
-  // 👇 الدائرة موجودة هنا
   container.innerHTML = `
     <div class="combo-text">Combo x${combo}</div>
     <div class="timer-bar" id="timerBar"></div>
@@ -2492,11 +2515,9 @@ function showQuestion(){
   startTimer();
 
   const answersDiv = document.getElementById("answers");
-  
-  // 🔹 نعمل shuffle للإجابات
   const shuffledAnswers = shuffle(q.answers);
 
-  shuffledAnswers.forEach(ans => {
+  shuffledAnswers.forEach((ans, i) => {
     const btn = document.createElement("div");
     btn.className = "btn fade-in";
     btn.style.display = "block";
@@ -2505,10 +2526,10 @@ function showQuestion(){
 
     btn.onclick = () => {
       if(btn.classList.contains("answered")) return;
-      answeredQuestions++;
 
+      answeredQuestions++;
       document.querySelectorAll("#answers .btn").forEach(b => b.classList.add("answered"));
-      q.answered = true; // 🔹 علامة السؤال انه اتجاوب
+      q.answered = true;
       clearInterval(timer);
 
       if(ans.correct){
@@ -2522,23 +2543,17 @@ function showQuestion(){
         combo = 0;
         btn.style.background = "red";
         btn.classList.add("shake");
-
-        // نور الإجابة الصح
-        shuffledAnswers.forEach((a,i)=>{
+        shuffledAnswers.forEach((a,j)=>{
           if(a.correct){
-            document.querySelectorAll("#answers .btn")[i].style.background="green";
+            document.querySelectorAll("#answers .btn")[j].style.background="green";
           }
         });
       }
 
-      // 🔹 تحديث الدائرة بعد كل إجابة
-    // نجيب كل الأسئلة اللي تم الإجابة عليها فقط
-const answeredQuestionsList = currentQuiz.slice(0, currentQuestionIndex + 1).filter((q, idx) => {
-  return document.querySelectorAll("#answers .btn")[idx]?.classList.contains("answered");
-});
-
-const maxPointsAnswered = answeredQuestionsList.reduce((sum, q) => sum + q.basePoints, 0);
-document.getElementById("scoreText").innerText = `${score} / ${maxPointsAnswered}`;
+      const answeredQuestionsList = currentQuiz.slice(0, currentQuestionIndex + 1)
+        .filter((q, idx) => document.querySelectorAll("#answers .btn")[idx]?.classList.contains("answered"));
+      const maxPointsAnswered = answeredQuestionsList.reduce((sum, q) => sum + q.basePoints, 0);
+      document.getElementById("scoreText").innerText = `${score} / ${maxPointsAnswered}`;
 
       setTimeout(() => {
         if(currentQuestionIndex < currentQuiz.length-1){
@@ -2554,72 +2569,64 @@ document.getElementById("scoreText").innerText = `${score} / ${maxPointsAnswered
   });
 }
 
+/* ===== TIMER ===== */
 function startTimer(){
-
   clearInterval(timer);
-
- 
   const bar = document.getElementById("timerBar");
   bar.style.width = "100%";
 
   timer = setInterval(() => {
-
     timeLeft--;
-
     bar.style.width = (timeLeft / categoryTime * 100) + "%";
 
     if(timeLeft <= 0){
       clearInterval(timer);
       combo = 0;
-
-      document.querySelectorAll("#answers .btn")
-        .forEach(b => b.classList.add("answered"));
-
-      // 🔥 يروح للسؤال اللي بعده تلقائي لو الوقت خلص
+      document.querySelectorAll("#answers .btn").forEach(b => b.classList.add("answered"));
       setTimeout(()=>{
         if(currentQuestionIndex < currentQuiz.length-1){
           currentQuestionIndex++;
           showQuestion();
-        }else{
+        } else {
           showResult();
         }
       }, 800);
     }
-
   }, 1000);
 }
 
-/* ===== NEXT ===== */
-// دالة Next Question لسه موجودة عشان الsetTimeout تستخدمها
+/* ===== NEXT QUESTION ===== */
 function nextQuestion(){
   if(currentQuestionIndex<currentQuiz.length-1){
     currentQuestionIndex++;
     showQuestion();
-  }else{
+  } else {
     showResult();
   }
 }
 
+/* ===== COMBO MULTIPLIER ===== */
 function getComboMultiplier(){
   if(combo >= 15) return 2.5;
   if(combo >= 10) return 2;
-  if(combo >= 5)  return 1.5;
+  if(combo >= 5) return 1.5;
   return 1;
 }
 
-function calculateBonus(q) {
+/* ===== CALCULATE BONUS ===== */
+function calculateBonus(q){
   const diff = DIFFICULTY_SETTINGS[q.difficulty] || DIFFICULTY_SETTINGS.easy;
   let base = q.basePoints * diff.multiplier;
 
   let halfTime = timeLeftStart / 2;
   let perfectThreshold = timeLeftStart * 0.75;
 
-  if (timeLeft >= perfectThreshold) {
+  if (timeLeft >= perfectThreshold){
     base *= 1.25;
   }
 
-  if (timeLeft >= halfTime) {
-    base = Math.min(base * getComboMultiplier(), q.basePoints); // 🔹 لا تتعدى basePoints
+  if (timeLeft >= halfTime){
+    base = Math.min(base * getComboMultiplier(), q.basePoints);
     return Math.round(base);
   }
 
@@ -2628,13 +2635,13 @@ function calculateBonus(q) {
   reductionPercent = Math.min(reductionPercent, 0.5);
 
   let finalPoints = base * (1 - reductionPercent);
-  finalPoints = Math.min(finalPoints * getComboMultiplier(), q.basePoints); // 🔹 لا تتعدى basePoints
+  finalPoints = Math.min(finalPoints * getComboMultiplier(), q.basePoints);
 
   return Math.round(finalPoints);
 }
 
-/* ===== RESULT ===== */
 
+/* ===== RESULT & RANK ===== */
 function getRank(percent){
   if(percent >= 95) return "A+ <br> &nbsp; &nbsp;  Impressive 🔥";
   if(percent >= 85) return "A <br> &nbsp; &nbsp; Excellent 🌟";
@@ -2646,54 +2653,45 @@ function getRank(percent){
   if(percent >= 50) return "D <br> &nbsp; &nbsp; Try Harder ⚠️";
   return "F <br> &nbsp; &nbsp; Try Again ❌";
 }
+function goHome(){
+  clearInterval(timer);  // يوقف أي تايمر شغال
+  resetQuiz();           // يفرغ كل المتغيرات
+
+  homeSection.style.display = 'block';
+  categoriesSection.style.display = 'none';
+  quizSection.style.display = 'none';
+  puzzleMenuSection.style.display = 'none';
+}
 
 function showResult(){
   document.getElementById("finishBtn").style.display = "none";
-  
-  // 🔹 مجموع النقاط اللي المستخدم جابها
+
   const pointsSoFar = score;
+  const totalPointsSoFar = currentQuiz.filter(q => q.answered)
+    .reduce((sum, q) => sum + q.basePoints, 0);
 
-  // 🔹 مجموع النقاط للأسئلة اللي جاوبها المستخدم
-  const totalPointsSoFar = currentQuiz
-  .filter(q => q.answered)
-  .reduce((sum, q) => sum + q.basePoints, 0);
-
-  // 🔹 النسبة المئوية من النقاط اللي جاوبها المستخدم
- let percent = 0;
-if(totalPointsSoFar > 0){
-  percent = Math.round((pointsSoFar / totalPointsSoFar) * 100);
-  percent = Math.min(percent, 100); // 🔹 أقصى نسبة 100%
-}
-
+  let percent = 0;
+  if(totalPointsSoFar > 0){
+    percent = Math.round((pointsSoFar / totalPointsSoFar) * 100);
+    percent = Math.min(percent, 100);
+  }
 
   document.getElementById("quizContainer").innerHTML = `
-    <div style="
-      background:#111;
-      padding:30px;
-      border-radius:20px;
-      text-align:center;
-      box-shadow:0 0 30px #00f2ff;
-      animation:fadeIn 0.5s;
-    ">
+    <div style="background:#111; padding:30px; border-radius:20px; text-align:center; box-shadow:0 0 30px #00f2ff; animation:fadeIn 0.5s;">
       <h2 style="color:#00f2ff">Quiz Finished!</h2>
       <h2 style="color:#FFD873">${getRank(percent)}</h2>
-
       <p style="margin-top:15px;font-size:18px;">
-        You scored <span style="color:#FFD873">${pointsSoFar}</span>
-        points
+        You scored <span style="color:#FFD873">${pointsSoFar}</span> points
       </p>
-
       <p>
         Out of <span style="color:#FFD873">${totalPointsSoFar}</span> possible points
       </p>
-
       <h3 style="margin-top:20px;color:#00ff88;">
         ${percent}% Accuracy
       </h3>
-
       <div style="margin-top:25px;">
         <a class="btn" onclick="restartQuiz()">Restart</a>
-        <a class="btn" onclick="openPuzzle()">Back To Menu</a>
+        <a class="btn" onclick="goHome()">Go home</a>
       </div>
     </div>
   `;
@@ -2701,18 +2699,13 @@ if(totalPointsSoFar > 0){
   winSound.play();
 }
 
-/* ===== SHUFFLE ===== */
-
-function shuffle(array) {
-  const arr = [...array]; // اعمل نسخة علشان ماتأثرش على الأصلية
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]]; // swap
-  }
-  return arr; // رجع المصفوفة بعد الخلط
-}
+const homeSection = document.getElementById('home');
 
 
+
+const originalHomeHTML = homeSection.innerHTML;
+
+/* ===== FINISH / RESTART / RESET ===== */
 function finishQuiz(){
   clearInterval(timer);
   showResult();
@@ -2721,32 +2714,79 @@ function finishQuiz(){
 function restartQuiz(){
   score = 0;
   combo = 0;
-  currentQuiz.forEach(q => q.answered = false); // 🔹 رجّع كل الأسئلة بدون علامة answered
   correctAnswers = 0;
   answeredQuestions = 0;
   currentQuestionIndex = 0;
-  startQuiz(currentLevel);
-}
-function resetQuiz() {
-    userScore = 0;
-    totalScore = 0;
 
-    // لو عندك متغيرات تانية زي combo أو timer أو أي حاجة في الكويز لازم ترجّعها للصفر هنا
+  currentQuiz.forEach(q => q.answered = false);
+  currentQuiz = shuffle(currentQuiz);
+  currentQuiz.forEach(q => { if(q.answers) q.answers = shuffle(q.answers); });
+
+  document.getElementById("finishBtn").style.display = "inline-block";
+
+  showQuestion();
 }
+function resetQuiz(){
+  userScore = 0;
+  totalScore = 0;
+  score = 0;
+  combo = 0;
+  correctAnswers = 0;
+  answeredQuestions = 0;
+  currentQuestionIndex = 0;
+  
+}
+
+function goHome() {
+  clearInterval(timer);        // يوقف التايمر لو شغال
+  resetQuiz();                 // يعمل ريست للقيم
+
+  // امسح الكويز بالكامل
+  const quizContainer = document.getElementById('quizContainer');
+  if (quizContainer) quizContainer.innerHTML = '';
+
+  // ارجع الصفحة الرئيسية الأصلية
+  homeSection.style.display = 'block';
+  categoriesSection.style.display = 'none';
+  quizSection.style.display = 'none';
+  puzzleMenuSection.style.display = 'none';
+}
+
+/* ===== EVENT LISTENERS ===== */
+
+const homeBtn = document.getElementById('homeBtn');
+const backBtn = document.getElementById('backBtn');
+
 homeBtn.addEventListener('click', () => {
-    resetQuiz(); // اعمل reset لكل البيانات
+  resetQuiz();
 
-    homeSection.style.display = 'block';
-    categoriesSection.style.display = 'none';
-    quizSection.style.display = 'none';
-    resultsSection.style.display = 'none';
+  homeSection.style.display = 'block';
+  categoriesSection.style.display = 'none';
+  quizSection.style.display = 'none';
+  resultsSection.style.display = 'none';
+  puzzleMenuSection.style.display = 'none';
 });
 
 backBtn.addEventListener('click', () => {
-    categoriesSection.style.display = 'block';
-    homeSection.style.display = 'none';
+
+  if (quizSection.style.display === 'block') {
     quizSection.style.display = 'none';
-    resultsSection.style.display = 'none';
+    categoriesSection.style.display = 'block';
+    return;
+  }
+
+  if (categoriesSection.style.display === 'block') {
+    categoriesSection.style.display = 'none';
+    puzzleMenuSection.style.display = 'block';
+    return;
+  }
+
+  if (puzzleMenuSection.style.display === 'block') {
+    puzzleMenuSection.style.display = 'none';
+    homeSection.style.display = 'block';
+    return;
+  }
+
 });
 
 
