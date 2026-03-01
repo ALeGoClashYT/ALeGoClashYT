@@ -2691,7 +2691,7 @@ function showResult(){
       </h3>
       <div style="margin-top:25px;">
         <a class="btn" onclick="restartQuiz()">Restart</a>
-        <a class="btn" onclick="goHome()">Go home</a>
+        
       </div>
     </div>
   `;
@@ -2735,21 +2735,6 @@ function resetQuiz(){
   answeredQuestions = 0;
   currentQuestionIndex = 0;
   
-}
-
-function goHome() {
-  clearInterval(timer);        // يوقف التايمر لو شغال
-  resetQuiz();                 // يعمل ريست للقيم
-
-  // امسح الكويز بالكامل
-  const quizContainer = document.getElementById('quizContainer');
-  if (quizContainer) quizContainer.innerHTML = '';
-
-  // ارجع الصفحة الرئيسية الأصلية
-  homeSection.style.display = 'block';
-  categoriesSection.style.display = 'none';
-  quizSection.style.display = 'none';
-  puzzleMenuSection.style.display = 'none';
 }
 
 /* ===== EVENT LISTENERS ===== */
