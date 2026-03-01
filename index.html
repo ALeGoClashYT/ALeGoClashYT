@@ -2507,6 +2507,7 @@ function showQuestion(){
       answeredQuestions++;
 
       document.querySelectorAll("#answers .btn").forEach(b => b.classList.add("answered"));
+      q.answered = true; // 🔹 علامة السؤال انه اتجاوب
       clearInterval(timer);
 
       if(ans.correct){
@@ -2532,8 +2533,9 @@ function showQuestion(){
       // 🔹 تحديث الدائرة بعد كل إجابة
       const pointsSoFar = score;
       const totalPointsSoFar = currentQuiz
-        .slice(0, currentQuestionIndex + 1)
-        .reduce((sum, q) => sum + q.basePoints, 0);
+  .filter(q => q.answered)
+  .reduce((sum, q) => sum + q.basePoints, 0);
+  
 
       document.getElementById("scoreText").innerText = `${pointsSoFar} / ${totalPointsSoFar}`;
 
@@ -2639,11 +2641,15 @@ if(timeLeft >= perfectThreshold){
 /* ===== RESULT ===== */
 
 function getRank(percent){
-  if(percent >= 95) return "S+ GOD MODE 🔥";
-  if(percent >= 85) return "S";
-  if(percent >= 70) return "A";
-  if(percent >= 50) return "B";
-  return "C";
+  if(percent >= 95) return "A+ <br> &nbsp; &nbsp;  Impressive 🔥";
+  if(percent >= 85) return "A <br> &nbsp; &nbsp; Excellent 🌟";
+  if(percent >= 80) return "B+ <br> &nbsp; &nbsp; Great Job 👍";
+  if(percent >= 75) return "B <br> &nbsp; &nbsp; Well Done 💪";
+  if(percent >= 70) return "C+ <br> &nbsp; &nbsp; Good Effort 🙂";
+  if(percent >= 65) return "C <br> &nbsp; &nbsp; Keep Trying 😐";
+  if(percent >= 60) return "D+ <br> &nbsp; &nbsp; Needs Work 😬";
+  if(percent >= 50) return "D <br> &nbsp; &nbsp; Try Harder ⚠️";
+  return "F <br> &nbsp; &nbsp; Try Again ❌";
 }
 
 function showResult(){
@@ -2654,8 +2660,8 @@ function showResult(){
 
   // 🔹 مجموع النقاط للأسئلة اللي جاوبها المستخدم
   const totalPointsSoFar = currentQuiz
-    .slice(0, currentQuestionIndex + 1)
-    .reduce((sum, q) => sum + q.basePoints, 0);
+  .filter(q => q.answered)
+  .reduce((sum, q) => sum + q.basePoints, 0);
 
   // 🔹 النسبة المئوية من النقاط اللي جاوبها المستخدم
   let percent = 0;
@@ -2696,7 +2702,7 @@ function showResult(){
     </div>
   `;
 
-  winSound.play();
+  winSound.play(c);
 }
 
 /* ===== SHUFFLE ===== */
@@ -2718,6 +2724,8 @@ function finishQuiz(){
 
 function restartQuiz(){
   score = 0;
+  combo = 0;
+  currentQuiz.forEach(q => q.answered = false); // 🔹 رجّع كل الأسئلة بدون علامة answered
   correctAnswers = 0;
   answeredQuestions = 0;
   currentQuestionIndex = 0;
