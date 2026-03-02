@@ -1041,6 +1041,8 @@ const puzzleButtonNames = [
   "Programing",
 ];
 
+
+
 let maxCombo = 0; // هذا لتخزين أعلى كومبو وصل له اللاعب
 let timeLeftStart = 0;
 let userScore = 0;      // النقاط اللي المستخدم جابها لحد دلوقتي
@@ -3115,12 +3117,116 @@ const quizData = {
   ]}
 ]
 };
+
 /* ===== QUIZ ===== */
 const DIFFICULTY_SETTINGS = {
-  easy:   { multiplier: 1,   reduction: 0.05 },
-  medium: { multiplier: 1.5, reduction: 0.08 },
-  hard:   { multiplier: 2,   reduction: 0.12 }, // ✅ عدلتها
-  insane: { multiplier: 3,   reduction: 0.15 }
+
+  easy: {
+
+    multiplier: 1, 
+    // مضاعف النقاط الأساسية
+    // لو السؤال 10 نقاط → يفضل 10
+
+    timeReductionPercent: 0.00,  
+    // نسبة تقليل من وقت الكاتيجوري
+    // 0.00 = مفيش تقليل خالص
+
+    earlyBonusPercent: 0.00,
+    // نسبة البونص لو اللاعب جاوب بدري
+    // 0.40 = ياخد 40% زيادة على النقاط
+
+    earlyThreshold: 0.75,
+    // لازم يجاوب ولسه فاضل 75% من الوقت
+    // يعني لو الوقت 20 ثانية لازم يجاوب قبل ما الوقت ينزل أقل من 15
+
+    penaltyStart: 0.40,
+    // يبدأ يخصم بعد ما الوقت يوصل لـ 50%
+    // يعني بعد نص الوقت
+
+    penaltyPerSecond: 0.10,
+  //يخصم 5%  كل ثانية بعد بداية الخصم
+  
+    maxPenalty: 0.20
+//أقصى خصم 80% 
+
+  },
+
+  medium: {
+
+    multiplier: 1, 
+    // يزود النقاط 50%
+
+    timeReductionPercent: 0.15,  
+    // يقلل 15% من وقت الكاتيجوري
+    // لو الوقت 20 ثانية → يبقى 17 ثانية تقريبًا
+
+    earlyBonusPercent: 0.10,
+    // بونص 30% لو جاوب بدري
+
+    earlyThreshold: 0.65,
+    // نفس شرط السرعة
+
+    penaltyStart: 0.50,
+    // يبدأ الخصم بعد نص الوقت
+
+    penaltyPerSecond: 0.15,
+    // يخصم 4% كل ثانية (أسرع من easy)
+
+    maxPenalty: 0.30
+    // أقصى خصم 70%
+  },
+
+  hard: {
+
+    multiplier: 1.4,
+    // يضاعف النقاط ×2
+
+    timeReductionPercent: 0.35,
+    // يقلل 30% من وقت الكاتيجوري
+
+    earlyBonusPercent: 0.25,
+    // بونص أقل (25%)
+
+    earlyThreshold: 0.75,
+    // لازم يجاوب ولسه فاضل 80% من الوقت (أصعب)
+
+    penaltyStart: 0.60,
+    // يبدأ الخصم بعد 60% من الوقت
+    // يعني بدري شوية
+
+    penaltyPerSecond: 0.20,
+    // يخصم 6% كل ثانية (سريع)
+
+    maxPenalty: 0.50
+    // ممكن يخسر لحد 80% من النقاط
+  },
+
+  insane: {
+
+    multiplier: 2,
+    // يضرب النقاط ×3 (مكافأة ضخمة)
+
+    timeReductionPercent: 0.50,
+    // يقلل 45% من الوقت
+    // لو الوقت 20 → يبقى حوالي 11 ثانية
+
+    earlyBonusPercent: 0.50,
+    // بونص قليل جدًا
+
+    earlyThreshold: 0.80,
+    // لازم يجاوب ولسه فاضل 85% من الوقت
+    // يعني شبه فوري
+
+    penaltyStart: 0.70,
+    // يبدأ يخصم بدري جدًا
+
+    penaltyPerSecond: 0.30,
+    // يخصم 8% كل ثانية (عنيف جدًا)
+
+    maxPenalty: 0.80
+    // ممكن يخسر 90% من النقاط
+  }
+
 };
 
 
@@ -3277,45 +3383,65 @@ function showQuestion() {
 
 /* ===== TIMER ===== */
 function startTimer(){
+
   clearInterval(timer);
 
   const bar = document.getElementById("timerBar");
   bar.style.width = "100%";
 
+  // ===== 🆕 هات إعدادات الصعوبة =====
+  const q = currentQuiz[currentQuestionIndex];
+
+  const diff = DIFFICULTY_SETTINGS[q.difficulty.toLowerCase()] 
+            || DIFFICULTY_SETTINGS.easy;
+
+  // ===== 🆕 الوقت الأساسي من الكاتيجوري =====
+  let baseTime = categoryTime;
+
+  // ===== 🆕 نقلل الوقت حسب الصعوبة =====
+  let reducedTime = baseTime - (baseTime * diff.timeReductionPercent);
+
+  // ===== 🆕 نخزن الوقت الجديد =====
+  timeLeft = Math.round(reducedTime);
+  timeLeftStart = timeLeft; // مهم لحساب البونص بعدين
+
+  // ===== 🆕 نستخدم الوقت الجديد بدل categoryTime في شريط التايمر =====
   timer = setInterval(() => {
+
     timeLeft--;
-    bar.style.width = (timeLeft / categoryTime * 100) + "%";
+
+    // 👇 أهم تعديل هنا
+    bar.style.width = (timeLeft / timeLeftStart * 100) + "%";
 
     if(timeLeft <= 0){
+
       clearInterval(timer);
       combo = 0;
 
       const q = currentQuiz[currentQuestionIndex];
 
-      // ✅ علّم السؤال إنه اتجاوب (حتى لو غلط بسبب الوقت)
       if(!q.answered){
         q.answered = true;
         answeredQuestions++;
       }
 
-      // قفل الأزرار
       document.querySelectorAll("#answers .btn")
         .forEach(b => b.classList.add("answered"));
 
-      // أظهر الإجابة الصحيحة
       const buttons = document.querySelectorAll("#answers .btn");
+
       q.answers.forEach((a, index) => {
         if(a.correct && buttons[index]){
           buttons[index].style.background = "green";
         }
       });
 
-      // تحديث عرض النقاط (من الأسئلة المجاب عليها فقط)
       const totalPointsAnsweredNow = currentQuiz
         .filter(q => q.answered)
         .reduce((sum, q) => sum + q.basePoints, 0);
 
       const scoreText = document.getElementById("scoreText");
+
       if(scoreText){
         scoreText.innerText = `${score} / ${totalPointsAnsweredNow}`;
       }
@@ -3332,6 +3458,7 @@ function startTimer(){
 
   }, 1000);
 }
+
 
 
 /* ===== NEXT QUESTION ===== */
@@ -3354,31 +3481,37 @@ function getComboMultiplier(){
 
 /* ===== CALCULATE BONUS ===== */
 function calculateBonus(q){
- const diff = DIFFICULTY_SETTINGS[q.difficulty.toLowerCase()] 
-          || DIFFICULTY_SETTINGS[q.difficulty] 
-          || DIFFICULTY_SETTINGS.easy;
- let base = q.basePoints * diff.multiplier;
 
- let halfTime = timeLeftStart / 2;
- let perfectThreshold = timeLeftStart * 0.75;
+  const diff = DIFFICULTY_SETTINGS[q.difficulty.toLowerCase()] 
+            || DIFFICULTY_SETTINGS.easy;
 
- if (timeLeft >= perfectThreshold){
-   base *= 1.25;
- }
+  let basePoints = q.basePoints * diff.multiplier;
 
- if (timeLeft >= halfTime){
-   base = Math.min(base * getComboMultiplier(), q.basePoints);
-   return Math.round(base);
- }
+  let timePercentLeft = timeLeft / timeLeftStart;
 
- let secondsAfterHalf = halfTime - timeLeft;
- let reductionPercent = secondsAfterHalf * diff.reduction;
- reductionPercent = Math.min(reductionPercent, 0.5);
+  /* ===== EARLY BONUS ===== */
+  if(timePercentLeft >= diff.earlyThreshold){
+    basePoints += basePoints * diff.earlyBonusPercent;
+  }
 
- let finalPoints = base * (1 - reductionPercent);
- finalPoints = Math.min(finalPoints * getComboMultiplier(), q.basePoints);
+  /* ===== PENALTY AFTER CERTAIN TIME ===== */
+  if(timePercentLeft < diff.penaltyStart){
 
- return Math.round(finalPoints);
+    let secondsAfterStart = 
+      (timeLeftStart * diff.penaltyStart) - timeLeft;
+
+    let penaltyPercent = 
+      secondsAfterStart * diff.penaltyPerSecond;
+
+    penaltyPercent = Math.min(penaltyPercent, diff.maxPenalty);
+
+    basePoints -= basePoints * penaltyPercent;
+  }
+
+  /* ===== COMBO ===== */
+  basePoints *= getComboMultiplier();
+
+  return Math.max(0, Math.round(basePoints));
 }
 
 
@@ -3394,35 +3527,104 @@ function getRank(percent){
   if(percent >= 50) return "D <br> &nbsp; &nbsp; Try Harder ⚠️";
   return "F <br> &nbsp; &nbsp; Try Again ❌";
 }
+
+
+
 /* ===== RESULT & RANK ===== */
+
 function showResult() {
   document.getElementById("finishBtn").style.display = "none";
 
-  // مجموع النقاط للأسئلة التي تم الإجابة عليها فقط
   const totalPointsAnswered = currentQuiz
     .filter(q => q.answered)
     .reduce((sum, q) => sum + q.basePoints, 0);
 
-  // حساب النسبة بناءً على النقاط الفعلية ÷ مجموع نقاط الأسئلة المجاب عليها
-  const percent = totalPointsAnswered > 0 ? Math.round((score / totalPointsAnswered) * 100) : 0;
+  let percent = totalPointsAnswered > 0 
+    ? Math.round((score / totalPointsAnswered) * 100) 
+    : 0;
+
+  percent = Math.min(percent, 100);
+
+  // ✅ عدد اللي جاوبهم فعلاً
+  const answeredCount = currentQuiz.filter(q => q.answered).length;
+
+  // ✅ الغلط من اللي جاوبهم بس
+  const wrongAnswers = answeredCount - correctAnswers;
 
   document.getElementById("quizContainer").innerHTML = `
-    <div style="background:#111; padding:30px; border-radius:20px; text-align:center; 
-                box-shadow:0 0 30px #00f2ff; animation:fadeIn 0.5s;">
+    <div style="
+      background:#111;
+      padding:30px;
+      border-radius:20px;
+      text-align:center;
+      box-shadow:0 0 30px #00f2ff;
+      animation:fadeIn 0.5s;
+      position:relative;
+    ">
+
       <h2 style="color:#00f2ff">Quiz Finished!</h2>
       <h2 style="color:#FFD873">${getRank(percent)}</h2>
-      <p style="margin-top:15px;font-size:18px;">
+
+      <!-- 🔴 Wrong Circle -->
+      <div style="
+        position:absolute;
+        left:25px;
+        top:50%;
+        transform:translateY(-50%);
+        width:110px;
+        height:110px;
+        border-radius:50%;
+        background:linear-gradient(145deg,#ff4d4d,#990000);
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        color:white;
+        font-weight:bold;
+        box-shadow:0 0 20px rgba(255,0,0,0.5);
+      ">
+        <div style="font-size:14px;">${wrongAnswers}</div>
+        <div style="font-size:14px;">Wrong</div>
+      </div>
+
+      <!-- 🟢 Correct Circle -->
+      <div style="
+        position:absolute;
+        right:25px;
+        top:50%;
+        transform:translateY(-50%);
+        width:110px;
+        height:110px;
+        border-radius:50%;
+        background:linear-gradient(145deg,#00cc66,#006633);
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        color:white;
+        font-weight:bold;
+        box-shadow:0 0 20px rgba(0,255,120,0.5);
+      ">
+        <div style="font-size:14px;">${correctAnswers}</div>
+        <div style="font-size:14px;">Correct</div>
+      </div>
+
+      <p style="margin-top:25px;font-size:18px;">
         You scored <span style="color:#FFD873">${score}</span> points
       </p>
+
       <p style="margin-top:10px;font-size:18px;">
         Highest Combo: <span style="color:#FFD873">${maxCombo}</span>
       </p>
+
       <h3 style="margin-top:20px;color:#00ff88;">
         ${percent}% Accuracy
       </h3>
+
       <div style="margin-top:25px;">
         <a class="btn" onclick="restartQuiz()">Restart</a>
       </div>
+
     </div>
   `;
 
