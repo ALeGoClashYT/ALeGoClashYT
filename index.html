@@ -1038,6 +1038,7 @@ const puzzleButtonNames = [
   "Programing",
 ];
 
+let maxCombo = 0; // هذا لتخزين أعلى كومبو وصل له اللاعب
 let timeLeftStart = 0;
 let userScore = 0;      // النقاط اللي المستخدم جابها لحد دلوقتي
 let totalScore = 0;     // مجموع النقاط الممكنة للأسئلة اللي جاوبها
@@ -1100,708 +1101,1261 @@ function generatePuzzleButtons(){
 
 const quizData = {
  1:[
-  {question:"In One Piece, what is Luffy's Devil Fruit?", basePoints:100, answers:[
-    {text:"Gomu Gomu no Mi", correct:true},
-    {text:"Mera Mera no Mi", correct:false},
-    {text:"Hito Hito no Mi", correct:false},
-    {text:"Ope Ope no Mi", correct:false}
-  ]},
-  {question:"Who killed Hisoka in Hunter x Hunter?", basePoints:120, answers:[
-    {text:"Gon", correct:false},
-    {text:"Chrollo", correct:true},
-    {text:"Killua", correct:false},
-    {text:"Leorio", correct:false}
-  ]},
-  {question:"What is the name of the first sword Zoro uses in One Piece?", basePoints:150, answers:[
-    {text:"Wado Ichimonji", correct:true},
-    {text:"Sandai Kitetsu", correct:false},
-    {text:"Shusui", correct:false},
-    {text:"Yubashiri", correct:false}
-  ]},
-  {question:"In Death Note, who is the second Kira?", basePoints:80, answers:[
-    {text:"Light Yagami", correct:false},
-    {text:"Misa Amane", correct:true},
-    {text:"L", correct:false},
-    {text:"Near", correct:false}
-  ]},
-  {question:"What is Naruto's mother's name?", basePoints:60, answers:[
-    {text:"Kushina Uzumaki", correct:true},
-    {text:"Hinata Hyuga", correct:false},
-    {text:"Tsunade", correct:false},
-    {text:"Sakura Haruno", correct:false}
-  ]},
-  {question:"Who taught Goku the Kamehameha?", basePoints:80, answers:[
-    {text:"Master Roshi", correct:true},
-    {text:"King Kai", correct:false},
-    {text:"Gohan", correct:false},
-    {text:"Piccolo", correct:false}
-  ]},
-  {question:"In Attack on Titan, what is the original name of the Founding Titan?", basePoints:130, answers:[
-    {text:"Eren Jaeger", correct:false},
-    {text:"Ymir Fritz", correct:true},
-    {text:"Zeke Jaeger", correct:false},
-    {text:"Historia Reiss", correct:false}
-  ]},
-  {question:"Who killed Itachi Uchiha in Naruto?", basePoints:100, answers:[
-    {text:"Kakashi", correct:false},
-    {text:"Sasuke", correct:true},
-    {text:"Orochimaru", correct:false},
-    {text:"Madara", correct:false}
-  ]},
-  {question:"What is Gohan's ultimate transformation?", basePoints:170, answers:[
-    {text:"Super Saiyan 2", correct:true},
-    {text:"Super Saiyan 3", correct:false},
-    {text:"Mystic Gohan", correct:false},
-    {text:"Super Saiyan God", correct:false}
-  ]},
-  {question:"In My Hero Academia, what is Deku's real name?", basePoints:80, answers:[
-    {text:"Izuku Midoriya", correct:true},
-    {text:"Katsuki Bakugo", correct:false},
-    {text:"Shoto Todoroki", correct:false},
-    {text:"Tenya Iida", correct:false}
-  ]},
-  {question:"Who is the main antagonist in Naruto Shippuden?", basePoints:100, answers:[
-    {text:"Madara Uchiha", correct:true},
-    {text:"Pain", correct:false},
-    {text:"Orochimaru", correct:false},
-    {text:"Kabuto", correct:false}
-  ]},
-  {question:"What is the name of the Hokage before Naruto?", basePoints:120, answers:[
-    {text:"Tsunade", correct:true},
-    {text:"Hiruzen Sarutobi", correct:false},
-    {text:"Kakashi", correct:false},
-    {text:"Minato", correct:false}
-  ]},
-  {question:"In Dragon Ball, who first kills Frieza?", basePoints:200, answers:[
-    {text:"Goku", correct:false},
-    {text:"Future Trunks", correct:true},
-    {text:"Vegeta", correct:false},
-    {text:"Piccolo", correct:false}
-  ]},
-  {question:"In One Punch Man, what is Saitama's hero name?", basePoints:70, answers:[
-    {text:"Caped Bald", correct:true},
-    {text:"Bald Hero", correct:false},
-    {text:"Strong Man", correct:false},
-    {text:"Punch King", correct:false}
-  ]},
-  {question:"Which country is Luffy from?", basePoints:50, answers:[
-    {text:"East Blue", correct:true},
-    {text:"West Blue", correct:false},
-    {text:"North Blue", correct:false},
-    {text:"South Blue", correct:false}
-  ]},
-  {question:"What is the name of Tanjiro's sword style?", basePoints:100, answers:[
-    {text:"Water Breathing", correct:true},
-    {text:"Flame Breathing", correct:false},
-    {text:"Thunder Breathing", correct:false},
-    {text:"Stone Breathing", correct:false}
-  ]},
-  {question:"Who was the first Titan Eren fought?", basePoints:150, answers:[
-    {text:"Armored Titan", correct:false},
-    {text:"Colossal Titan", correct:true},
-    {text:"Beast Titan", correct:false},
-    {text:"Female Titan", correct:false}
-  ]},
-  {question:"In Attack on Titan, what is Levi known for?", basePoints:80, answers:[
-    {text:"Cooking abilities", correct:false},
-    {text:"His speed and skill", correct:true},
-    {text:"Being the main titan", correct:false},
-    {text:"Healing powers", correct:false}
-  ]},
-  {question:"Which anime features the Phantom Troupe?", basePoints:50, answers:[
-    {text:"Naruto", correct:false},
-    {text:"One Piece", correct:false},
-    {text:"Hunter x Hunter", correct:true},
-    {text:"Bleach", correct:false}
-  ]},
-  {question:" In Tokyo Revengers, what gang does Takemichi try to save?", basePoints:110, answers:[
-    {text:"Black Dragon", correct:false},
-    {text:"Kanto Alliance", correct:false},
-    {text:"White Snake", correct:false},
-    {text:"Tokyo Manji", correct:true}
-  ]},
-  {question:"Who trained Luffy to use Haki?", basePoints:140, answers:[
-    {text:"Rayleigh", correct:true},
-    {text:"Shanks", correct:false},
-    {text:"Roger", correct:false},
-    {text:"Sanji", correct:false}
-  ]},
-  {question:"What is the name of Naruto's father?", basePoints:80, answers:[
-    {text:"Kakashi Hatake", correct:false},
-    {text:"Hiruzen Sarutobi", correct:false},
-    {text:"Minato Namikaze", correct:true},
-    {text:"Jiraiya", correct:false}
-  ]},
-  {question:"Who is the strongest Saiyan?", basePoints:100, answers:[
-    {text:"Goku", correct:true},
-    {text:"Vegeta", correct:false},
-    {text:"Broly", correct:false},
-    {text:"Gohan", correct:false}
-  ]},
-  {question:"In Attack on Titan, who is revealed to have the Coordinate power besides Eren?", basePoints:180, answers:[
-    {text:"Historia Reiss", correct:false},
-    {text:"Zeke Yeager", correct:true},
-    {text:"Armin Arlert", correct:false},
-    {text:"Levi Ackerman", correct:false}
-  ]},
-  {question:"In Naruto, who is the first Jinchūriki of the Nine-Tails before Kushina?", basePoints:200, answers:[
-    {text:"Rin Nohara", correct:false},
-    {text:"Minato Namikaze", correct:false},
-    {text:"Uzumaki Naruto", correct:false},
-    {text:"Mito Uzumaki", correct:true}
-  ]},
-  {question:"In Hunter x Hunter, what is the primary ability of Hisoka’s Bungee Gum?", basePoints:200, answers:[
-    {text:"Generating illusionsn", correct:false},
-    {text:"NStretchable and sticky like gum", correct:true},
-    {text:"Transforming objects into cards", correct:false},
-    {text:"Controlling puppets", correct:false}
-  ]},
-  {question:"In One Piece, what is the real reason why Vegapunk created the Pacifista cyborgs?", basePoints:180, answers:[
-    {text:"To experiment with Artificial Devil Fruits", correct:true},
-    {text:"To protect marine bases", correct:false},
-    {text:"To hunt down Devil Fruit usersi", correct:false},
-    {text:"To replace the Shichibukai", correct:false}
-  ]},
-  {question:"In Attack on Titan, what is the real reason Historia Reiss becomes queen?", basePoints:150, answers:[
-    {text:"To unify Marley and Paradis", correct:false},
-    {text:"To protect her friends", correct:false},
-    {text:"To lead a rebellion", correct:false},
-    {text:"To inherit the Founding Titan’s power", correct:true}
-  ]},
-  {question:"In Code Geass, what is the power of Geass given to Lelouch?", basePoints:60, answers:[
-    {text:"Mind reading", correct:false},
-    {text:"Time manipulation", correct:false},
-    {text:"Absolute obedience to his command", correct:true},
-    {text:"Super speed", correct:false}
-  ]}
+  {
+    question: "In One Piece, what is Luffy's Devil Fruit?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "Gomu Gomu no Mi", correct: true },
+      { text: "Mera Mera no Mi", correct: false },
+      { text: "Hito Hito no Mi", correct: false },
+      { text: "Ope Ope no Mi", correct: false }
+    ]
+  },
+  {
+    question: "Who killed Hisoka in Hunter x Hunter?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "Gon", correct: false },
+      { text: "Chrollo", correct: true },
+      { text: "Killua", correct: false },
+      { text: "Leorio", correct: false }
+    ]
+  },
+  {
+    question: "What is the name of the first sword Zoro uses in One Piece?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "Wado Ichimonji", correct: true },
+      { text: "Sandai Kitetsu", correct: false },
+      { text: "Shusui", correct: false },
+      { text: "Yubashiri", correct: false }
+    ]
+  },
+  {
+    question: "In Death Note, who is the second Kira?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "Light Yagami", correct: false },
+      { text: "Misa Amane", correct: true },
+      { text: "L", correct: false },
+      { text: "Near", correct: false }
+    ]
+  },
+  {
+    question: "What is Naruto's mother's name?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "Kushina Uzumaki", correct: true },
+      { text: "Hinata Hyuga", correct: false },
+      { text: "Tsunade", correct: false },
+      { text: "Sakura Haruno", correct: false }
+    ]
+  },
+  {
+    question: "Who taught Goku the Kamehameha?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "Master Roshi", correct: true },
+      { text: "King Kai", correct: false },
+      { text: "Gohan", correct: false },
+      { text: "Piccolo", correct: false }
+    ]
+  },
+  {
+    question: "In Attack on Titan, what is the original name of the Founding Titan?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "Eren Jaeger", correct: false },
+      { text: "Ymir Fritz", correct: true },
+      { text: "Zeke Jaeger", correct: false },
+      { text: "Historia Reiss", correct: false }
+    ]
+  },
+  {
+    question: "Who killed Itachi Uchiha in Naruto?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "Kakashi", correct: false },
+      { text: "Sasuke", correct: true },
+      { text: "Orochimaru", correct: false },
+      { text: "Madara", correct: false }
+    ]
+  },
+  {
+    question: "What is Gohan's ultimate transformation?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "Super Saiyan 2", correct: true },
+      { text: "Super Saiyan 3", correct: false },
+      { text: "Mystic Gohan", correct: false },
+      { text: "Super Saiyan God", correct: false }
+    ]
+  },
+  {
+    question: "In My Hero Academia, what is Deku's real name?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "Izuku Midoriya", correct: true },
+      { text: "Katsuki Bakugo", correct: false },
+      { text: "Shoto Todoroki", correct: false },
+      { text: "Tenya Iida", correct: false }
+    ]
+  },
+  {
+    question: "Who is the main antagonist in Naruto Shippuden?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "Madara Uchiha", correct: true },
+      { text: "Pain", correct: false },
+      { text: "Orochimaru", correct: false },
+      { text: "Kabuto", correct: false }
+    ]
+  },
+  {
+    question: "What is the name of the Hokage before Naruto?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "Tsunade", correct: true },
+      { text: "Hiruzen Sarutobi", correct: false },
+      { text: "Kakashi", correct: false },
+      { text: "Minato", correct: false }
+    ]
+  },
+  {
+    question: "In Dragon Ball, who first kills Frieza?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "Goku", correct: false },
+      { text: "Future Trunks", correct: true },
+      { text: "Vegeta", correct: false },
+      { text: "Piccolo", correct: false }
+    ]
+  },
+  {
+    question: "In One Punch Man, what is Saitama's hero name?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "Caped Bald", correct: true },
+      { text: "Bald Hero", correct: false },
+      { text: "Strong Man", correct: false },
+      { text: "Punch King", correct: false }
+    ]
+  },
+  {
+    question: "Which country is Luffy from?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "East Blue", correct: true },
+      { text: "West Blue", correct: false },
+      { text: "North Blue", correct: false },
+      { text: "South Blue", correct: false }
+    ]
+  },
+  {
+    question: "What is the name of Tanjiro's sword style?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "Water Breathing", correct: true },
+      { text: "Flame Breathing", correct: false },
+      { text: "Thunder Breathing", correct: false },
+      { text: "Stone Breathing", correct: false }
+    ]
+  },
+  {
+    question: "Who was the first Titan Eren fought?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "Armored Titan", correct: false },
+      { text: "Colossal Titan", correct: true },
+      { text: "Beast Titan", correct: false },
+      { text: "Female Titan", correct: false }
+    ]
+  },
+  {
+    question: "In Attack on Titan, what is Levi known for?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "Cooking abilities", correct: false },
+      { text: "His speed and skill", correct: true },
+      { text: "Being the main titan", correct: false },
+      { text: "Healing powers", correct: false }
+    ]
+  },
+  {
+    question: "Which anime features the Phantom Troupe?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "Naruto", correct: false },
+      { text: "One Piece", correct: false },
+      { text: "Hunter x Hunter", correct: true },
+      { text: "Bleach", correct: false }
+    ]
+  },
+  {
+    question: "In Tokyo Revengers, what gang does Takemichi try to save?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "Black Dragon", correct: false },
+      { text: "Kanto Alliance", correct: false },
+      { text: "White Snake", correct: false },
+      { text: "Tokyo Manji", correct: true }
+    ]
+  },
+  {
+    question: "Who trained Luffy to use Haki?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "Rayleigh", correct: true },
+      { text: "Shanks", correct: false },
+      { text: "Roger", correct: false },
+      { text: "Sanji", correct: false }
+    ]
+  },
+  {
+    question: "What is the name of Naruto's father?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "Kakashi Hatake", correct: false },
+      { text: "Hiruzen Sarutobi", correct: false },
+      { text: "Minato Namikaze", correct: true },
+      { text: "Jiraiya", correct: false }
+    ]
+  },
+  {
+    question: "Who is the strongest Saiyan?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "Goku", correct: true },
+      { text: "Vegeta", correct: false },
+      { text: "Broly", correct: false },
+      { text: "Gohan", correct: false }
+    ]
+  },
+  {
+    question: "In Attack on Titan, who is revealed to have the Coordinate power besides Eren?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "Historia Reiss", correct: false },
+      { text: "Zeke Yeager", correct: true },
+      { text: "Armin Arlert", correct: false },
+      { text: "Levi Ackerman", correct: false }
+    ]
+  },
+  {
+    question: "In Naruto, who is the first Jinchūriki of the Nine-Tails before Kushina?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "Rin Nohara", correct: false },
+      { text: "Minato Namikaze", correct: false },
+      { text: "Uzumaki Naruto", correct: false },
+      { text: "Mito Uzumaki", correct: true }
+    ]
+  },
+  {
+    question: "In Hunter x Hunter, what is the primary ability of Hisoka’s Bungee Gum?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "Generating illusions", correct: false },
+      { text: "Stretchable and sticky like gum", correct: true },
+      { text: "Transforming objects into cards", correct: false },
+      { text: "Controlling puppets", correct: false }
+    ]
+  },
+  {
+    question: "In One Piece, what is the real reason why Vegapunk created the Pacifista cyborgs?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "To experiment with Artificial Devil Fruits", correct: true },
+      { text: "To protect marine bases", correct: false },
+      { text: "To hunt down Devil Fruit users", correct: false },
+      { text: "To replace the Shichibukai", correct: false }
+    ]
+  },
+  {
+    question: "In Attack on Titan, what is the real reason Historia Reiss becomes queen?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "To unify Marley and Paradis", correct: false },
+      { text: "To protect her friends", correct: false },
+      { text: "To lead a rebellion", correct: false },
+      { text: "To inherit the Founding Titan’s power", correct: true }
+    ]
+  },
+  {
+    question: "In Code Geass, what is the power of Geass given to Lelouch?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "Mind reading", correct: false },
+      { text: "Time manipulation", correct: false },
+      { text: "Absolute obedience to his command", correct: true },
+      { text: "Super speed", correct: false }
+    ]
+  }
 ],
 
 2: [
-  {question:"What is the derivative of f(x) = x^3 + 2x?", basePoints:50, answers:[
-    {text:"3x^2 + 2", correct:true},
-    {text:"x^2 + 2", correct:false},
-    {text:"3x^2", correct:false},
-    {text:"2x + 3", correct:false}
-  ]},
-  {question:"If 5x - 7 = 18, what is x?", basePoints:100, answers:[
-    {text:"5", correct:true},
-    {text:"6", correct:false},
-    {text:"7", correct:false},
-    {text:"8", correct:false}
-  ]},
-  {question:"Simplify: (2x^2)(3x^3)", basePoints:110, answers:[
-    {text:"6x^5", correct:true},
-    {text:"5x^6", correct:false},
-    {text:"6x^6", correct:false},
-    {text:"5x^5", correct:false}
-  ]},
-  {question:"What is the integral of ∫2x dx?", basePoints:40, answers:[
-    {text:"x^2 + C", correct:true},
-    {text:"2x + C", correct:false},
-    {text:"x^2/2 + C", correct:false},
-    {text:"4x + C", correct:false}
-  ]},
-  {question:"Solve for x: x^2 - 9 = 0", basePoints:40, answers:[
-    {text:"x = 3 or x = -3", correct:true},
-    {text:"x = 9", correct:false},
-    {text:"x = -9", correct:false},
-    {text:"x = 0", correct:false}
-  ]},
-  {question:"What is the sum of the first 10 positive integers?", basePoints:200, answers:[
-    {text:"55", correct:true},
-    {text:"45", correct:false},
-    {text:"50", correct:false},
-    {text:"60", correct:false}
-  ]},
-  {question:"What is the sum of the first 8 positive integers?", basePoints:100, answers:[
-    {text:"36", correct:true},
-    {text:"45", correct:false},
-    {text:"44", correct:false},
-    {text:"38", correct:false}
-  ]},
-  {question:"If f(x) = 2x + 3, find f(5)", basePoints:70, answers:[
-    {text:"13", correct:true},
-    {text:"10", correct:false},
-    {text:"15", correct:false},
-    {text:"8", correct:false}
-  ]},
-  {question:"Simplify: (x^4)/(x^2)", basePoints:60, answers:[
-    {text:"x^2", correct:true},
-    {text:"x^6", correct:false},
-    {text:"2x^2", correct:false},
-    {text:"x^4", correct:false}
-  ]},
-  {question:"What is 15% of 200?", basePoints:80, answers:[
-    {text:"30", correct:true},
-    {text:"25", correct:false},
-    {text:"20", correct:false},
-    {text:"35", correct:false}
-  ]},
-  {question:"Find the next number in the sequence: .., 8, 13, 21, 34, ...", basePoints:110, answers:[
-    {text:"55", correct:true},
-    {text:"65", correct:false},
-    {text:"56", correct:false},
-    {text:"44", correct:false}
-  ]},
-  {question:"Solve: 3x + 5 = 20", basePoints:50, answers:[
-    {text:"x = 5", correct:true},
-    {text:"x = 10", correct:false},
-    {text:"x = 15", correct:false},
-    {text:"x = 20", correct:false}
-  ]},
-  {question:"What is the value of 2^5?", basePoints:60, answers:[
-    {text:"32", correct:true},
-    {text:"25", correct:false},
-    {text:"64", correct:false},
-    {text:"16", correct:false}
-  ]},
-  {question:"If y = 3x + 2 and x = 4, find y", basePoints:100, answers:[
-    {text:"14", correct:true},
-    {text:"12", correct:false},
-    {text:"10", correct:false},
-    {text:"16", correct:false}
-  ]},
-  {question:"Simplify: (x^3)^2", basePoints:70, answers:[
-    {text:"x^6", correct:true},
-    {text:"x^5", correct:false},
-    {text:"x^9", correct:false},
-    {text:"2x^3", correct:false}
-  ]},
-  {question:"What is the area of a rectangle with length 6 and width 9?", basePoints:50, answers:[
-    {text:"54", correct:true},
-    {text:"63", correct:false},
-    {text:"45", correct:false},
-    {text:"72", correct:false}
-  ]},
-  {question:"Factorize: x^2 - 16", basePoints:120, answers:[
-    {text:"(x - 4)(x + 4)", correct:true},
-    {text:"(x - 8)(x + 2)", correct:false},
-    {text:"(x - 2)(x + 8)", correct:false},
-    {text:"(x - 16)(x + 1)", correct:false}
-  ]},
-  {question:"Solve: 2x - 7 = 3", basePoints:70, answers:[
-    {text:"x = 5", correct:true},
-    {text:"x = 10", correct:false},
-    {text:"x = 7", correct:false},
-    {text:"x = 2", correct:false}
-  ]},
-  {question:"What is the square root of 144?", basePoints:60, answers:[
-    {text:"12", correct:true},
-    {text:"14", correct:false},
-    {text:"16", correct:false},
-    {text:"10", correct:false}
-  ]},
-  {question:"If f(x) = x^2, find f(3)", basePoints:30, answers:[
-    {text:"9", correct:true},
-    {text:"6", correct:false},
-    {text:"12", correct:false},
-    {text:"8", correct:false}
-  ]},
-  {question:"Solve: 4x + 1 = 9", basePoints:20, answers:[
-    {text:"x = 2", correct:true},
-    {text:"x = 3", correct:false},
-    {text:"x = 1", correct:false},
-    {text:"x = 4", correct:false}
-  ]}
-  ],
+  {
+    question: "What is the derivative of f(x) = x^3 + 2x?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "3x^2 + 2", correct: true },
+      { text: "x^2 + 2", correct: false },
+      { text: "3x^2", correct: false },
+      { text: "2x + 3", correct: false }
+    ]
+  },
+  {
+    question: "If 5x - 7 = 18, what is x?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "5", correct: true },
+      { text: "6", correct: false },
+      { text: "7", correct: false },
+      { text: "8", correct: false }
+    ]
+  },
+  {
+    question: "Simplify: (2x^2)(3x^3)",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "6x^5", correct: true },
+      { text: "5x^6", correct: false },
+      { text: "6x^6", correct: false },
+      { text: "5x^5", correct: false }
+    ]
+  },
+  {
+    question: "What is the integral of ∫2x dx?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "x^2 + C", correct: true },
+      { text: "2x + C", correct: false },
+      { text: "x^2/2 + C", correct: false },
+      { text: "4x + C", correct: false }
+    ]
+  },
+  {
+    question: "Solve for x: x^2 - 9 = 0",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "x = 3 or x = -3", correct: true },
+      { text: "x = 9", correct: false },
+      { text: "x = -9", correct: false },
+      { text: "x = 0", correct: false }
+    ]
+  },
+  {
+    question: "What is the sum of the first 10 positive integers?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "55", correct: true },
+      { text: "45", correct: false },
+      { text: "50", correct: false },
+      { text: "60", correct: false }
+    ]
+  },
+  {
+    question: "What is the sum of the first 8 positive integers?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "36", correct: true },
+      { text: "45", correct: false },
+      { text: "44", correct: false },
+      { text: "38", correct: false }
+    ]
+  },
+  {
+    question: "If f(x) = 2x + 3, find f(5)",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "13", correct: true },
+      { text: "10", correct: false },
+      { text: "15", correct: false },
+      { text: "8", correct: false }
+    ]
+  },
+  {
+    question: "Simplify: (x^4)/(x^2)",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "x^2", correct: true },
+      { text: "x^6", correct: false },
+      { text: "2x^2", correct: false },
+      { text: "x^4", correct: false }
+    ]
+  },
+  {
+    question: "What is 15% of 200?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "30", correct: true },
+      { text: "25", correct: false },
+      { text: "20", correct: false },
+      { text: "35", correct: false }
+    ]
+  },
+  {
+    question: "Find the next number in the sequence: .., 8, 13, 21, 34, ...",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "55", correct: true },
+      { text: "65", correct: false },
+      { text: "56", correct: false },
+      { text: "44", correct: false }
+    ]
+  },
+  {
+    question: "Solve: 3x + 5 = 20",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "x = 5", correct: true },
+      { text: "x = 10", correct: false },
+      { text: "x = 15", correct: false },
+      { text: "x = 20", correct: false }
+    ]
+  },
+  {
+    question: "What is the value of 2^5?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "32", correct: true },
+      { text: "25", correct: false },
+      { text: "64", correct: false },
+      { text: "16", correct: false }
+    ]
+  },
+  {
+    question: "If y = 3x + 2 and x = 4, find y",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "14", correct: true },
+      { text: "12", correct: false },
+      { text: "10", correct: false },
+      { text: "16", correct: false }
+    ]
+  },
+  {
+    question: "Simplify: (x^3)^2",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "x^6", correct: true },
+      { text: "x^5", correct: false },
+      { text: "x^9", correct: false },
+      { text: "2x^3", correct: false }
+    ]
+  },
+  {
+    question: "What is the area of a rectangle with length 6 and width 9?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "54", correct: true },
+      { text: "63", correct: false },
+      { text: "45", correct: false },
+      { text: "72", correct: false }
+    ]
+  },
+  {
+    question: "Factorize: x^2 - 16",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "(x - 4)(x + 4)", correct: true },
+      { text: "(x - 8)(x + 2)", correct: false },
+      { text: "(x - 2)(x + 8)", correct: false },
+      { text: "(x - 16)(x + 1)", correct: false }
+    ]
+  },
+  {
+    question: "Solve: 2x - 7 = 3",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "x = 5", correct: true },
+      { text: "x = 10", correct: false },
+      { text: "x = 7", correct: false },
+      { text: "x = 2", correct: false }
+    ]
+  },
+  {
+    question: "What is the square root of 144?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "12", correct: true },
+      { text: "14", correct: false },
+      { text: "16", correct: false },
+      { text: "10", correct: false }
+    ]
+  },
+  {
+    question: "If f(x) = x^2, find f(3)",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "9", correct: true },
+      { text: "6", correct: false },
+      { text: "12", correct: false },
+      { text: "8", correct: false }
+    ]
+  },
+  {
+    question: "Solve: 4x + 1 = 9",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "x = 2", correct: true },
+      { text: "x = 3", correct: false },
+      { text: "x = 1", correct: false },
+      { text: "x = 4", correct: false }
+    ]
+  }
+],
   
-  3: [
-  {question:"What is the capital city of Australia?", basePoints:100, answers:[
-    {text:"Sydney", correct:false},
-    {text:"Melbourne", correct:false},
-    {text:"Canberra", correct:true},
-    {text:"Brisbane", correct:false}
-  ]},
-  {question:"Which planet is known as the Red Planet?", basePoints:80, answers:[
-    {text:"Mars", correct:true},
-    {text:"Jupiter", correct:false},
-    {text:"Venus", correct:false},
-    {text:"Saturn", correct:false}
-  ]},
-  {question:"Who wrote the play 'Romeo and Juliet'?", basePoints:90, answers:[
-    {text:"William Shakespeare", correct:true},
-    {text:"Charles Dickens", correct:false},
-    {text:"Mark Twain", correct:false},
-    {text:"Jane Austen", correct:false}
-  ]},
-  {question:"Which element has the chemical symbol 'O'?", basePoints:60, answers:[
-    {text:"Oxygen", correct:true},
-    {text:"Gold", correct:false},
-    {text:"Silver", correct:false},
-    {text:"Iron", correct:false}
-  ]},
-  {question:"What is the largest ocean on Earth?", basePoints:120, answers:[
-    {text:"Atlantic Ocean", correct:false},
-    {text:"Indian Ocean", correct:false},
-    {text:"Pacific Ocean", correct:true},
-    {text:"Arctic Ocean", correct:false}
-  ]},
-  {question:"Who painted the Mona Lisa?", basePoints:100, answers:[
-    {text:"Vincent van Gogh", correct:false},
-    {text:"Leonardo da Vinci", correct:true},
-    {text:"Pablo Picasso", correct:false},
-    {text:"Michelangelo", correct:false}
-  ]},
-  {question:"Which country hosted the 2016 Summer Olympics?", basePoints:80, answers:[
-    {text:"China", correct:false},
-    {text:"Brazil", correct:true},
-    {text:"UK", correct:false},
-    {text:"Russia", correct:false}
-  ]},
-  {question:"What is the currency of Japan?", basePoints:90, answers:[
-    {text:"Yen", correct:true},
-    {text:"Won", correct:false},
-    {text:"Dollar", correct:false},
-    {text:"Peso", correct:false}
-  ]},
-  {question:"Which gas do plants absorb from the atmosphere?", basePoints:70, answers:[
-    {text:"Oxygen", correct:false},
-    {text:"Carbon Dioxide", correct:true},
-    {text:"Nitrogen", correct:false},
-    {text:"Hydrogen", correct:false}
-  ]},
-  {question:"Who discovered penicillin?", basePoints:110, answers:[
-    {text:"Alexander Fleming", correct:true},
-    {text:"Marie Curie", correct:false},
-    {text:"Louis Pasteur", correct:false},
-    {text:"Thomas Edison", correct:false}
-  ]},
-  {question:"Which country is known as the Land of the Rising Sun?", basePoints:80, answers:[
-    {text:"China", correct:false},
-    {text:"Japan", correct:true},
-    {text:"Thailand", correct:false},
-    {text:"South Korea", correct:false}
-  ]},
-  {question:"How many continents are there on Earth?", basePoints:60, answers:[
-    {text:"5", correct:false},
-    {text:"6", correct:false},
-    {text:"7", correct:true},
-    {text:"8", correct:false}
-  ]},
-  {question:"Which planet has the most moons?", basePoints:100, answers:[
-    {text:"Saturn", correct:false},
-    {text:"Jupiter", correct:true},
-    {text:"Mars", correct:false},
-    {text:"Neptune", correct:false}
-  ]},
-  {question:"Who is the author of 'Harry Potter' series?", basePoints:90, answers:[
-    {text:"J.K. Rowling", correct:true},
-    {text:"J.R.R. Tolkien", correct:false},
-    {text:"George R.R. Martin", correct:false},
-    {text:"C.S. Lewis", correct:false}
-  ]},
-  {question:"Which language is the most spoken worldwide?", basePoints:120, answers:[
-    {text:"English", correct:false},
-    {text:"Mandarin Chinese", correct:true},
-    {text:"Spanish", correct:false},
-    {text:"Hindi", correct:false}
-  ]},
-  {question:"What is the smallest country in the world?", basePoints:100, answers:[
-    {text:"Monaco", correct:false},
-    {text:"Vatican City", correct:true},
-    {text:"San Marino", correct:false},
-    {text:"Liechtenstein", correct:false}
-  ]},
-  {question:"Who invented the telephone?", basePoints:90, answers:[
-    {text:"Alexander Graham Bell", correct:true},
-    {text:"Thomas Edison", correct:false},
-    {text:"Nikola Tesla", correct:false},
-    {text:"Guglielmo Marconi", correct:false}
-  ]},
-  {question:"Which organ purifies blood in the human body?", basePoints:80, answers:[
-    {text:"Heart", correct:false},
-    {text:"Kidney", correct:true},
-    {text:"Lungs", correct:false},
-    {text:"Liver", correct:false}
-  ]},
-  {question:"What is the chemical formula of water?", basePoints:60, answers:[
-    {text:"H2O", correct:true},
-    {text:"CO2", correct:false},
-    {text:"NaCl", correct:false},
-    {text:"O2", correct:false}
-  ]},
-  {question:"Which is the tallest mountain in the world?", basePoints:120, answers:[
-    {text:"K2", correct:false},
-    {text:"Mount Everest", correct:true},
-    {text:"Kangchenjunga", correct:false},
-    {text:"Lhotse", correct:false}
-  ]}
-    ],
+  3:[
+  {
+    question: "What is the capital city of Australia?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "Sydney", correct: false },
+      { text: "Melbourne", correct: false },
+      { text: "Canberra", correct: true },
+      { text: "Brisbane", correct: false }
+    ]
+  },
+  {
+    question: "Which planet is known as the Red Planet?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "Mars", correct: true },
+      { text: "Jupiter", correct: false },
+      { text: "Venus", correct: false },
+      { text: "Saturn", correct: false }
+    ]
+  },
+  {
+    question: "Who wrote the play 'Romeo and Juliet'?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "William Shakespeare", correct: true },
+      { text: "Charles Dickens", correct: false },
+      { text: "Mark Twain", correct: false },
+      { text: "Jane Austen", correct: false }
+    ]
+  },
+  {
+    question: "Which element has the chemical symbol 'Au'?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "Oxygen", correct: false },
+      { text: "Gold", correct: true },
+      { text: "Silver", correct: false },
+      { text: "Iron", correct: false }
+    ]
+  },
+  {
+    question: "What is the largest ocean on Earth?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "Atlantic Ocean", correct: false },
+      { text: "Indian Ocean", correct: false },
+      { text: "Pacific Ocean", correct: true },
+      { text: "Arctic Ocean", correct: false }
+    ]
+  },
+  {
+    question: "Who painted the Mona Lisa?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "Vincent van Gogh", correct: false },
+      { text: "Leonardo da Vinci", correct: true },
+      { text: "Pablo Picasso", correct: false },
+      { text: "Michelangelo", correct: false }
+    ]
+  },
+  {
+    question: "Which country hosted the 2016 Summer Olympics?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "China", correct: false },
+      { text: "Brazil", correct: true },
+      { text: "UK", correct: false },
+      { text: "Russia", correct: false }
+    ]
+  },
+  {
+    question: "What is the currency of Japan?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "Yen", correct: true },
+      { text: "Won", correct: false },
+      { text: "Dollar", correct: false },
+      { text: "Peso", correct: false }
+    ]
+  },
+  {
+    question: "Which gas do plants absorb from the atmosphere?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "Oxygen", correct: false },
+      { text: "Carbon Dioxide", correct: true },
+      { text: "Nitrogen", correct: false },
+      { text: "Hydrogen", correct: false }
+    ]
+  },
+  {
+    question: "Who discovered penicillin?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "Alexander Fleming", correct: true },
+      { text: "Marie Curie", correct: false },
+      { text: "Louis Pasteur", correct: false },
+      { text: "Thomas Edison", correct: false }
+    ]
+  },
+  {
+    question: "Which country is known as the Land of the Rising Sun?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "China", correct: false },
+      { text: "Japan", correct: true },
+      { text: "Thailand", correct: false },
+      { text: "South Korea", correct: false }
+    ]
+  },
+  {
+    question: "How many continents are there on Earth?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "5", correct: false },
+      { text: "6", correct: false },
+      { text: "7", correct: true },
+      { text: "8", correct: false }
+    ]
+  },
+  {
+    question: "Which planet has the most moons?",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "Saturn", correct: false },
+      { text: "Jupiter", correct: true },
+      { text: "Mars", correct: false },
+      { text: "Neptune", correct: false }
+    ]
+  },
+  {
+    question: "Who is the author of 'Harry Potter' series?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "J.K. Rowling", correct: true },
+      { text: "J.R.R. Tolkien", correct: false },
+      { text: "George R.R. Martin", correct: false },
+      { text: "C.S. Lewis", correct: false }
+    ]
+  },
+  {
+    question: "Which language is the most spoken worldwide?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "English", correct: false },
+      { text: "Mandarin Chinese", correct: true },
+      { text: "Spanish", correct: false },
+      { text: "Hindi", correct: false }
+    ]
+  },
+  {
+    question: "What is the smallest country in the world?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "Monaco", correct: false },
+      { text: "Vatican City", correct: true },
+      { text: "San Marino", correct: false },
+      { text: "Liechtenstein", correct: false }
+    ]
+  },
+  {
+    question: "Who invented the telephone?",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "Alexander Graham Bell", correct: true },
+      { text: "Thomas Edison", correct: false },
+      { text: "Nikola Tesla", correct: false },
+      { text: "Guglielmo Marconi", correct: false }
+    ]
+  },
+  {
+    question: "Which organ purifies blood in the human body?",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "Heart", correct: false },
+      { text: "Kidney", correct: true },
+      { text: "Lungs", correct: false },
+      { text: "Liver", correct: false }
+    ]
+  },
+  {
+    question: "What is the chemical formula of water?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "H2O", correct: true },
+      { text: "CO2", correct: false },
+      { text: "NaCl", correct: false },
+      { text: "O2", correct: false }
+    ]
+  },
+  {
+    question: "Which is the tallest mountain in the world?",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "K2", correct: false },
+      { text: "Mount Everest", correct: true },
+      { text: "Kangchenjunga", correct: false },
+      { text: "Lhotse", correct: false }
+    ]
+  }
+],
   
-  4: [
-  {question:"ما هي أول سورة نزلت كاملة على النبي محمد ﷺ؟", basePoints:60, answers:[
-    {text:"سورة الفاتحة", correct:false},
-    {text:"سورة المدثر", correct:false},
-    {text:"سورة العلق", correct:true},
-    {text:"سورة البقرة", correct:false}
-  ]},
-  {question:"من هو الصحابي المعروف بلقب 'سيف الله المسلول'؟", basePoints:80, answers:[
-    {text:"علي بن أبي طالب", correct:false},
-    {text:"خالد بن الوليد", correct:true},
-    {text:"أبو بكر الصديق", correct:false},
-    {text:"عمر بن الخطاب", correct:false}
-  ]},
-  {question:"ما هو معنى كلمة 'الإسراء' في القرآن؟", basePoints:100, answers:[
-    {text:"الرحلة الليلية", correct:true},
-    {text:" الصلاة الليلية", correct:false},
-    {text:"الجهاد الشديد", correct:false},
-    {text:"التسرية عن النفس", correct:false}
-  ]},
-  {question:"كم عدد آيات القرآن الكريم ؟", basePoints:180, answers:[
-    {text:"6363", correct:false},
-    {text:"8424", correct:false},
-    {text:"8114", correct:false},
-    {text:"6236", correct:true}
-  ]},
-  {question:"من هو النبي الذي ابتلعه الحوت وفق القرآن؟", basePoints:50, answers:[
-    {text:"يونس عليه السلام", correct:true},
-    {text:"إبراهيم عليه السلام", correct:false},
-    {text:"موسى عليه السلام", correct:false},
-    {text:"نوح عليه السلام", correct:false}
-  ]},
-  {question:"ما هي أطول سورة في القرآن؟", basePoints:60, answers:[
-    {text:"سورة آل عمران", correct:false},
-    {text:"سورة النساء", correct:false},
-    {text:"سورة يونس", correct:false},
-    {text:"سورة البقرة", correct:true},
-
-  ]},
-  {question:"ما اسم خازن النار في القرآن؟", basePoints:150, answers:[
-    {text:"مالك", correct:true},
-    {text:"ميكائيل", correct:false},
-    {text:"جبريل", correct:false},
-    {text:"إسرافيل", correct:false}
-  ]},
-  {question:"من هو الصحابي الذي لقبه النبي ﷺ بـ ذو النورين؟", basePoints:160, answers:[
-    {text:" عمر بن الخطاب", correct:false},
-    {text:"علي بن أبي طالب", correct:false},
-    {text:"عثمان بن عفان ", correct:true},
-    {text:"سعد بن أبي وقاص ", correct:false}
-  ]},
-  {question:"ما السورة التي تُعرف باسم سورة العهد؟", basePoints:200, answers:[
-    {text:"المائدة ", correct:true},
-    {text:"النساء ", correct:false},
-    {text:"آل عمران ", correct:false},
-    {text:"يوسف ", correct:false}
-  ]},
-  {question:"من هو الصحابي الذي اهتز لموته عرش الرحمن؟", basePoints:250, answers:[
-    {text:"حمزة بن عبد المطلب", correct:false},
-    {text:"سعد بن معاذ ", correct:true},
-    {text:"مصعب بن عمير", correct:false},
-    {text:"جعفر بن أبي طالب", correct:false}
-  ]},
-  {question:"من هو الصحابي الذي جمع القرآن بعد وفاة النبي ﷺ؟", basePoints:150, answers:[
-    {text:"عمر بن الخطاب", correct:false},
-    {text:"أبو بكر الصديق", correct:true},
-    {text:"عثمان بن عفان", correct:false},
-    {text:"علي بن أبي طالب", correct:false}
-  ]},
-  {question:"من هو الصحابي الملقب بترجمان اقرآن ؟", basePoints:190, answers:[
-    {text:"عبد الله بن عمر", correct:false},
-    {text:"عبد الله بن عباس", correct:true},
-    {text:"زيد بن ثابت", correct:false},
-    {text:"أبيّ بن كعب", correct:false}
-  ]},
-  {question:"من هو أول سفير في الإسلام؟", basePoints:220, answers:[
-    {text:"عبد الله بن رواحة", correct:false},
-    {text:"مصعب بن عمير", correct:true},
-    {text:"معاذ بن جبل", correct:false},
-    {text:"عثمان بن عفان", correct:false}
-  ]},
-  {question:"ما آخر سورة نزلت كاملة على النبي ﷺ؟", basePoints:100, answers:[
-    {text:"النصر", correct:true},
-    {text:"البقرة", correct:false},
-    {text:"الكوثر", correct:false},
-    {text:"يس", correct:false}
-  ]},
-  {question:"من هو الصحابي الذي أشار بحفر الخندق؟", basePoints:280, answers:[
-    {text:"سلمان الفارسي", correct:true},
-    {text:"أبو بكر الصديق", correct:false},
-    {text:"عمر بن الخطاب", correct:false},
-    {text:"سعد بن أبي وقاص", correct:false}
-  ]},
-  {question:"من قتل مسيلمة الكذاب؟", basePoints:300, answers:[
-    {text:"وحشيّ بن حرب", correct:true},
-    {text:"خالد بن الوليد", correct:false},
-    {text:"البراء بن مالك", correct:false},
-    {text:"أبو دجانة", correct:false}
-  ]},
-   {question:"من آخر من مات من العشرة المبشرين بالجنة؟", basePoints:350, answers:[
-    {text:"سعد بن أبي وقاص", correct:true},
-    {text:"طلحة بن عبيد الله", correct:false},
-    {text:"علي بن أبي طالب", correct:false},
-    {text:"عبد الرحمن بن عوف", correct:false}
-  ]},
-  {question: "ما هي السورة التي لا تبدأ بالبسملة؟",
-  basePoints: 100,
-  answers: [
-    { text: "الفاتحة", correct: false },
-    { text: "البقرة", correct: false },
-    { text: "التوبة", correct: true },
-    { text: "آل عمران", correct: false }
-  ]
-},
-  {question:"أي سورة نزلت كاملةً في ليلة واحدة؟", basePoints:200, answers:[
-    {text:"سورة الفاتحة", correct:false},
-    {text:"سورة القدر", correct:true},
-    {text:"سورة النصر", correct:false},
-    {text:"سورة المدثر", correct:false}
-  ]},
-  {question:"من هو الصحابي المعروف بحبر الأمه؟ ", basePoints:120, answers:[
-    {text:"أبي بكر الصديق", correct:false},
-    {text:"أبو هريرة", correct:false},
-    {text:"عبد الله بن عباس", correct:true},
-    {text:"زيد بن حارثة", correct:false}
-  ]},
-  {question:"ما اسم أول مسجد بني في الإسلام؟", basePoints:160, answers:[
-    {text:"المسجد النبوي", correct:false},
-    {text:"المسجد الحرام", correct:false},
-    {text:"مسجد قباء", correct:true},
-    {text:"المسجد الأقصى", correct:false}
-  ]},
-  {question:"من هو النبي الذي كلمه الله مباشرةً وفق القرآن؟", basePoints:80, answers:[
-    {text:"موسى عليه السلام", correct:true},
-    {text:"إبراهيم عليه السلام", correct:false},
-    {text:"نوح عليه السلام", correct:false},
-    {text:"يونس عليه السلام", correct:false}
-  ]}
-  
+  4:[
+  {
+    question: "ما هي أول سورة نزلت كاملة على النبي محمد ﷺ؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "سورة الفاتحة", correct: false },
+      { text: "سورة المدثر", correct: false },
+      { text: "سورة العلق", correct: true },
+      { text: "سورة البقرة", correct: false }
+    ]
+  },
+  {
+    question: "من هو الصحابي المعروف بلقب 'سيف الله المسلول'؟",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "علي بن أبي طالب", correct: false },
+      { text: "خالد بن الوليد", correct: true },
+      { text: "أبو بكر الصديق", correct: false },
+      { text: "عمر بن الخطاب", correct: false }
+    ]
+  },
+  {
+    question: "ما هو معنى كلمة 'الإسراء' في القرآن؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "الرحلة الليلية", correct: true },
+      { text: "الصلاة الليلية", correct: false },
+      { text: "الجهاد الشديد", correct: false },
+      { text: "التسرية عن النفس", correct: false }
+    ]
+  },
+  {
+    question: "كم عدد آيات القرآن الكريم ؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "6363", correct: false },
+      { text: "8424", correct: false },
+      { text: "8114", correct: false },
+      { text: "6236", correct: true }
+    ]
+  },
+  {
+    question: "من هو النبي الذي ابتلعه الحوت وفق القرآن؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "يونس عليه السلام", correct: true },
+      { text: "إبراهيم عليه السلام", correct: false },
+      { text: "موسى عليه السلام", correct: false },
+      { text: "نوح عليه السلام", correct: false }
+    ]
+  },
+  {
+    question: "ما هي أطول سورة في القرآن؟",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "سورة آل عمران", correct: false },
+      { text: "سورة النساء", correct: false },
+      { text: "سورة يونس", correct: false },
+      { text: "سورة البقرة", correct: true }
+    ]
+  },
+  {
+    question: "ما اسم خازن النار في القرآن؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "مالك", correct: true },
+      { text: "ميكائيل", correct: false },
+      { text: "جبريل", correct: false },
+      { text: "إسرافيل", correct: false }
+    ]
+  },
+  {
+    question: "من هو الصحابي الذي لقبه النبي ﷺ بـ ذو النورين؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "عمر بن الخطاب", correct: false },
+      { text: "علي بن أبي طالب", correct: false },
+      { text: "عثمان بن عفان", correct: true },
+      { text: "سعد بن أبي وقاص", correct: false }
+    ]
+  },
+  {
+    question: "ما السورة التي تُعرف باسم سورة العهد؟",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "المائدة", correct: true },
+      { text: "النساء", correct: false },
+      { text: "آل عمران", correct: false },
+      { text: "يوسف", correct: false }
+    ]
+  },
+  {
+    question: "من هو الصحابي الذي اهتز لموته عرش الرحمن؟",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "حمزة بن عبد المطلب", correct: false },
+      { text: "سعد بن معاذ", correct: true },
+      { text: "مصعب بن عمير", correct: false },
+      { text: "جعفر بن أبي طالب", correct: false }
+    ]
+  },
+  {
+    question: "من هو الصحابي الذي جمع القرآن بعد وفاة النبي ﷺ؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "عمر بن الخطاب", correct: false },
+      { text: "أبو بكر الصديق", correct: true },
+      { text: "عثمان بن عفان", correct: false },
+      { text: "علي بن أبي طالب", correct: false }
+    ]
+  },
+  {
+    question: "من هو الصحابي الملقب بترجمان القرآن؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "عبد الله بن عمر", correct: false },
+      { text: "عبد الله بن عباس", correct: true },
+      { text: "زيد بن ثابت", correct: false },
+      { text: "أبيّ بن كعب", correct: false }
+    ]
+  },
+  {
+    question: "من هو أول سفير في الإسلام؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "عبد الله بن رواحة", correct: false },
+      { text: "مصعب بن عمير", correct: true },
+      { text: "معاذ بن جبل", correct: false },
+      { text: "عثمان بن عفان", correct: false }
+    ]
+  },
+  {
+    question: "ما آخر سورة نزلت كاملة على النبي ﷺ؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "النصر", correct: true },
+      { text: "البقرة", correct: false },
+      { text: "الكوثر", correct: false },
+      { text: "يس", correct: false }
+    ]
+  },
+  {
+    question: "من هو الصحابي الذي أشار بحفر الخندق؟",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "سلمان الفارسي", correct: true },
+      { text: "أبو بكر الصديق", correct: false },
+      { text: "عمر بن الخطاب", correct: false },
+      { text: "سعد بن أبي وقاص", correct: false }
+    ]
+  },
+  {
+    question: "من قتل مسيلمة الكذاب؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "وحشيّ بن حرب", correct: true },
+      { text: "خالد بن الوليد", correct: false },
+      { text: "البراء بن مالك", correct: false },
+      { text: "أبو دجانة", correct: false }
+    ]
+  },
+  {
+    question: "من آخر من مات من العشرة المبشرين بالجنة؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "سعد بن أبي وقاص", correct: true },
+      { text: "طلحة بن عبيد الله", correct: false },
+      { text: "علي بن أبي طالب", correct: false },
+      { text: "عبد الرحمن بن عوف", correct: false }
+    ]
+  },
+  {
+    question: "ما هي السورة التي لا تبدأ بالبسملة؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "الفاتحة", correct: false },
+      { text: "البقرة", correct: false },
+      { text: "التوبة", correct: true },
+      { text: "آل عمران", correct: false }
+    ]
+  },
+  {
+    question: "أي سورة نزلت كاملةً في ليلة واحدة؟",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "سورة الفاتحة", correct: false },
+      { text: "سورة القدر", correct: true },
+      { text: "سورة النصر", correct: false },
+      { text: "سورة المدثر", correct: false }
+    ]
+  },
+  {
+    question: "من هو الصحابي المعروف بحبر الأمة؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "أبي بكر الصديق", correct: false },
+      { text: "أبو هريرة", correct: false },
+      { text: "عبد الله بن عباس", correct: true },
+      { text: "زيد بن حارثة", correct: false }
+    ]
+  },
+  {
+    question: "ما اسم أول مسجد بني في الإسلام؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "المسجد النبوي", correct: false },
+      { text: "المسجد الحرام", correct: false },
+      { text: "مسجد قباء", correct: true },
+      { text: "المسجد الأقصى", correct: false }
+    ]
+  },
+  {
+    question: "من هو النبي الذي كلمه الله مباشرةً وفق القرآن؟",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "موسى عليه السلام", correct: true },
+      { text: "إبراهيم عليه السلام", correct: false },
+      { text: "نوح عليه السلام", correct: false },
+      { text: "يونس عليه السلام", correct: false }
+    ]
+  }
+],
     
-    ],
-    
-  5: [
-    
-    {question:"في أنمي ناروتو، ما اسم القرية المخفية التي ينتمي إليها ناروتو؟", basePoints:40, answers:[
-    {text:"كونوها", correct:true},
-    {text:"سونا", correct:false},
-    {text:"كيرا", correct:false},
-    {text:"أكاتسوكي", correct:false}
-  ]},
-  {question:"في أنمي هجوم العمالقة، من هو قائد فرقة الاستطلاع؟", basePoints:60, answers:[
-
-    {text:"إرين", correct:false},
-    {text:"ليفاي", correct:true},
-    {text:"هانجي", correct:false},
-    {text:"ريتز", correct:false}
-  ]},
-  {question:"في ون بيس، ما اسم فاكهة لوفي الشيطانية؟", basePoints:120, answers:[
-    {text:"ميرا ميرا نو مي", correct:false},
-    {text:"هيتو هيتو نو مي", correct:false},
-    {text:"أوبي أوب نو مي", correct:false},
-    {text:"جومو جومو نو مي", correct:true}
-    
-  ]},
-  {question:"في دراغون بول، ما اسم التقنية التي يستخدمها غوكو لتقوية قوته مؤقتًا؟", basePoints:60, answers:[
-    {text:"كايوجين", correct:false},
-    {text:"غينبو", correct:false},
-    {text:"كايوكين", correct:true},
-    {text:"جيندو", correct:false}
-  ]},
-  {question:"في أنمي بليتش، ما اسم السيف الخاص بإيتشيغو؟", basePoints:100, answers:[
-    {text:"زانباكو", correct:true},
-    {text:"تينسا زانغيتسو", correct:false},
-    {text:"كينشي", correct:false},
-    {text:"شوسوي", correct:false}
-  ]},
-  {question:"في هانتر × هانتر، ما نوع النين الخاصة بجون؟", basePoints:85, answers:[
-    {text:"كين", correct:false},
-    {text:"هولو", correct:false},
-    {text:"رين", correct:true},
-    {text:"باجو", correct:false}
-  ]},
-  {question:"في أنمي دراغون بول، ما اسم التقنية النهائية لفريزا قبل تحوله الأخير؟", basePoints:100, answers:[
-    {text:"سوبر فريزا", correct:false},
-    {text:"ألتيميت فريزا", correct:false},
-    {text:"ترانسفورم ذهبية", correct:true},
-    {text:"فريزا سايان", correct:false}
-  ]},
-  {question:"في ون بيس، ما اسم الجزيرة التي وُلد عليها مونكي دي لوفي؟", basePoints:150, answers:[
-    {text:"جزيرة الفاكهة", correct:false},
-    {text:"فوجوآ", correct:false},
-    {text:"جزيرة غويندورا", correct:false},
-    {text:"جزيرة الشمس", correct:true}
-  ]},
-  {question:"في أنمي أكاديميا بطلي ، ما اسم الشخصية التي لديه قوة التفجير؟", basePoints:80, answers:[
-    {text:"إيزيكورا", correct:false},
-    {text:"بومراست", correct:true},
-    {text:"ميودورا", correct:false},
-    {text:"تودوروكي", correct:false}
-  ]},
-  {question:"في أنمي ون بيس، من هو ملك القراصنة السابق؟", basePoints:40, answers:[
-    {text:"شانكس", correct:false},
-    {text:"دوفي", correct:false},
-    {text:"كايدو", correct:false},
-    {text:"روجر", correct:true}
-    
-  ]},
-  {question:"في دراغون بول، من هو أول شخص الذي تحول إلى سوبر سايان حاكم", basePoints:90, answers:[
-    {text:"غوكو", correct:true},
-    {text:"فيجيتا", correct:false},
-    {text:"جوهان", correct:false},
-    {text:"برولي", correct:false}
-  ]},
-  {question:"في أنمي ناروتو، ما اسم الفريق الذي كان يتألف من ناروتو وساسكي وساكورا؟", basePoints:100, answers:[
-    {text:"الفريق العاشر", correct:false},
-    {text:"فريق هاتاكي", correct:false},
-    {text:"الفريق السابع", correct:true},
-    {text:"فريق كاكاشي", correct:false}
-  ]},
-  {question:"في هجوم العمالقة، ما اسم العمالقة الذين يستطيعون التحكم بهم البشر؟", basePoints:130, answers:[
-    {text:"العمالقة المصلّحين", correct:false},
-    {text:"العمالقة القابضون", correct:true},
-    {text:"العمالقة الأحرار", correct:false},
-    {text:"العمالقة الضخمة", correct:false}
-  ]},
- {question:"في بلاك كلوفر، ما اسم الفصيلة التي ينتمي إليها أستا؟", basePoints:90, answers:[
-    {text:"فصيلة الفتاة السوداء", correct:false},
-    {text:"فصيلة السحر الأسود", correct:true},
-    {text:"فصيلة الفرسان الذهبية", correct:false},
-    {text:"فصيلة الطيف", correct:false}
-  ]},
-  {question:"في بليتش، من هو قائد فرقة 13؟", basePoints:200, answers:[
-    {text:"جويارا", correct:true},
-    {text:"إيتشيغو", correct:false},
-    {text:"كينشي", correct:false},
-    {text:"غينجو", correct:false}
-  ]},
-  {question:"في دراغون بول، ما اسم والد غوكو البيولوجي؟", basePoints:85, answers:[
-    {text:"بارادوك", correct:true},
-    {text:"راديتز", correct:false},
-    {text:"بيكولو", correct:false},
-    {text:"كيامو", correct:false}
-  ]},
-  {question:"في أنمي أكاديميا بطلي ، ما اسم الطالب الذي يستطيع التحكم بالنار والجليد؟", basePoints:100, answers:[
-    {text:"ميدوريا", correct:false},
-    {text:"أولوما", correct:false},
-    {text:"كيورا", correct:false},
-    {text:"تودوروكي", correct:true}
-    
-  ]},
-  {question:"في هانتر × هانتر، ما اسم صديق كورابيكا المقرب؟", basePoints:75, answers:[
-    {text:"ليون", correct:false},
-    {text:"كونيغا", correct:false},
-    {text:"هيسوكا", correct:false},
-    {text:"لا يملك", correct:true}
-    
-  ]},
-  {question:"في أنمي ديث نوت ، ما اسم المحقق الذي يحاول القبض على كيرا؟", basePoints:60, answers:[
-    {text:"إل", correct:true},
-    {text:"ميتسو", correct:false},
-    {text:"ريو", correct:false},
-    {text:"لايت", correct:false}
-  ]},
-  {question:"في أنمي ون بيس، من هو أقوى رجل في العالم؟", basePoints:140, answers:[
-    {text:"كايدو", correct:true},
-    {text:"لوفي", correct:false},
-    {text:"دوفي", correct:false},
-    {text:"شانكس", correct:false}
-  ]},
-  {question:"في هجوم العمالقة، من هو العملاق الذي ابتلع والدة إرين؟", basePoints:220, answers:[
-    {text:"العملاق الضخم", correct:true},
-    {text:"العملاق المصلح", correct:false},
-    {text:"العملاق المبتلع", correct:false},
-    {text:"العملاق القوي", correct:false}
-  ]}
+  5:[
+  {
+    question: "في أنمي ناروتو، ما اسم القرية المخفية التي ينتمي إليها ناروتو؟",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "كونوها", correct: true },
+      { text: "سونا", correct: false },
+      { text: "كيرا", correct: false },
+      { text: "أكاتسوكي", correct: false }
+    ]
+  },
+  {
+    question: "في أنمي هجوم العمالقة، من هو قائد فرقة الاستطلاع؟",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "إرين", correct: false },
+      { text: "ليفاي", correct: true },
+      { text: "هانجي", correct: false },
+      { text: "ريتز", correct: false }
+    ]
+  },
+  {
+    question: "في ون بيس، ما اسم فاكهة لوفي الشيطانية؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "ميرا ميرا نو مي", correct: false },
+      { text: "هيتو هيتو نو مي", correct: false },
+      { text: "أوبي أوب نو مي", correct: false },
+      { text: "جومو جومو نو مي", correct: true }
+    ]
+  },
+  {
+    question: "في دراغون بول، ما اسم التقنية التي يستخدمها غوكو لتقوية قوته مؤقتًا؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "كايوجين", correct: false },
+      { text: "غينبو", correct: false },
+      { text: "كايوكين", correct: true },
+      { text: "جيندو", correct: false }
+    ]
+  },
+  {
+    question: "في أنمي بليتش، ما اسم السيف الخاص بإيتشيغو؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "زانباكو", correct: true },
+      { text: "تينسا زانغيتسو", correct: false },
+      { text: "كينشي", correct: false },
+      { text: "شوسوي", correct: false }
+    ]
+  },
+  {
+    question: "في هانتر × هانتر، ما نوع النين الخاصة بجون؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "كين", correct: false },
+      { text: "هولو", correct: false },
+      { text: "رين", correct: true },
+      { text: "باجو", correct: false }
+    ]
+  },
+  {
+    question: "في أنمي دراغون بول، ما اسم التقنية النهائية لفريزا قبل تحوله الأخير؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "سوبر فريزا", correct: false },
+      { text: "ألتيميت فريزا", correct: false },
+      { text: "ترانسفورم ذهبية", correct: true },
+      { text: "فريزا سايان", correct: false }
+    ]
+  },
+  {
+    question: "في ون بيس، ما اسم الجزيرة التي وُلد عليها مونكي دي لوفي؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "جزيرة الفاكهة", correct: false },
+      { text: "فوجوآ", correct: false },
+      { text: "جزيرة غويندورا", correct: false },
+      { text: "جزيرة الشمس", correct: true }
+    ]
+  },
+  {
+    question: "في أنمي أكاديميا بطلي، ما اسم الشخصية التي لديه قوة التفجير؟",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "إيزيكورا", correct: false },
+      { text: "بومراست", correct: true },
+      { text: "ميودورا", correct: false },
+      { text: "تودوروكي", correct: false }
+    ]
+  },
+  {
+    question: "في أنمي ون بيس، من هو ملك القراصنة السابق؟",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "شانكس", correct: false },
+      { text: "دوفي", correct: false },
+      { text: "كايدو", correct: false },
+      { text: "روجر", correct: true }
+    ]
+  },
+  {
+    question: "في دراغون بول، من هو أول شخص الذي تحول إلى سوبر سايان حاكم",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "غوكو", correct: true },
+      { text: "فيجيتا", correct: false },
+      { text: "جوهان", correct: false },
+      { text: "برولي", correct: false }
+    ]
+  },
+  {
+    question: "في أنمي ناروتو، ما اسم الفريق الذي كان يتألف من ناروتو وساسكي وساكورا؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "الفريق العاشر", correct: false },
+      { text: "فريق هاتاكي", correct: false },
+      { text: "الفريق السابع", correct: true },
+      { text: "فريق كاكاشي", correct: false }
+    ]
+  },
+  {
+    question: "في هجوم العمالقة، ما اسم العمالقة الذين يستطيعون التحكم بهم البشر؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "العمالقة المصلّحين", correct: false },
+      { text: "العمالقة القابضون", correct: true },
+      { text: "العمالقة الأحرار", correct: false },
+      { text: "العمالقة الضخمة", correct: false }
+    ]
+  },
+  {
+    question: "في بلاك كلوفر، ما اسم الفصيلة التي ينتمي إليها أستا؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "فصيلة الفتاة السوداء", correct: false },
+      { text: "فصيلة السحر الأسود", correct: true },
+      { text: "فصيلة الفرسان الذهبية", correct: false },
+      { text: "فصيلة الطيف", correct: false }
+    ]
+  },
+  {
+    question: "في بليتش، من هو قائد فرقة 13؟",
+    basePoints: 10,
+    difficulty: "Hard",
+    answers: [
+      { text: "جويارا", correct: true },
+      { text: "إيتشيغو", correct: false },
+      { text: "كينشي", correct: false },
+      { text: "غينجو", correct: false }
+    ]
+  },
+  {
+    question: "في دراغون بول، ما اسم والد غوكو البيولوجي؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "بارادوك", correct: true },
+      { text: "راديتز", correct: false },
+      { text: "بيكولو", correct: false },
+      { text: "كيامو", correct: false }
+    ]
+  },
+  {
+    question: "في أنمي أكاديميا بطلي، ما اسم الطالب الذي يستطيع التحكم بالنار والجليد؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "ميدوريا", correct: false },
+      { text: "أولوما", correct: false },
+      { text: "كيورا", correct: false },
+      { text: "تودوروكي", correct: true }
+    ]
+  },
+  {
+    question: "في هانتر × هانتر، ما اسم صديق كورابيكا المقرب؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "ليون", correct: false },
+      { text: "كونيغا", correct: false },
+      { text: "هيسوكا", correct: false },
+      { text: "لا يملك", correct: true }
+    ]
+  },
+  {
+    question: "في أنمي ديث نوت، ما اسم المحقق الذي يحاول القبض على كيرا؟",
+    basePoints: 10,
+    difficulty: "easy",
+    answers: [
+      { text: "إل", correct: true },
+      { text: "ميتسو", correct: false },
+      { text: "ريو", correct: false },
+      { text: "لايت", correct: false }
+    ]
+  },
+  {
+    question: "في أنمي ون بيس، من هو أقوى رجل في العالم؟",
+    basePoints: 10,
+    difficulty: "medium",
+    answers: [
+      { text: "كايدو", correct: true },
+      { text: "لوفي", correct: false },
+      { text: "دوفي", correct: false },
+      { text: "شانكس", correct: false }
+    ]
+  },
+  {
+    question: "في هجوم العمالقة، من هو العملاق الذي ابتلع والدة إرين؟",
+    basePoints: 10,
+    difficulty: "insane",
+    answers: [
+      { text: "العملاق الضخم", correct: true },
+      { text: "العملاق المصلح", correct: false },
+      { text: "العملاق المبتلع", correct: false },
+      { text: "العملاق القوي", correct: false }
+    ]
+  }
 ],
 
   6: [
@@ -2171,7 +2725,7 @@ const quizData = {
     {text:"النعامة", correct:false},
     {text:"الحمامة", correct:false}
   ]},
-  {question:"ما هي عاصمة أيسلندا؟", basePoints:60, answers:[
+  {question:"ما هي عاصمة أيسلندا؟", basePoints:60,difficulty: "medium",answers:[
     {text:"ريكيافيك", correct:true},
     {text:"أوسلو", correct:false},
     {text:"ستوكهولم", correct:false},
@@ -2427,7 +2981,7 @@ const quizData = {
 const DIFFICULTY_SETTINGS = {
   easy:   { multiplier: 1,   reduction: 0.05 },
   medium: { multiplier: 1.5, reduction: 0.08 },
-  hard:   { multiplier: 2,   reduction: 0.12 },
+  Hard:   { multiplier: 2,   reduction: 0.12 },
   insane: { multiplier: 3,   reduction: 0.15 }
 };
 
@@ -2492,22 +3046,28 @@ function startQuiz(level){
 }
 
 /* ===== SHOW QUESTION ===== */
-function showQuestion(){
+function showQuestion() {
   const container = document.getElementById("quizContainer");
   const q = currentQuiz[currentQuestionIndex];
 
   timeLeft = categoryTime;
   timeLeftStart = categoryTime;
 
+  // مجموع النقاط للأسئلة اللي جاوبتها فقط (قبل السؤال الحالي)
+  const totalPointsAnswered = currentQuiz
+    .filter(q => q.answered)
+    .reduce((sum, q) => sum + q.basePoints, 0);
+
   container.innerHTML = `
+    <div style="text-align:left; font-weight:bold; font-size:16px; margin-bottom:5px;">
+      Question ${currentQuestionIndex + 1} / ${currentQuiz.length}
+    </div>
     <div class="combo-text">Combo x${combo}</div>
     <div class="timer-bar" id="timerBar"></div>
     <h3 class="fade-in">${q.question}</h3>
     <div id="answers"></div>
     <div id="scoreCircle">
-      <span id="scoreText">${score} / ${currentQuiz
-        .slice(0, currentQuestionIndex + 1)
-        .reduce((sum, q) => sum + q.basePoints, 0)}</span>
+      <span id="scoreText">${score} / ${totalPointsAnswered + q.basePoints}</span>
     </div>
     <br>
   `;
@@ -2517,7 +3077,7 @@ function showQuestion(){
   const answersDiv = document.getElementById("answers");
   const shuffledAnswers = shuffle(q.answers);
 
-  shuffledAnswers.forEach((ans, i) => {
+  shuffledAnswers.forEach((ans) => {
     const btn = document.createElement("div");
     btn.className = "btn fade-in";
     btn.style.display = "block";
@@ -2525,17 +3085,23 @@ function showQuestion(){
     btn.innerText = ans.text;
 
     btn.onclick = () => {
-      if(btn.classList.contains("answered")) return;
+      if (btn.classList.contains("answered")) return;
 
       answeredQuestions++;
       document.querySelectorAll("#answers .btn").forEach(b => b.classList.add("answered"));
       q.answered = true;
+
+      shuffledAnswers.forEach(a => a.selected = false);
+      ans.selected = true;
+
       clearInterval(timer);
 
-      if(ans.correct){
+      if (ans.correct) {
         correctSound.play();
         correctAnswers++;
         combo++;
+        if (combo > maxCombo) maxCombo = combo;
+
         score += calculateBonus(q);
         btn.style.background = "green";
       } else {
@@ -2543,20 +3109,22 @@ function showQuestion(){
         combo = 0;
         btn.style.background = "red";
         btn.classList.add("shake");
-        shuffledAnswers.forEach((a,j)=>{
-          if(a.correct){
-            document.querySelectorAll("#answers .btn")[j].style.background="green";
+
+        shuffledAnswers.forEach((a, j) => {
+          if (a.correct) {
+            document.querySelectorAll("#answers .btn")[j].style.background = "green";
           }
         });
       }
 
-      const answeredQuestionsList = currentQuiz.slice(0, currentQuestionIndex + 1)
-        .filter((q, idx) => document.querySelectorAll("#answers .btn")[idx]?.classList.contains("answered"));
-      const maxPointsAnswered = answeredQuestionsList.reduce((sum, q) => sum + q.basePoints, 0);
-      document.getElementById("scoreText").innerText = `${score} / ${maxPointsAnswered}`;
+      // ✅ تحديث النقاط حسب جميع الأسئلة اللي جاوبتها فعليًا
+      const totalPointsAnsweredNow = currentQuiz
+        .filter(q => q.answered)
+        .reduce((sum, q) => sum + q.basePoints, 0);
+      document.getElementById("scoreText").innerText = `${score} / ${totalPointsAnsweredNow}`;
 
       setTimeout(() => {
-        if(currentQuestionIndex < currentQuiz.length-1){
+        if (currentQuestionIndex < currentQuiz.length - 1) {
           currentQuestionIndex++;
           showQuestion();
         } else {
@@ -2568,7 +3136,6 @@ function showQuestion(){
     answersDiv.appendChild(btn);
   });
 }
-
 /* ===== TIMER ===== */
 function startTimer(){
   clearInterval(timer);
@@ -2615,29 +3182,31 @@ function getComboMultiplier(){
 
 /* ===== CALCULATE BONUS ===== */
 function calculateBonus(q){
-  const diff = DIFFICULTY_SETTINGS[q.difficulty] || DIFFICULTY_SETTINGS.easy;
-  let base = q.basePoints * diff.multiplier;
+ const diff = DIFFICULTY_SETTINGS[q.difficulty.toLowerCase()] 
+          || DIFFICULTY_SETTINGS[q.difficulty] 
+          || DIFFICULTY_SETTINGS.easy;
+ let base = q.basePoints * diff.multiplier;
 
-  let halfTime = timeLeftStart / 2;
-  let perfectThreshold = timeLeftStart * 0.75;
+ let halfTime = timeLeftStart / 2;
+ let perfectThreshold = timeLeftStart * 0.75;
 
-  if (timeLeft >= perfectThreshold){
-    base *= 1.25;
-  }
+ if (timeLeft >= perfectThreshold){
+   base *= 1.25;
+ }
 
-  if (timeLeft >= halfTime){
-    base = Math.min(base * getComboMultiplier(), q.basePoints);
-    return Math.round(base);
-  }
+ if (timeLeft >= halfTime){
+   base = Math.min(base * getComboMultiplier(), q.basePoints);
+   return Math.round(base);
+ }
 
-  let secondsAfterHalf = halfTime - timeLeft;
-  let reductionPercent = secondsAfterHalf * diff.reduction;
-  reductionPercent = Math.min(reductionPercent, 0.5);
+ let secondsAfterHalf = halfTime - timeLeft;
+ let reductionPercent = secondsAfterHalf * diff.reduction;
+ reductionPercent = Math.min(reductionPercent, 0.5);
 
-  let finalPoints = base * (1 - reductionPercent);
-  finalPoints = Math.min(finalPoints * getComboMultiplier(), q.basePoints);
+ let finalPoints = base * (1 - reductionPercent);
+ finalPoints = Math.min(finalPoints * getComboMultiplier(), q.basePoints);
 
-  return Math.round(finalPoints);
+ return Math.round(finalPoints);
 }
 
 
@@ -2653,57 +3222,53 @@ function getRank(percent){
   if(percent >= 50) return "D <br> &nbsp; &nbsp; Try Harder ⚠️";
   return "F <br> &nbsp; &nbsp; Try Again ❌";
 }
-function goHome(){
-  clearInterval(timer);  // يوقف أي تايمر شغال
-  resetQuiz();           // يفرغ كل المتغيرات
-
-  homeSection.style.display = 'block';
-  categoriesSection.style.display = 'none';
-  quizSection.style.display = 'none';
-  puzzleMenuSection.style.display = 'none';
-}
-
-function showResult(){
+/* ===== RESULT & RANK ===== */
+function showResult() {
   document.getElementById("finishBtn").style.display = "none";
 
-  const pointsSoFar = score;
-  const totalPointsSoFar = currentQuiz.filter(q => q.answered)
+  // مجموع النقاط للأسئلة التي تم الإجابة عليها فقط
+  const totalPointsAnswered = currentQuiz
+    .filter(q => q.answered)
     .reduce((sum, q) => sum + q.basePoints, 0);
 
-  let percent = 0;
-  if(totalPointsSoFar > 0){
-    percent = Math.round((pointsSoFar / totalPointsSoFar) * 100);
-    percent = Math.min(percent, 100);
-  }
+  // حساب النسبة بناءً على النقاط الفعلية ÷ مجموع نقاط الأسئلة المجاب عليها
+  const percent = totalPointsAnswered > 0 ? Math.round((score / totalPointsAnswered) * 100) : 0;
 
   document.getElementById("quizContainer").innerHTML = `
-    <div style="background:#111; padding:30px; border-radius:20px; text-align:center; box-shadow:0 0 30px #00f2ff; animation:fadeIn 0.5s;">
+    <div style="background:#111; padding:30px; border-radius:20px; text-align:center; 
+                box-shadow:0 0 30px #00f2ff; animation:fadeIn 0.5s;">
       <h2 style="color:#00f2ff">Quiz Finished!</h2>
       <h2 style="color:#FFD873">${getRank(percent)}</h2>
       <p style="margin-top:15px;font-size:18px;">
-        You scored <span style="color:#FFD873">${pointsSoFar}</span> points
+        You scored <span style="color:#FFD873">${score}</span> points
       </p>
-      <p>
-        Out of <span style="color:#FFD873">${totalPointsSoFar}</span> possible points
+      <p style="margin-top:10px;font-size:18px;">
+        Highest Combo: <span style="color:#FFD873">${maxCombo}</span>
       </p>
       <h3 style="margin-top:20px;color:#00ff88;">
         ${percent}% Accuracy
       </h3>
       <div style="margin-top:25px;">
         <a class="btn" onclick="restartQuiz()">Restart</a>
-        
       </div>
     </div>
   `;
 
   winSound.play();
 }
+/* ===== HOME SECTION SAFE INIT ===== */
+let homeSection = null;
+let originalHomeHTML = "";
 
-const homeSection = document.getElementById('home');
+document.addEventListener("DOMContentLoaded", function () {
+  homeSection = document.getElementById("home");
 
-
-
-const originalHomeHTML = homeSection.innerHTML;
+  if (homeSection) {
+    originalHomeHTML = homeSection.innerHTML;
+  } else {
+    console.warn("Element with id='home' not found");
+  }
+});
 
 /* ===== FINISH / RESTART / RESET ===== */
 function finishQuiz(){
@@ -2714,6 +3279,7 @@ function finishQuiz(){
 function restartQuiz(){
   score = 0;
   combo = 0;
+  maxCombo = 0; // 🔥 رجع أعلى كومبو للصفر
   correctAnswers = 0;
   answeredQuestions = 0;
   currentQuestionIndex = 0;
