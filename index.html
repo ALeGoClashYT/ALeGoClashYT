@@ -496,7 +496,7 @@ body * {
   position: fixed;
   color: #00ff99;
   font-weight: bold;
-  font-size: 22px;
+  font-size: 20px;
   pointer-events: none;
   animation: comboUp 0.8s ease-out forwards;
 }
@@ -507,11 +507,139 @@ body * {
     transform: translateY(0) scale(1);
   }
   50% {
-    transform: translateY(-20px) scale(1.2);
+    transform: translate(50%,-20px) scale(1.3);
   }
   100% {
     opacity: 0;
-    transform: translateY(-50px) scale(1);
+    transform: translate(50%,-50px) scale(1);
+  }
+}
+
+.auth-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.auth-box{
+  background:#111;
+  padding:30px;
+  border-radius:12px;
+  width:300px;
+  text-align:center;
+  box-shadow:0 0 20px #00f2ff;
+}
+
+.auth-box input{
+  width:100%;
+  margin:10px 0;
+  padding:10px;
+  border:none;
+  border-radius:6px;
+}
+
+.auth-box button{
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  background:#00f2ff;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.close-auth{
+  position:absolute;
+  right:20px;
+  top:15px;
+  cursor:pointer;
+  font-size:22px;
+}
+
+.combo-text {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.combo-side-bonus {
+  margin-left: 8px;
+  color: #FFD873;
+  font-weight: 900;
+  animation: comboPop 0.9s ease-out forwards;
+}
+
+@keyframes comboPop {
+  0% {
+    opacity: 0;
+    transform: translateY(5px) scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-15px) scale(1);
+  }
+}
+
+.combo-floating {
+  position: fixed;
+  color: #FFD873;
+  font-weight: 900;
+  font-size: 18px;
+  pointer-events: none;
+  animation: comboFloatUp 0.9s ease-out forwards;
+  text-shadow: 0 0 8px #FFD873;
+}
+
+@keyframes comboFloatUp {
+  0% {
+    opacity: 0;
+    transform: translateY(5px) scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px) scale(1);
+  }
+}
+.combo-popup-bonus {
+  position: fixed;
+  transform: translateX(-50%);
+  color: #FFD873;
+  font-weight: 900;
+  font-size: 20px;
+  pointer-events: none;
+  animation: comboFloat2 0.8s ease-out forwards;
+  text-shadow: 0 0 20px #FFD873;
+}
+
+@keyframes comboFloat2 {
+  0% {
+    opacity: 0;
+    transform: translate(-600%, 10px) scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: translate(-550%, -10px) scale(1.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-500%, -50px) scale(1);
   }
 }
 
@@ -529,6 +657,8 @@ body * {
     <div class="logo">ALeGoClash YT</div>
     <img  src="AG-logo.png" alt="Logo" loading="lazy">
   </div>
+  <li id="myAccountBtn">My Account</li>
+  
   <div class="nav-right">
     <ul id="menu">
       <li data-section="home"><a>Home</a></li>
@@ -713,6 +843,41 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
 <script src="https://www.youtube.com/iframe_api"></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDHa6ehG1vQoodbxNDfJuEN0UUg2Ymv-1s",
+  authDomain: "alegoclashyt.firebaseapp.com",
+  databaseURL: "https://alegoclashyt-default-rtdb.firebaseio.com",
+  projectId: "alegoclashyt",
+  storageBucket: "alegoclashyt.firebasestorage.app",
+  messagingSenderId: "199878543888",
+  appId: "1:199878543888:web:1d964fa5a1830111925895",
+  measurementId: "G-15ZKJXPSWS"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.db = db;
+window.auth = auth;
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    window.firebaseUser = user;
+    console.log("Logged in:", user.email);
+  } else {
+    window.firebaseUser = null;
+    console.log("No user");
+  }
+});
+</script>
+
 
 <script>
 AOS.init();
@@ -1138,7 +1303,7 @@ const quizData = {
   1:[
   {
     question: "In One Piece, what is Luffy's Devil Fruit?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "Gomu Gomu no Mi", correct: true },
@@ -1149,7 +1314,7 @@ const quizData = {
   },
   {
     question: "Who killed Hisoka in Hunter x Hunter?",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "Gon", correct: false },
@@ -1160,7 +1325,7 @@ const quizData = {
   },
   {
     question: "What is the name of the first sword Zoro uses in One Piece?",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "Wado Ichimonji", correct: true },
@@ -1171,7 +1336,7 @@ const quizData = {
   },
   {
     question: "In Death Note, who is the second Kira?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "Light Yagami", correct: false },
@@ -1204,7 +1369,7 @@ const quizData = {
   },
   {
     question: "In Attack on Titan, what is the original name of the Founding Titan?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "Eren Jaeger", correct: false },
@@ -1226,7 +1391,7 @@ const quizData = {
   },
   {
   question: "What is Gohan's ultimate form called?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "Ultimate Gohan", correct: true },
@@ -1248,7 +1413,7 @@ const quizData = {
   },
   {
     question: "Who is the main antagonist in Naruto Shippuden?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "Madara Uchiha", correct: true },
@@ -1259,7 +1424,7 @@ const quizData = {
   },
   {
     question: "What is the name of the Hokage before Naruto?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "Tsunade", correct: true },
@@ -1270,7 +1435,7 @@ const quizData = {
   },
   {
     question: "In Dragon Ball, who first kills Frieza?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "Goku", correct: false },
@@ -1281,7 +1446,7 @@ const quizData = {
   },
   {
     question: "In One Punch Man, what is Saitama's hero name?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "Caped Bald", correct: true },
@@ -1314,7 +1479,7 @@ const quizData = {
   },
   {
     question: "Who was the first Titan Eren fought?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "Armored Titan", correct: false },
@@ -1325,7 +1490,7 @@ const quizData = {
   },
   {
     question: "In Attack on Titan, what is Levi known for?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "Cooking abilities", correct: false },
@@ -1336,7 +1501,7 @@ const quizData = {
   },
   {
     question: "Which anime features the Phantom Troupe?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "Naruto", correct: false },
@@ -1358,7 +1523,7 @@ const quizData = {
   },
   {
     question: "Who trained Luffy to use Haki?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "Rayleigh", correct: true },
@@ -1369,7 +1534,7 @@ const quizData = {
   },
   {
     question: "What is the name of Naruto's father?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "Kakashi Hatake", correct: false },
@@ -1380,7 +1545,7 @@ const quizData = {
   },
   {
     question: "Who is the strongest Saiyan?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "Goku", correct: true },
@@ -1391,7 +1556,7 @@ const quizData = {
   },
   {
     question: "In Attack on Titan, who is revealed to have the Coordinate power besides Eren?",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "Historia Reiss", correct: false },
@@ -1402,7 +1567,7 @@ const quizData = {
   },
   {
     question: "In Naruto, who is the first Jinchūriki of the Nine-Tails before Kushina?",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "Rin Nohara", correct: false },
@@ -1413,7 +1578,7 @@ const quizData = {
   },
   {
     question: "In Hunter x Hunter, what is the primary ability of Hisoka’s Bungee Gum?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "Generating illusions", correct: false },
@@ -1424,7 +1589,7 @@ const quizData = {
   },
   {
     question: "In One Piece, what is the real reason why Vegapunk created the Pacifista cyborgs?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "To experiment with Artificial Devil Fruits", correct: true },
@@ -1435,7 +1600,7 @@ const quizData = {
   },
   {
   question: "In Attack on Titan, what is the real reason Historia Reiss becomes queen?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "Hard",
   answers: [
     { text: "After overthrowing the fake royal government and revealing the truth", correct: true },
@@ -1446,7 +1611,7 @@ const quizData = {
 },
   {
     question: "In Code Geass, what is the power of Geass given to Lelouch?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "Mind reading", correct: false },
@@ -1490,112 +1655,112 @@ const quizData = {
   { text: "Shinigami Scroll", correct: false }
 ]},
 
-{ question: "Who is known as the 'Hero Killer' in My Hero Academia?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "Who is known as the 'Hero Killer' in My Hero Academia?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Stain", correct: true },
   { text: "Shigaraki", correct: false },
   { text: "Dabi", correct: false },
   { text: "Overhaul", correct: false }
 ]},
 
-{ question: "What breathing style does Zenitsu use?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "What breathing style does Zenitsu use?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Thunder Breathing", correct: true },
   { text: "Water Breathing", correct: false },
   { text: "Flame Breathing", correct: false },
   { text: "Wind Breathing", correct: false }
 ]},
 
-{ question: "What is Levi Ackerman's rank in Attack on Titan?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "What is Levi Ackerman's rank in Attack on Titan?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Captain", correct: true },
   { text: "Commander", correct: false },
   { text: "Lieutenant", correct: false },
   { text: "General", correct: false }
 ]},
 
-{ question: "Who trained Naruto during the time skip?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "Who trained Naruto during the time skip?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Jiraiya", correct: true },
   { text: "Kakashi", correct: false },
   { text: "Tsunade", correct: false },
   { text: "Orochimaru", correct: false }
 ]},
 
-{ question: "What is the name of Ichigo's sword in Bleach?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "What is the name of Ichigo's sword in Bleach?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Zangetsu", correct: true },
   { text: "Senbonzakura", correct: false },
   { text: "Ryujin Jakka", correct: false },
   { text: "Nozarashi", correct: false }
 ]},
 
-{ question: "Who is the Flame Hashira?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "Who is the Flame Hashira?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Kyojuro Rengoku", correct: true },
   { text: "Tengen Uzui", correct: false },
   { text: "Sanemi Shinazugawa", correct: false },
   { text: "Muichiro Tokito", correct: false }
 ]},
 
-{ question: "What is L's real name in Death Note?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "What is L's real name in Death Note?", basePoints: 20, difficulty: "hard", answers: [
   { text: "L Lawliet", correct: true },
   { text: "Light Yagami", correct: false },
   { text: "Near", correct: false },
   { text: "Mello", correct: false }
 ]},
 
-{ question: "Who is the founding titan before Eren?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "Who is the founding titan before Eren?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Frieda Reiss", correct: true },
   { text: "Ymir Fritz", correct: false },
   { text: "Grisha Yeager", correct: false },
   { text: "Zeke Yeager", correct: false }
 ]},
 
-{ question: "What is the name of Gojo's domain expansion?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "What is the name of Gojo's domain expansion?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Unlimited Void", correct: true },
   { text: "Infinite Space", correct: false },
   { text: "Purple Realm", correct: false },
   { text: "Void Collapse", correct: false }
 ]},
 
-{ question: "Who defeated All Might?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "Who defeated All Might?", basePoints: 20, difficulty: "hard", answers: [
   { text: "All For One", correct: true },
   { text: "Shigaraki", correct: false },
   { text: "Endeavor", correct: false },
   { text: "Overhaul", correct: false }
 ]},
 
-{ question: "What is the true identity of Pain?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "What is the true identity of Pain?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Nagato", correct: true },
   { text: "Yahiko", correct: false },
   { text: "Obito", correct: false },
   { text: "Madara", correct: false }
 ]},
 
-{ question: "Who is the captain of the Black Bulls?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "Who is the captain of the Black Bulls?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Yami Sukehiro", correct: true },
   { text: "Julius Novachrono", correct: false },
   { text: "Fuegoleon", correct: false },
   { text: "Nozel Silva", correct: false }
 ]},
 
-{ question: "What is the name of the kingdom in Seven Deadly Sins?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "What is the name of the kingdom in Seven Deadly Sins?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Liones", correct: true },
   { text: "Camelot", correct: false },
   { text: "Britannia", correct: false },
   { text: "Valhalla", correct: false }
 ]},
 
-{ question: "Who is known as the strongest alchemist in Fullmetal Alchemist?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "Who is known as the strongest alchemist in Fullmetal Alchemist?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Father", correct: true },
   { text: "Roy Mustang", correct: false },
   { text: "Edward Elric", correct: false },
   { text: "Scar", correct: false }
 ]},
 
-{ question: "What is Killua's family name?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "What is Killua's family name?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Zoldyck", correct: true },
   { text: "Freecss", correct: false },
   { text: "Kurta", correct: false },
   { text: "Phantom", correct: false }
 ]},
 
-{ question: "Who is the captain of Squad 6 in Bleach?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "Who is the captain of Squad 6 in Bleach?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Byakuya Kuchiki", correct: true },
   { text: "Kenpachi Zaraki", correct: false },
   { text: "Toshiro Hitsugaya", correct: false },
@@ -1616,21 +1781,21 @@ const quizData = {
   { text: "Hiruzen Sarutobi", correct: false }
 ]},
 
-{ question: "Who is the leader of the Akatsuki?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "Who is the leader of the Akatsuki?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Nagato", correct: true },
   { text: "Itachi", correct: false },
   { text: "Obito", correct: false },
   { text: "Madara", correct: false }
 ]},
 
-{ question: "What is the name of Eren's half-brother?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "What is the name of Eren's half-brother?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Zeke Yeager", correct: true },
   { text: "Reiner Braun", correct: false },
   { text: "Falco Grice", correct: false },
   { text: "Porco Galliard", correct: false }
 ]},
 
-{ question: "What is Sukuna known as?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "What is Sukuna known as?", basePoints: 20, difficulty: "medium", answers: [
   { text: "King of Curses", correct: true },
   { text: "Demon King", correct: false },
   { text: "Curse Lord", correct: false },
@@ -1643,63 +1808,63 @@ const quizData = {
   { text: "Gelus", correct: false }
 ]},
 
-{ question: "Who is the main villain of Dragon Ball Super (Tournament of Power)?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "Who is the main villain of Dragon Ball Super (Tournament of Power)?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Jiren", correct: true },
   { text: "Beerus", correct: false },
   { text: "Zamasu", correct: false },
   { text: "Hit", correct: false }
 ]},
 
-{ question: "What is the name of the strongest Espada?", basePoints: 10, difficulty: "insane", answers: [
+{ question: "What is the name of the strongest Espada?", basePoints: 30, difficulty: "insane", answers: [
   { text: "Coyote Starrk", correct: true },
   { text: "Ulquiorra", correct: false },
   { text: "Grimmjow", correct: false },
   { text: "Barragan", correct: false }
 ]},
 
-{ question: "What is the true name of the Nine-Tails?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "What is the true name of the Nine-Tails?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Kurama", correct: true },
   { text: "Shukaku", correct: false },
   { text: "Matatabi", correct: false },
   { text: "Gyuki", correct: false }
 ]},
 
-{ question: "Who is the author of One Piece?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "Who is the author of One Piece?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Eiichiro Oda", correct: true },
   { text: "Masashi Kishimoto", correct: false },
   { text: "Tite Kubo", correct: false },
   { text: "Hajime Isayama", correct: false }
 ]},
 
-{ question: "What is the name of the demon king in Seven Deadly Sins?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "What is the name of the demon king in Seven Deadly Sins?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Demon King", correct: true },
   { text: "Chandler", correct: false },
   { text: "Zeldris", correct: false },
   { text: "Meliodas", correct: false }
 ]},
 
-{ question: "Who is Gon’s father?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "Who is Gon’s father?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Ging Freecss", correct: true },
   { text: "Silva Zoldyck", correct: false },
   { text: "Netero", correct: false },
   { text: "Chrollo", correct: false }
 ]},
 
-{ question: "What is the name of Erwin Smith’s successor?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "What is the name of Erwin Smith’s successor?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Armin Arlert", correct: true },
   { text: "Levi Ackerman", correct: false },
   { text: "Hange Zoe", correct: false },
   { text: "Jean Kirstein", correct: false }
 ]},
 
-{ question: "What is the name of the cursed spirit manipulator in Jujutsu Kaisen?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "What is the name of the cursed spirit manipulator in Jujutsu Kaisen?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Suguru Geto", correct: true },
   { text: "Mahito", correct: false },
   { text: "Nanami", correct: false },
   { text: "Toji", correct: false }
 ]},
 
-{ question: "Who is the captain of Squad 11?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "Who is the captain of Squad 11?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Kenpachi Zaraki", correct: true },
   { text: "Byakuya Kuchiki", correct: false },
   { text: "Shunsui Kyoraku", correct: false },
@@ -1713,7 +1878,7 @@ const quizData = {
   { text: "Ultimate Frieza", correct: false }
 ]},
 
-{ question: "Who sealed the Nine-Tails inside Naruto?", basePoints: 10, difficulty: "medium", answers: [
+{ question: "Who sealed the Nine-Tails inside Naruto?", basePoints: 20, difficulty: "medium", answers: [
   { text: "Minato Namikaze", correct: true },
   { text: "Hiruzen", correct: false },
   { text: "Jiraiya", correct: false },
@@ -1727,49 +1892,49 @@ const quizData = {
   { text: "Oracion Seis", correct: false }
 ]},
 
-{ question: "Who is the traitor in Attack on Titan (Season 2 reveal)?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "Who is the traitor in Attack on Titan (Season 2 reveal)?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Reiner Braun", correct: true },
   { text: "Jean", correct: false },
   { text: "Connie", correct: false },
   { text: "Sasha", correct: false }
 ]},
 
-{ question: "What is the name of the ultimate technique of Naruto and Sasuke together?", basePoints: 10, difficulty: "insane", answers: [
+{ question: "What is the name of the ultimate technique of Naruto and Sasuke together?", basePoints: 30, difficulty: "insane", answers: [
   { text: "Six Paths Chibaku Tensei", correct: true },
   { text: "Rasenshuriken Blaze", correct: false },
   { text: "Indra's Arrow", correct: false },
   { text: "Susanoo Kurama Mode", correct: false }
 ]},
 
-{ question: "Who is the strongest Hashira?", basePoints: 10, difficulty: "insane", answers: [
+{ question: "Who is the strongest Hashira?", basePoints: 30, difficulty: "insane", answers: [
   { text: "Gyomei Himejima", correct: true },
   { text: "Sanemi Shinazugawa", correct: false },
   { text: "Kyojuro Rengoku", correct: false },
   { text: "Tengen Uzui", correct: false }
 ]},
 
-{ question: "What is the name of the Phantom Troupe leader?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "What is the name of the Phantom Troupe leader?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Chrollo Lucilfer", correct: true },
   { text: "Hisoka", correct: false },
   { text: "Illumi", correct: false },
   { text: "Feitan", correct: false }
 ]},
 
-{ question: "Who is the main antagonist of Fullmetal Alchemist: Brotherhood?", basePoints: 10, difficulty: "hard", answers: [
+{ question: "Who is the main antagonist of Fullmetal Alchemist: Brotherhood?", basePoints: 20, difficulty: "hard", answers: [
   { text: "Father", correct: true },
   { text: "King Bradley", correct: false },
   { text: "Envy", correct: false },
   { text: "Pride", correct: false }
 ]},
 
-{ question: "What is the name of the strongest form of Ichigo?", basePoints: 10, difficulty: "insane", answers: [
+{ question: "What is the name of the strongest form of Ichigo?", basePoints: 30, difficulty: "insane", answers: [
   { text: "Final Getsuga Tensho", correct: true },
   { text: "Bankai Hollow Mode", correct: false },
   { text: "True Shikai", correct: false },
   { text: "Dangai Form", correct: false }
 ]},
 
-{ question: "Who became the Wizard King in Black Clover after Julius?", basePoints: 10, difficulty: "insane", answers: [
+{ question: "Who became the Wizard King in Black Clover after Julius?", basePoints: 30, difficulty: "insane", answers: [
   { text: "No one yet", correct: true },
   { text: "Yami", correct: false },
   { text: "Fuegoleon", correct: false },
@@ -1780,7 +1945,7 @@ const quizData = {
   2:[
 {
   question: "What is the derivative of f(x) = x³ + 2x?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "3x² + 2", correct: true },
@@ -1802,7 +1967,7 @@ const quizData = {
 },
 {
   question: "Simplify: (2x²)(3x³)",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "6x⁵", correct: true },
@@ -1813,7 +1978,7 @@ const quizData = {
 },
 {
   question: "What is the integral of ∫2x dx?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "x² + C", correct: true },
@@ -1835,7 +2000,7 @@ const quizData = {
 },
 {
   question: "What is the sum of the first 10 positive integers?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "55", correct: true },
@@ -1846,7 +2011,7 @@ const quizData = {
 },
 {
   question: "What is the sum of the first 8 positive integers?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "36", correct: true },
@@ -1857,7 +2022,7 @@ const quizData = {
 },
 {
   question: "If f(x) = 2x + 3, find f(5)",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "13", correct: true },
@@ -1879,7 +2044,7 @@ const quizData = {
 },
 {
   question: "What is 15% of 200?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "30", correct: true },
@@ -1890,7 +2055,7 @@ const quizData = {
 },
 {
   question: "Find the next number in the sequence: .., 8, 13, 21, 34, ...",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "55", correct: true },
@@ -1912,7 +2077,7 @@ const quizData = {
 },
 {
   question: "What is the value of 2⁵?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "32", correct: true },
@@ -1945,7 +2110,7 @@ const quizData = {
 },
 {
   question: "What is the area of a rectangle with length 6 and width 9?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "54", correct: true },
@@ -2060,7 +2225,7 @@ const quizData = {
 
 {
   question: "Solve for x: 2x + 6 = 14",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "4", correct: true },
@@ -2072,7 +2237,7 @@ const quizData = {
 
 {
   question: "What is the area of a rectangle with length 8 and width 5?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "40", correct: true },
@@ -2084,7 +2249,7 @@ const quizData = {
 
 {
   question: "Simplify: 3(x + 4)",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "3x + 12", correct: true },
@@ -2096,7 +2261,7 @@ const quizData = {
 
 {
   question: "What is the perimeter of a square with side 9?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "36", correct: true },
@@ -2108,7 +2273,7 @@ const quizData = {
 
 {
   question: "What is 2³ × 2²?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "32", correct: true },
@@ -2120,7 +2285,7 @@ const quizData = {
 
 {
   question: "Solve: x² = 49",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "7 or -7", correct: true },
@@ -2132,7 +2297,7 @@ const quizData = {
 
 {
   question: "What is the derivative of x²?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "2x", correct: true },
@@ -2144,7 +2309,7 @@ const quizData = {
 
 {
   question: "What is sin(90°)?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "1", correct: true },
@@ -2156,7 +2321,7 @@ const quizData = {
 
 {
   question: "Solve: log10(100)",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "2", correct: true },
@@ -2180,7 +2345,7 @@ const quizData = {
 
 {
   question: "What is the integral of 2x?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "x² + C", correct: true },
@@ -2192,7 +2357,7 @@ const quizData = {
 
 {
   question: "Solve: 3x - 5 = 16",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "7", correct: true },
@@ -2204,7 +2369,7 @@ const quizData = {
 
 {
   question: "What is 9! (9 factorial)?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "362880", correct: true },
@@ -2216,7 +2381,7 @@ const quizData = {
 
 {
   question: "If a triangle has angles 90° and 45°, what is the third angle?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "45°", correct: true },
@@ -2228,7 +2393,7 @@ const quizData = {
 
 {
   question: "What is the solution to 1/x = 5?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "1/5", correct: true },
@@ -2275,7 +2440,7 @@ const quizData = {
 
 {
   question: "Simplify: x² × x³",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "x⁵", correct: true },
@@ -2287,7 +2452,7 @@ const quizData = {
 
 {
   question: "What is the cube root of 27?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "3", correct: true },
@@ -2299,7 +2464,7 @@ const quizData = {
 
 {
   question: "Solve: x² - 16 = 0",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "4 or -4", correct: true },
@@ -2311,7 +2476,7 @@ const quizData = {
 
 {
   question: "What is cos(0°)?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "1", correct: true },
@@ -2323,7 +2488,7 @@ const quizData = {
 
 {
   question: "Derivative of 3x²?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "6x", correct: true },
@@ -2347,7 +2512,7 @@ const quizData = {
 
 {
   question: "Solve: 2x² = 18",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "3 or -3", correct: true },
@@ -2359,7 +2524,7 @@ const quizData = {
 
 {
   question: "What is ln(e)?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "1", correct: true },
@@ -2383,7 +2548,7 @@ const quizData = {
 
 {
   question: "Solve: √x = 6",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "36", correct: true },
@@ -2395,7 +2560,7 @@ const quizData = {
 
 {
   question: "What is tan(45°)?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "1", correct: true },
@@ -2407,7 +2572,7 @@ const quizData = {
 
 {
   question: "What is 6! ?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "720", correct: true },
@@ -2431,7 +2596,7 @@ const quizData = {
 
 {
   question: "What is the area of a circle (r = 7)? (Use π ≈ 3.14)",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "153.86", correct: true },
@@ -2443,7 +2608,7 @@ const quizData = {
 
 {
   question: "Derivative of eˣ?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "eˣ", correct: true },
@@ -2455,7 +2620,7 @@ const quizData = {
 
 {
   question: "Solve: x³ = 27",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "3", correct: true },
@@ -2503,7 +2668,7 @@ const quizData = {
 
 {
   question: "What is log10(1000)?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "3", correct: true },
@@ -2515,7 +2680,7 @@ const quizData = {
 
 {
   question: "What is 3⁴?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "81", correct: true },
@@ -2539,7 +2704,7 @@ const quizData = {
 
 {
   question: "What is 2⁶?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "64", correct: true },
@@ -2551,7 +2716,7 @@ const quizData = {
 
 {
   question: "Solve: x² + 5x + 6 = 0",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "-2 or -3", correct: true },
@@ -2563,7 +2728,7 @@ const quizData = {
 
 {
   question: "What is the derivative of 5?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "0", correct: true },
@@ -2587,7 +2752,7 @@ const quizData = {
 
 {
   question: "Solve: 9x + 3 = 30",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "3", correct: true },
@@ -2601,7 +2766,7 @@ const quizData = {
   3:[
   {
     question: "What is the capital city of Australia?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "Sydney", correct: false },
@@ -2623,7 +2788,7 @@ const quizData = {
   },
   {
     question: "Who painted the Mona Lisa?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "Vincent van Gogh", correct: false },
@@ -2634,7 +2799,7 @@ const quizData = {
   },
   {
     question: "Which country hosted the 2016 Summer Olympics?",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "China", correct: false },
@@ -2645,7 +2810,7 @@ const quizData = {
   },
   {
     question: "What is the currency of Japan?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "Yen", correct: true },
@@ -2656,7 +2821,7 @@ const quizData = {
   },
   {
     question: "Which gas do plants absorb from the atmosphere?",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "Oxygen", correct: false },
@@ -2667,7 +2832,7 @@ const quizData = {
   },
   {
     question: "Who discovered penicillin?",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "Alexander Fleming", correct: true },
@@ -2678,7 +2843,7 @@ const quizData = {
   },
   {
     question: "Which country is known as the Land of the Rising Sun?",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "China", correct: false },
@@ -2700,7 +2865,7 @@ const quizData = {
   },
   {
     question: "Which planet has the most moons?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "Saturn", correct: false },
@@ -2711,7 +2876,7 @@ const quizData = {
   },
   {
     question: "Who is the author of 'Harry Potter' series?",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "J.K. Rowling", correct: true },
@@ -2722,7 +2887,7 @@ const quizData = {
   },
   {
     question: "Which language is the most spoken worldwide?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "English", correct: false },
@@ -2733,7 +2898,7 @@ const quizData = {
   },
   {
     question: "What is the smallest country in the world?",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "Monaco", correct: false },
@@ -2744,7 +2909,7 @@ const quizData = {
   },
   {
     question: "Who invented the telephone?",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "Alexander Graham Bell", correct: true },
@@ -2755,7 +2920,7 @@ const quizData = {
   },
   {
     question: "Which organ purifies blood in the human body?",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "Heart", correct: false },
@@ -2812,7 +2977,7 @@ const quizData = {
 
 {
   question: "Who wrote 'Romeo and Juliet'?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "William Shakespeare", correct: true },
@@ -2824,7 +2989,7 @@ const quizData = {
 
 {
   question: "What is the largest ocean on Earth?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "Pacific Ocean", correct: true },
@@ -2846,7 +3011,7 @@ const quizData = {
 },
 {
   question: "Who developed the theory of relativity?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "Albert Einstein", correct: true },
@@ -2858,7 +3023,7 @@ const quizData = {
 
 {
   question: "What is the largest desert in the world?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "Antarctic Desert", correct: true },
@@ -2882,7 +3047,7 @@ const quizData = {
 
 {
   question: "What is the longest river in the world?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "Nile River", correct: true },
@@ -2894,7 +3059,7 @@ const quizData = {
 
 {
   question: "Who was the first man to walk on the Moon?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "Neil Armstrong", correct: true },
@@ -2905,7 +3070,7 @@ const quizData = {
 },
 {
   question: "Which country is home to the Great Barrier Reef?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "Australia", correct: true },
@@ -2940,7 +3105,7 @@ const quizData = {
 
 {
   question: "Which language has the most native speakers worldwide?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "Mandarin Chinese", correct: true },
@@ -2952,7 +3117,7 @@ const quizData = {
 
 {
   question: "What year did World War II end?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "1945", correct: true },
@@ -2975,7 +3140,7 @@ const quizData = {
 
 {
   question: "Who is known as the Father of Computers?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "Charles Babbage", correct: true },
@@ -2987,7 +3152,7 @@ const quizData = {
 
 {
   question: "Which country gifted the Statue of Liberty to the USA?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "France", correct: true },
@@ -3011,7 +3176,7 @@ const quizData = {
 
 {
   question: "Which planet has the most moons?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "Saturn", correct: true },
@@ -3034,7 +3199,7 @@ const quizData = {
 
 {
   question: "Which metal is liquid at room temperature?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "Mercury", correct: true },
@@ -3046,7 +3211,7 @@ const quizData = {
 
 {
   question: "How many bones are in the adult human body?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "206", correct: true },
@@ -3057,7 +3222,7 @@ const quizData = {
 },
 {
   question: "What is the main gas found in Earth's atmosphere?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "Nitrogen", correct: true },
@@ -3069,7 +3234,7 @@ const quizData = {
 
 {
   question: "Who painted the ceiling of the Sistine Chapel?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "Michelangelo", correct: true },
@@ -3081,7 +3246,7 @@ const quizData = {
 
 {
   question: "Which country has the most population in the world (as of recent data)?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "India", correct: true },
@@ -3092,7 +3257,7 @@ const quizData = {
 },
 {
   question: "Which country is home to the Amazon Rainforest?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "Brazil", correct: true },
@@ -3103,7 +3268,7 @@ const quizData = {
 },
 {
   question: "Who was the first President of the United States?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "George Washington", correct: true },
@@ -3127,7 +3292,7 @@ const quizData = {
 
 {
   question: "What is the largest organ in the human body?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "Skin", correct: true },
@@ -3163,7 +3328,7 @@ const quizData = {
 
 {
   question: "What is the speed of light in vacuum (approx)?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "300,000 km/s", correct: true },
@@ -3175,7 +3340,7 @@ const quizData = {
 
 {
   question: "Who discovered gravity after seeing a falling apple?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "Isaac Newton", correct: true },
@@ -3187,7 +3352,7 @@ const quizData = {
 
 {
   question: "Which continent is the Sahara Desert located in?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "Africa", correct: true },
@@ -3211,7 +3376,7 @@ const quizData = {
 
 {
   question: "Which country won the FIFA World Cup in 2018?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "France", correct: true },
@@ -3222,7 +3387,7 @@ const quizData = {
 },
 {
   question: "Which blood type is known as the universal donor?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "O negative", correct: true },
@@ -3234,7 +3399,7 @@ const quizData = {
 
 {
   question: "How many players are on a standard soccer team on the field?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "11", correct: true },
@@ -3248,7 +3413,7 @@ const quizData = {
   4:[
   {
     question: "ما هي أول سورة نزلت كاملة على النبي محمد ﷺ؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "سورة الفاتحة", correct: true },
@@ -3270,7 +3435,7 @@ const quizData = {
   },
   {
     question: "ما هو معنى كلمة 'الإسراء' في القرآن؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "الرحلة الليلية", correct: true },
@@ -3281,7 +3446,7 @@ const quizData = {
   },
   {
     question: "كم عدد آيات القرآن الكريم ؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "6363", correct: false },
@@ -3292,7 +3457,7 @@ const quizData = {
   },
   {
     question: "من هو النبي الذي ابتلعه الحوت وفق القرآن؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "يونس عليه السلام", correct: true },
@@ -3314,7 +3479,7 @@ const quizData = {
   },
   {
     question: "ما اسم خازن النار في القرآن؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "مالك", correct: true },
@@ -3325,7 +3490,7 @@ const quizData = {
   },
   {
     question: "من هو الصحابي الذي لقبه النبي ﷺ بـ ذو النورين؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "عمر بن الخطاب", correct: false },
@@ -3336,7 +3501,7 @@ const quizData = {
   },
   {
     question: "ما السورة التي تُعرف باسم سورة العهد؟",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "المائدة", correct: true },
@@ -3347,7 +3512,7 @@ const quizData = {
   },
   {
     question: "من هو الصحابي الذي اهتز لموته عرش الرحمن؟",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "حمزة بن عبد المطلب", correct: false },
@@ -3358,7 +3523,7 @@ const quizData = {
   },
   {
     question: "من هو الصحابي الذي جمع القرآن بعد وفاة النبي ﷺ؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "عمر بن الخطاب", correct: false },
@@ -3369,7 +3534,7 @@ const quizData = {
   },
   {
     question: "من هو الصحابي الملقب بترجمان القرآن؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "عبد الله بن عمر", correct: false },
@@ -3380,7 +3545,7 @@ const quizData = {
   },
   {
     question: "من هو أول سفير في الإسلام؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "عبد الله بن رواحة", correct: false },
@@ -3391,7 +3556,7 @@ const quizData = {
   },
   {
     question: "ما آخر سورة نزلت كاملة على النبي ﷺ؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "النصر", correct: true },
@@ -3402,7 +3567,7 @@ const quizData = {
   },
   {
     question: "من هو الصحابي الذي أشار بحفر الخندق؟",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "سلمان الفارسي", correct: true },
@@ -3413,7 +3578,7 @@ const quizData = {
   },
   {
     question: "من قتل مسيلمة الكذاب؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "وحشيّ بن حرب", correct: true },
@@ -3424,7 +3589,7 @@ const quizData = {
   },
   {
     question: "من آخر من مات من العشرة المبشرين بالجنة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "سعد بن أبي وقاص", correct: true },
@@ -3435,7 +3600,7 @@ const quizData = {
   },
   {
     question: "ما هي السورة التي لا تبدأ بالبسملة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "الفاتحة", correct: false },
@@ -3457,7 +3622,7 @@ const quizData = {
   },
   {
     question: "من هو الصحابي المعروف بحبر الأمة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "أبي بكر الصديق", correct: false },
@@ -3468,7 +3633,7 @@ const quizData = {
   },
   {
     question: "ما اسم أول مسجد بني في الإسلام؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "المسجد النبوي", correct: false },
@@ -3534,7 +3699,7 @@ const quizData = {
 },
 {
   question: "من هو أول من آمن من الرجال؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "أبو بكر الصديق", correct: true },
@@ -3556,7 +3721,7 @@ const quizData = {
 },
 {
   question: "من هو الصحابي الملقب بأمين الأمة؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "hard",
   answers: [
     { text: "أبو عبيدة بن الجراح", correct: true },
@@ -3578,7 +3743,7 @@ const quizData = {
 },
 {
   question: "ما أول معركة في الإسلام؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty: "medium",
   answers: [
     { text: "بدر", correct: true },
@@ -3589,7 +3754,7 @@ const quizData = {
 },
 {
   question: "كم عدد الأنبياء المذكورين في القرآن؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty: "insane",
   answers: [
     { text: "25", correct: true },
@@ -3600,7 +3765,7 @@ const quizData = {
 },
   {
     question: "ما اسم والد النبي إبراهيم عليه السلام؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "آزر", correct: true },
@@ -3611,7 +3776,7 @@ const quizData = {
   },
   {
     question: "ما السورة التي تسمى قلب القرآن؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "يس", correct: true },
@@ -3622,7 +3787,7 @@ const quizData = {
   },
   {
     question: "كم عدد أبواب الجنة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "8", correct: true },
@@ -3644,7 +3809,7 @@ const quizData = {
   },
   {
     question: "ما اسم زوجة فرعون التي آمنت بموسى عليه السلام؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "آسية بنت مزاحم", correct: true },
@@ -3666,7 +3831,7 @@ const quizData = {
   },
   {
     question: "ما اسم المعركة التي استشهد فيها حمزة بن عبد المطلب؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "أحد", correct: true },
@@ -3677,7 +3842,7 @@ const quizData = {
   },
   {
     question: "من هو النبي الذي فُتن في ملكه؟",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "سليمان عليه السلام", correct: true },
@@ -3688,7 +3853,7 @@ const quizData = {
   },
   {
     question: "ما اسم السورة التي تحدثت عن غزوة بدر؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الأنفال", correct: true },
@@ -3699,7 +3864,7 @@ const quizData = {
   },
   {
     question: "كم عدد أيام خلق السماوات والأرض؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "6", correct: true },
@@ -3721,7 +3886,7 @@ const quizData = {
   },
   {
     question: "ما اسم أكبر مسجد في العالم؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "المسجد الحرام", correct: true },
@@ -3743,7 +3908,7 @@ const quizData = {
   },
   {
     question: "ما اسم أم المؤمنين التي كانت تُلقب بالصديقة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "عائشة بنت أبي بكر", correct: true },
@@ -3754,7 +3919,7 @@ const quizData = {
   },
   {
     question: "ما اسم المكان الذي هاجر إليه المسلمون أولاً؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "الحبشة", correct: true },
@@ -3765,7 +3930,7 @@ const quizData = {
   },
   {
     question: "ما اسم السورة التي تسمى عروس القرآن؟",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "الرحمن", correct: true },
@@ -3776,7 +3941,7 @@ const quizData = {
   },
   {
     question: "من هو الصحابي الذي كان شديد الشبه بالنبي ﷺ؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "جعفر بن أبي طالب", correct: true },
@@ -3798,7 +3963,7 @@ const quizData = {
   },
   {
     question: "في أي سنة كانت غزوة الخندق؟",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "السنة الخامسة للهجرة", correct: true },
@@ -3820,7 +3985,7 @@ const quizData = {
   },
   {
     question: "ما اسم المعركة التي فُتحت فيها مكة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "فتح مكة", correct: true },
@@ -3831,7 +3996,7 @@ const quizData = {
   },
   {
     question: "ما اسم أول مسجد بُني في المدينة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "مسجد قباء", correct: true },
@@ -3842,7 +4007,7 @@ const quizData = {
   },
   {
     question: "من هو الصحابي الذي نام في فراش النبي ﷺ ليلة الهجرة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "علي بن أبي طالب", correct: true },
@@ -3853,7 +4018,7 @@ const quizData = {
   },
   {
     question: "كم عدد تكبيرات صلاة الجنازة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "4", correct: true },
@@ -3886,7 +4051,7 @@ const quizData = {
   },
   {
     question: "ما اسم السورة التي تُسمى المنجية؟",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "الملك", correct: true },
@@ -3897,7 +4062,7 @@ const quizData = {
   },
   {
     question: "من هو النبي الذي فُقد بصره من الحزن؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "يعقوب عليه السلام", correct: true },
@@ -3908,7 +4073,7 @@ const quizData = {
   },
   {
     question: "ما اسم العام الذي توفي فيه أبو طالب وخديجة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "عام الحزن", correct: true },
@@ -3919,7 +4084,7 @@ const quizData = {
   },
   {
     question: "كم عدد الأشهر الحرم؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "4", correct: true },
@@ -3955,7 +4120,7 @@ const quizData = {
   },
   {
     question: "في ون بيس، ما اسم فاكهة لوفي الشيطانية؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "ميرا ميرا نو مي", correct: false },
@@ -3966,7 +4131,7 @@ const quizData = {
   },
   {
     question: "في دراغون بول، ما اسم التقنية التي يستخدمها غوكو لتقوية قوته مؤقتًا؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "كايوجين", correct: false },
@@ -3977,7 +4142,7 @@ const quizData = {
   },
   {
     question: "في أنمي بليتش، ما اسم السيف الخاص بإيتشيغو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "زانغيتسو", correct: true },
@@ -3988,7 +4153,7 @@ const quizData = {
   },
   {
     question: "في هانتر × هانتر، ما نوع النين الخاصة بجون؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "متخصص", correct: false },
@@ -3999,7 +4164,7 @@ const quizData = {
   },
   {
     question: "في ون بيس، ما اسم الجزيرة التي وُلد عليها مونكي دي لوفي؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "جزيرة الفاكهة", correct: false },
@@ -4043,7 +4208,7 @@ const quizData = {
   },
   {
     question: "في أنمي ناروتو، ما اسم الفريق الذي كان يتألف من ناروتو وساسكي وساكورا؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "الفريق العاشر", correct: false },
@@ -4054,7 +4219,7 @@ const quizData = {
   },
   {
     question: "في هجوم العمالقة، ما اسم العمالقة الذين يستطيعون التحكم بهم البشر؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "العمالقة المصلّحين", correct: false },
@@ -4065,7 +4230,7 @@ const quizData = {
   },
   {
     question: "في بلاك كلوفر، ما اسم الفصيلة التي ينتمي إليها أستا؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "فصيلة الفتاة السوداء", correct: false },
@@ -4076,7 +4241,7 @@ const quizData = {
   },
   {
     question: "في بليتش، من هو قائد فرقة 13؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "Hard",
     answers: [
       { text: "أوكيتاكي", correct: true },
@@ -4087,7 +4252,7 @@ const quizData = {
   },
   {
     question: "في دراغون بول، ما اسم والد غوكو البيولوجي؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "بارادوك", correct: true },
@@ -4098,7 +4263,7 @@ const quizData = {
   },
   {
     question: "في أنمي أكاديميا بطلي، ما اسم الطالب الذي يستطيع التحكم بالنار والجليد؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "ميدوريا", correct: false },
@@ -4109,7 +4274,7 @@ const quizData = {
   },
   {
     question: "في هانتر × هانتر، ما اسم صديق كورابيكا المقرب؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "ليون", correct: false },
@@ -4131,7 +4296,7 @@ const quizData = {
   },
   {
     question: "في أنمي ون بيس، من هو أقوى رجل في العالم؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "كايدو", correct: true },
@@ -4142,7 +4307,7 @@ const quizData = {
   },
   {
     question: "في هجوم العمالقة، من هو العملاق الذي ابتلع والدة إرين؟",
-    basePoints: 10,
+    basePoints: 30,
     difficulty: "insane",
     answers: [
       { text: "العملاق المبتسم ", correct: true },
@@ -4166,7 +4331,7 @@ answers: [
 {
 question: "في ون بيس، من هو نائب قائد طاقم قبعة القش؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "سانجي", correct: false },
 { text: "زورو", correct: true },
@@ -4178,7 +4343,7 @@ answers: [
 {
 question: "في دراغون بول، ما اسم كوكب السايان؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "كوكب فيجيتا", correct: true },
 { text: "كوكب ناميك", correct: false },
@@ -4202,7 +4367,7 @@ answers: [
 {
 question: "في هجوم العمالقة، ما اسم العملاق المدرع؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "راينر", correct: true },
 { text: "بيرتهولد", correct: false },
@@ -4214,7 +4379,7 @@ answers: [
 {
 question: "في بليتش، ما اسم قائد فرقة 6؟",
 difficulty: "hard",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "كوتشيكي", correct: true },
 { text: "كينباتشي", correct: false },
@@ -4226,7 +4391,7 @@ answers: [
 {
 question: "في هانتر × هانتر، ما اسم زعيم العناكب؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "كرولو", correct: true },
 { text: "هيسوكا", correct: false },
@@ -4238,7 +4403,7 @@ answers: [
 {
 question: "في ون بيس، ما اسم سيف زورو الأسطوري؟",
 difficulty: "insane",
-basePoints: 10,
+basePoints: 30,
 answers: [
 { text: "إنما", correct: true },
 { text: "شوسوي", correct: false },
@@ -4262,7 +4427,7 @@ answers: [
 {
 question: "في أكاديمية بطلي، ما اسم البطل رقم 1 قبل أول مايت؟",
 difficulty: "insane",
-basePoints: 10,
+basePoints: 30,
 answers: [
 { text: "إنديفر", correct: false },
 { text: "أول مايت", correct: false },
@@ -4273,7 +4438,7 @@ answers: [
 {
 question: "في ناروتو، من هو زعيم منظمة الأكاتسوكي الحقيقي؟",
 difficulty: "hard",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "أوبيتو", correct: true },
 { text: "ناغاتو", correct: false },
@@ -4285,7 +4450,7 @@ answers: [
 {
 question: "في ون بيس، ما اسم البحرية التي يحملها سموكر؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "موكو موكو نو مي", correct: true },
 { text: "ميرا ميرا نو مي", correct: false },
@@ -4309,7 +4474,7 @@ answers: [
 {
 question: "في بليتش، من هو الخصم الرئيسي في أرك أرانكار؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "آيزن", correct: true },
 { text: "يوها باخ", correct: false },
@@ -4321,7 +4486,7 @@ answers: [
 {
 question: "في هجوم العمالقة، من هو صاحب العملاق الوحش؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "زيك", correct: true },
 { text: "راينر", correct: false },
@@ -4333,7 +4498,7 @@ answers: [
 {
 question: "في هانتر × هانتر، ما اسم قدرة كورابيكا الخاصة بسلسلته؟",
 difficulty: "insane",
-basePoints: 10,
+basePoints: 30,
 answers: [
 { text: "إمبراطور تايم", correct: true },
 { text: "باندِت سيكريت", correct: false },
@@ -4357,7 +4522,7 @@ answers: [
 {
 question: "في ناروتو شيبودن، من قتل إيتاتشي؟",
 difficulty: "hard",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "ساسكي", correct: true },
 { text: "ناروتو", correct: false },
@@ -4369,7 +4534,7 @@ answers: [
 {
 question: "في دراغون بول، من هو أقوى اندرويد في أرك سيل؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "سيل", correct: true },
 { text: "أندرويد 18", correct: false },
@@ -4381,7 +4546,7 @@ answers: [
 {
 question: "في ديث نوت، من تولى التحقيق بعد موت إل؟",
 difficulty: "hard",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "نير", correct: true },
 { text: "ميلو", correct: false },
@@ -4393,7 +4558,7 @@ answers: [
 {
 question: "في بلاك كلوفر، ما نوع سحر يونو؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "سحر الرياح", correct: true },
 { text: "سحر النار", correct: false },
@@ -4405,7 +4570,7 @@ answers: [
 {
 question: "في هجوم العمالقة، من قتل العملاق المدرع في النهاية؟",
 difficulty: "insane",
-basePoints: 10,
+basePoints: 30,
 answers: [
 { text: "لم يُقتل", correct: true },
 { text: "إرين", correct: false },
@@ -4417,7 +4582,7 @@ answers: [
 {
 question: "في بليتش، ما اسم بنكاي بياكويا؟",
 difficulty: "insane",
-basePoints: 10,
+basePoints: 30,
 answers: [
 { text: "سينبونزاكورا كاغيوشي", correct: true },
 { text: "تينسا زانغيتسو", correct: false },
@@ -4429,7 +4594,7 @@ answers: [
 {
 question: "في ون بيس، من هو والد إيس؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "غول دي روجر", correct: true },
 { text: "اللحية البيضاء", correct: false },
@@ -4441,7 +4606,7 @@ answers: [
 {
 question: "في ناروتو، من هو أول أوتشيها استيقظ المانغيكيو؟",
 difficulty: "insane",
-basePoints: 10,
+basePoints: 30,
 answers: [
 { text: "مادارا", correct: true },
 { text: "إيتاتشي", correct: false },
@@ -4465,7 +4630,7 @@ answers: [
 {
 question: "في ديمون سلاير، ما اسم تنفس تانجيرو؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "تنفس الماء", correct: true },
 { text: "تنفس النار", correct: false },
@@ -4489,7 +4654,7 @@ answers: [
 {
 question: "في ون بيس، ما اسم سيف ميهوك؟",
 difficulty: "hard",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "يورُو", correct: true },
 { text: "إنما", correct: false },
@@ -4513,7 +4678,7 @@ answers: [
 {
 question: "في هجوم العمالقة، من قتل زيك؟",
 difficulty: "hard",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "ليفاي", correct: true },
 { text: "إرين", correct: false },
@@ -4525,7 +4690,7 @@ answers: [
 {
 question: "في بليتش، من هو قائد فرقة 11؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "زاراكي", correct: true },
 { text: "بياكويا", correct: false },
@@ -4537,7 +4702,7 @@ answers: [
 {
 question: "في ون بيس، ما اسم جيش دراغون؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "الجيش الثوري", correct: true },
 { text: "القراصنة السود", correct: false },
@@ -4549,7 +4714,7 @@ answers: [
 {
 question: "في هانتر × هانتر، من قتل هيسوكا (المرة الأولى)؟",
 difficulty: "insane",
-basePoints: 10,
+basePoints: 30,
 answers: [
 { text: "كرولو", correct: true },
 { text: "جون", correct: false },
@@ -4561,7 +4726,7 @@ answers: [
 {
 question: "في دراغون بول، ما اسم اندماج غوكو وفيجيتا باستخدام البوتارا؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "فيجيتو", correct: true },
 { text: "غوجيتا", correct: false },
@@ -4573,7 +4738,7 @@ answers: [
 {
 question: "في ناروتو، من قتل جيرايا؟",
 difficulty: "hard",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "باين", correct: true },
 { text: "أوروتشيمارو", correct: false },
@@ -4585,7 +4750,7 @@ answers: [
 {
 question: "في ون بيس، من هزم كايدو؟",
 difficulty: "medium",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "لوفي", correct: true },
 { text: "زورو", correct: false },
@@ -4609,7 +4774,7 @@ answers: [
 {
 question: "في ديمون سلاير، من هو أقوى هاشيرا؟",
 difficulty: "insane",
-basePoints: 10,
+basePoints: 30,
 answers: [
 { text: "غيومي", correct: true },
 { text: "رينغوكو", correct: false },
@@ -4621,7 +4786,7 @@ answers: [
 {
 question: "في بليتش، من هزم آيزن؟",
 difficulty: "hard",
-basePoints: 10,
+basePoints: 20,
 answers: [
 { text: "إيتشيغو", correct: true },
 { text: "بياكويا", correct: false },
@@ -4634,7 +4799,7 @@ answers: [
   6:[
   {
     question: "ما الشيء الذي كلما أخذت منه يكبر؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الحفرة", correct: true },
@@ -4645,7 +4810,7 @@ answers: [
   },
   {
     question: "ما الشيء الذي يمشي بلا أرجل؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "السيارة", correct: false },
@@ -4656,7 +4821,7 @@ answers: [
   },
   {
     question: "له أوراق وليس شجرة، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الكتاب", correct: true },
@@ -4667,7 +4832,7 @@ answers: [
   },
   {
     question: "ما هو الشيء الذي كلما جف زاد وزنه؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الإسفنج", correct: true },
@@ -4678,7 +4843,7 @@ answers: [
   },
   {
     question: "شيء تستطيع أن تكسره دون لمسه، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الوعد", correct: true },
@@ -4689,7 +4854,7 @@ answers: [
   },
   {
     question: "له أسنان ولا يعض، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "المشط", correct: true },
@@ -4700,7 +4865,7 @@ answers: [
   },
   {
     question: "يمشي بلا أرجل، ويصرخ بلا صوت، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الريح", correct: true },
@@ -4711,7 +4876,7 @@ answers: [
   },
   {
     question: "شيء لا يؤكل ولا يشرب لكن يمكن أن يموت، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الشمع", correct: true },
@@ -4722,7 +4887,7 @@ answers: [
   },
   {
     question: "ما الشيء الذي يسمع بلا أذن ويتكلم بلا لسان؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الهاتف", correct: true },
@@ -4733,7 +4898,7 @@ answers: [
   },
   {
     question: "ما هو الشيء الذي يكتب ولا يقرأ؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "القلم", correct: true },
@@ -4745,7 +4910,7 @@ answers: [
 
   {
     question: "شيء ليس حياً، لكنه ينمو، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "البلورة", correct: true },
@@ -4756,7 +4921,7 @@ answers: [
   },
   {
     question: "له مفتاح لكنه لا يفتح باباً، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "البيانو", correct: true },
@@ -4767,7 +4932,7 @@ answers: [
   },
   {
     question: "شيء كلما زاد نقص، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "العمر", correct: true },
@@ -4778,7 +4943,7 @@ answers: [
   },
   {
     question: "له عين ولا يرى، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الإبرة", correct: true },
@@ -4789,7 +4954,7 @@ answers: [
   },
   {
     question: "شيء يوجد أمامك دائماً، لكن لا تراه، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "المستقبل", correct: true },
@@ -4800,7 +4965,7 @@ answers: [
   },
   {
     question: "ما الشيء الذي يأكل ولا يشبع؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "النار", correct: true },
@@ -4811,7 +4976,7 @@ answers: [
   },
   {
     question: "ما الشيء الذي يُكسر بمجرد ذكر اسمه؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الصمت", correct: true },
@@ -4822,7 +4987,7 @@ answers: [
   },
   {
     question: "شيء يسير بلا رجلين، ويبكي بلا عيون، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "السحاب", correct: true },
@@ -4833,7 +4998,7 @@ answers: [
   },
   {
     question: "ما هو الشيء الذي يجري ولكن لا يمشي؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الماء", correct: true },
@@ -4844,7 +5009,7 @@ answers: [
   },
   {
     question: "شيء يمكنه الطيران بلا جناح، ما هو؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "الوقت", correct: true },
@@ -4879,7 +5044,7 @@ answers: [
 },
 {
   question: "شيء إذا دخل الماء لم يبتل، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -4891,7 +5056,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي كلما زاد اتساعًا قلّ وزنًا؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -4903,7 +5068,7 @@ answers: [
 },
 {
   question: "ما هو الشيء الذي يعيش إذا أطعمته ويموت إذا سقيته؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -4915,7 +5080,7 @@ answers: [
 },
 {
   question: "شيء يولد كبيرًا ويموت صغيرًا، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -4927,7 +5092,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي إذا قلبته زاد؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -4939,7 +5104,7 @@ answers: [
 },
 {
   question: "له رأس ولا عين له، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -4951,7 +5116,7 @@ answers: [
 },
 {
   question: "شيء إذا أخذت منه يختفي، ما هو؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -4963,7 +5128,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي لا يمكن كسره؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -4976,7 +5141,7 @@ answers: [
 
 {
   question: "شيء تراه في الليل ثلاث مرات وفي النهار مرة واحدة، ما هو؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -4988,7 +5153,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي يمشي ويقف وليس له أرجل؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5000,7 +5165,7 @@ answers: [
 },
 {
   question: "له رقبة بلا رأس، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5012,7 +5177,7 @@ answers: [
 },
 {
   question: "شيء تملكه ولكن يستخدمه الآخرون أكثر منك، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5024,7 +5189,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي يكتب ولا يرى؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5037,7 +5202,7 @@ answers: [
 
 {
   question: "شيء لا يمشي إلا بالضرب، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5061,7 +5226,7 @@ answers: [
 },
 {
   question: "له أجنحة ولا يطير، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5073,7 +5238,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي ينام ولا يغلق عينيه؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5085,7 +5250,7 @@ answers: [
 },
 {
   question: "شيء كلما اقتربت منه ابتعد، ما هو؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -5097,7 +5262,7 @@ answers: [
 },
 {
   question: "شيء إذا نظفتَه أصبح أسود، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5121,7 +5286,7 @@ answers: [
 },
 {
   question: "شيء له قلب ولا ينبض، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5133,7 +5298,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي إذا دخلته عميت؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5145,7 +5310,7 @@ answers: [
 },
 {
   question: "شيء موجود في السماء وإذا أضفت له حرفًا أصبح في الأرض، ما هو؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -5169,7 +5334,7 @@ answers: [
 },
 {
   question: "شيء يحمل طعامه فوق رأسه، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5181,7 +5346,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي كلما طال قصر؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5193,7 +5358,7 @@ answers: [
 },
 {
   question: "شيء إذا أكلته كاملًا تستفيد، وإذا أكلت نصفه تموت، ما هو؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -5217,7 +5382,7 @@ answers: [
 },
 {
   question: "شيء يمر خلال الزجاج دون أن يكسره، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5229,7 +5394,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي كلما أخذت منه نقص؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5241,7 +5406,7 @@ answers: [
 },
 {
   question: "شيء لا يدخل إلا إذا ضربته، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5253,7 +5418,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي يتكلم جميع لغات العالم؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -5265,7 +5430,7 @@ answers: [
 },
 {
   question: "شيء لا يمكن رؤيته لكنه يملأ المكان، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5277,7 +5442,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي يكتب اسمه ولا يقرأه؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5301,7 +5466,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي يولد مرة ويموت مرة؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5313,7 +5478,7 @@ answers: [
 },
 {
   question: "شيء إذا وضعتَه في الماء لا يبتل، ما هو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5325,7 +5490,7 @@ answers: [
 },
 {
   question: "ما الشيء الذي لا يبتل حتى لو غمرته بالماء؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5338,7 +5503,7 @@ answers: [
 ],
     
   7:[
-  {question:"I speak without a mouth and hear without ears. What am I?", difficulty:"medium", basePoints:10, answers:[
+  {question:"I speak without a mouth and hear without ears. What am I?", difficulty:"medium", basePoints:20, answers:[
     {text:"A ghost", correct:false},
     {text:"An echo", correct:true},
     {text:"A shadow", correct:false},
@@ -5352,7 +5517,7 @@ answers: [
     {text:"A diary", correct:false}
   ]},
 
-  {question:"What comes once in a minute, twice in a moment, but never in a thousand years?", difficulty:"hard", basePoints:10, answers:[
+  {question:"What comes once in a minute, twice in a moment, but never in a thousand years?", difficulty:"hard", basePoints:20, answers:[
     {text:"The letter M", correct:true},
     {text:"A second", correct:false},
     {text:"A moon", correct:false},
@@ -5366,28 +5531,28 @@ answers: [
     {text:"A mountain", correct:false}
   ]},
 
-  {question:"The more of this you take, the more you leave behind. What is it?", difficulty:"medium", basePoints:10, answers:[
+  {question:"The more of this you take, the more you leave behind. What is it?", difficulty:"medium", basePoints:20, answers:[
     {text:"Footsteps", correct:true},
     {text:"Time", correct:false},
     {text:"Memories", correct:false},
     {text:"Shadows", correct:false}
   ]},
 
-  {question:"I have cities but no houses, forests but no trees, and water but no fish. What am I?", difficulty:"hard", basePoints:10, answers:[
+  {question:"I have cities but no houses, forests but no trees, and water but no fish. What am I?", difficulty:"hard", basePoints:20, answers:[
     {text:"A map", correct:true},
     {text:"A painting", correct:false},
     {text:"A dream", correct:false},
     {text:"A book", correct:false}
   ]},
 
-  {question:"What can travel around the world while staying in a corner?", difficulty:"medium", basePoints:10, answers:[
+  {question:"What can travel around the world while staying in a corner?", difficulty:"medium", basePoints:20, answers:[
     {text:"A stamp", correct:true},
     {text:"A shadow", correct:false},
     {text:"A coin", correct:false},
     {text:"An airplane", correct:false}
   ]},
 
-  {question:"What has a heart that doesn’t beat?", difficulty:"hard", basePoints:10, answers:[
+  {question:"What has a heart that doesn’t beat?", difficulty:"hard", basePoints:20, answers:[
     {text:"An artichoke", correct:true},
     {text:"A robot", correct:false},
     {text:"A clock", correct:false},
@@ -5408,14 +5573,14 @@ answers: [
     {text:"A telescope", correct:false}
   ]},
 
-  {question:"I am always hungry, I must always be fed. The finger I touch will soon turn red. What am I?", difficulty:"medium", basePoints:10, answers:[
+  {question:"I am always hungry, I must always be fed. The finger I touch will soon turn red. What am I?", difficulty:"medium", basePoints:20, answers:[
     {text:"Fire", correct:true},
     {text:"Water", correct:false},
     {text:"Wind", correct:false},
     {text:"Ice", correct:false}
   ]},
 
-  {question:"The more you take from me, the bigger I get. What am I?", difficulty:"medium", basePoints:10, answers:[
+  {question:"The more you take from me, the bigger I get. What am I?", difficulty:"medium", basePoints:20, answers:[
     {text:"A hole", correct:true},
     {text:"A shadow", correct:false},
     {text:"A balloon", correct:false},
@@ -5429,14 +5594,14 @@ answers: [
     {text:"A tree", correct:false}
   ]},
 
-  {question:"What is always in front of you but can’t be seen?", difficulty:"medium", basePoints:10, answers:[
+  {question:"What is always in front of you but can’t be seen?", difficulty:"medium", basePoints:20, answers:[
     {text:"The future", correct:true},
     {text:"The past", correct:false},
     {text:"Air", correct:false},
     {text:"Time", correct:false}
   ]},
 
-  {question:"I’m found in socks, scarves and mittens; and often in the paws of playful kittens. What am I?", difficulty:"hard", basePoints:10, answers:[
+  {question:"I’m found in socks, scarves and mittens; and often in the paws of playful kittens. What am I?", difficulty:"hard", basePoints:20, answers:[
     {text:"Yarn", correct:true},
     {text:"Plastic", correct:false},
     {text:"Paper", correct:false},
@@ -5450,21 +5615,21 @@ answers: [
     {text:"Sun", correct:false}
   ]},
 
-  {question:"What begins with T, ends with T, and has T in it?", difficulty:"medium", basePoints:10, answers:[
+  {question:"What begins with T, ends with T, and has T in it?", difficulty:"medium", basePoints:20, answers:[
     {text:"A teapot", correct:true},
     {text:"A tent", correct:false},
     {text:"Time", correct:false},
     {text:"Trust", correct:false}
   ]},
 
-  {question:"I’m light as a feather, yet the strongest person can’t hold me for more than 5 minutes. What am I?", difficulty:"hard", basePoints:10, answers:[
+  {question:"I’m light as a feather, yet the strongest person can’t hold me for more than 5 minutes. What am I?", difficulty:"hard", basePoints:20, answers:[
     {text:"Breath", correct:true},
     {text:"Air", correct:false},
     {text:"Water", correct:false},
     {text:"Fire", correct:false}
   ]},
 
-  {question:"I have branches, but no fruit, trunk or leaves. What am I?", difficulty:"medium", basePoints:10, answers:[
+  {question:"I have branches, but no fruit, trunk or leaves. What am I?", difficulty:"medium", basePoints:20, answers:[
     {text:"A bank", correct:true},
     {text:"A tree", correct:false},
     {text:"A library", correct:false},
@@ -5479,7 +5644,7 @@ answers: [
   ]},
   {
   question: "What has an eye but cannot see, and a needle but cannot sew?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5515,7 +5680,7 @@ answers: [
 },
 {
   question: "What can run but never walks, has a mouth but never talks?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5539,7 +5704,7 @@ answers: [
 },
 {
   question: "What can you catch but not throw?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5563,7 +5728,7 @@ answers: [
 },
 {
   question: "What can you break, even if you never pick it up or touch it?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5587,7 +5752,7 @@ answers: [
 },
 {
   question: "What building has the most stories?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5599,7 +5764,7 @@ answers: [
 },
 {
   question: "What invention lets you look right through a wall?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -5611,7 +5776,7 @@ answers: [
 },
 {
   question: "What goes through cities and fields but never moves?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5623,7 +5788,7 @@ answers: [
 },
 {
   question: "If you drop me, I crack. If you smile at me, I smile back. What am I?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5647,7 +5812,7 @@ answers: [
 },
 {
   question: "What begins with an E but only contains one letter?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5659,7 +5824,7 @@ answers: [
 },
 {
   question: "What is full of holes but still holds water?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5671,7 +5836,7 @@ answers: [
 },
 {
   question: "What has a bottom at the top?",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -5695,7 +5860,7 @@ answers: [
 },
 {
   question: "What has a spine but no bones?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -5707,7 +5872,7 @@ answers: [
 },
 {
   question: "What is so fragile that saying its name breaks it?",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -5734,7 +5899,7 @@ answers: [
 
   {
     question: "من هو مؤلف رواية 'الحرب والسلم'؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "تولستوي", correct: true },
@@ -5746,7 +5911,7 @@ answers: [
 
   {
     question: "أي دولة لديها أكبر عدد من البراكين النشطة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "إندونيسيا", correct: true },
@@ -5782,7 +5947,7 @@ answers: [
 
   {
     question: "ما هو أطول نهر في العالم؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "الأمازون", correct: false },
@@ -5806,7 +5971,7 @@ answers: [
 
   {
     question: "أي دولة اخترعت ورق الطباعة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "مصر", correct: false },
@@ -5818,7 +5983,7 @@ answers: [
 
   {
     question: "ما هو العضو الأكبر في جسم الإنسان؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "القلب", correct: false },
@@ -5830,7 +5995,7 @@ answers: [
 
   {
     question: "ما هو أعمق محيط على الأرض؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "الأطلسي", correct: false },
@@ -5842,7 +6007,7 @@ answers: [
 
   {
     question: "من هو مؤسس علم النفس الحديث؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "سيغموند فرويد", correct: true },
@@ -5866,7 +6031,7 @@ answers: [
 
   {
     question: "أي لغة كانت لغة الإمبراطورية الرومانية؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "اليونانية", correct: false },
@@ -5890,7 +6055,7 @@ answers: [
 
   {
     question: "أي دولة لديها أكبر عدد من الأهرامات؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "مصر", correct: false },
@@ -5914,7 +6079,7 @@ answers: [
 
   {
     question: "أي من هذه المعادن أثقل؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "الذهب", correct: true },
@@ -5926,7 +6091,7 @@ answers: [
 
   {
     question: "ما هي عاصمة أيسلندا؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "hard",
     answers: [
       { text: "ريكيافيك", correct: true },
@@ -5938,7 +6103,7 @@ answers: [
 
   {
     question: "ما هو الغاز الذي يشكل معظم الغلاف الجوي للأرض؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "الأكسجين", correct: false },
@@ -5986,7 +6151,7 @@ answers: [
 
   {
     question: "ما هو الكوكب الذي له أكبر نظام حلقات؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "زحل", correct: true },
@@ -5998,7 +6163,7 @@ answers: [
 
   {
     question: "ما هي الدولة التي تُعرف ببلاد الألف بحيرة؟",
-    basePoints: 10,
+    basePoints: 20,
     difficulty: "medium",
     answers: [
       { text: "فنلندا", correct: true },
@@ -6033,7 +6198,7 @@ answers: [
 },
 {
   question: "ما هو أسرع طائر في العالم؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6069,7 +6234,7 @@ answers: [
 },
 {
   question: "من هو مخترع المصباح الكهربائي؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6081,7 +6246,7 @@ answers: [
 },
 {
   question: "ما هو أكبر صحراء في العالم؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -6105,7 +6270,7 @@ answers: [
 },
 {
   question: "ما هو أطول جبل في العالم فوق مستوى سطح البحر؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6129,7 +6294,7 @@ answers: [
 },
 {
   question: "من هو أول إنسان وصل إلى القمر؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6141,7 +6306,7 @@ answers: [
 },
 {
   question: "ما هو العنصر الذي يُستخدم في صناعة الزجاج أساسًا؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -6165,7 +6330,7 @@ answers: [
 },
 {
   question: "ما هو أضخم كائن حي على الأرض؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -6189,7 +6354,7 @@ answers: [
 },
 {
   question: "ما هو الغاز المسؤول عن ظاهرة الاحتباس الحراري بدرجة أكبر؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6201,7 +6366,7 @@ answers: [
 },
 {
   question: "من هو مؤلف رواية '1984'؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -6225,7 +6390,7 @@ answers: [
 },
 {
   question: "كم عدد عظام جسم الإنسان البالغ تقريبًا؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6237,7 +6402,7 @@ answers: [
 },
 {
   question: "ما هو أسرع كوكب دورانًا حول نفسه؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -6261,7 +6426,7 @@ answers: [
 },
 {
   question: "من هو مكتشف البنسلين؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6273,7 +6438,7 @@ answers: [
 },
 {
   question: "ما هو أكبر عضو داخلي في جسم الإنسان؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -6285,7 +6450,7 @@ answers: [
 },
 {
   question: "أي كوكب يُعرف باسم العملاق الغازي؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6297,7 +6462,7 @@ answers: [
 },
 {
   question: "في أي عام بدأت الحرب العالمية الثانية؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -6309,7 +6474,7 @@ answers: [
 },
 {
   question: "ما هو أسرع حيوان بحري؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -6321,7 +6486,7 @@ answers: [
 },
 {
   question: "ما هي عاصمة كندا؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6333,7 +6498,7 @@ answers: [
 },
 {
   question: "ما هو أطول عظم في جسم الإنسان؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6345,7 +6510,7 @@ answers: [
 },
 {
   question: "أي عنصر يُستخدم في صناعة الأقلام الرصاص؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -6369,7 +6534,7 @@ answers: [
 },
 {
   question: "ما هو أكبر قمر في المجموعة الشمسية؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -6405,7 +6570,7 @@ answers: [
 },
 {
   question: "من هو مؤلف مسرحية 'روميو وجولييت'؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6417,7 +6582,7 @@ answers: [
 },
 {
   question: "ما هو أكبر محيط من حيث العمق؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -6441,7 +6606,7 @@ answers: [
 },
 {
   question: "أي دولة تُعرف ببلاد التانغو؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "hard",
   answers: [
@@ -6465,7 +6630,7 @@ answers: [
 },
 {
   question: "من هو أول رئيس للولايات المتحدة الأمريكية؟",
-  basePoints: 10,
+  basePoints: 20,
   difficulty:
   "medium",
   answers: [
@@ -6477,7 +6642,7 @@ answers: [
 },
 {
   question: "ما هو أندر فصائل الدم؟",
-  basePoints: 10,
+  basePoints: 30,
   difficulty:
   "insane",
   answers: [
@@ -6518,7 +6683,7 @@ answers: [
     {text:"styles", correct:false}
   ]},
 
-  {question:"How do you select an element with id 'main' in CSS?", difficulty:"medium", basePoints:10, answers:[
+  {question:"How do you select an element with id 'main' in CSS?", difficulty:"medium", basePoints:20, answers:[
     {text:".main", correct:false},
     {text:"#main", correct:true},
     {text:"main", correct:false},
@@ -6553,14 +6718,14 @@ answers: [
     {text:"<src>", correct:false}
   ]},
 
-  {question:"Which CSS property is used to make text bold?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property is used to make text bold?", difficulty:"medium", basePoints:20, answers:[
     {text:"font-weight", correct:true},
     {text:"text-style", correct:false},
     {text:"font-style", correct:false},
     {text:"bold", correct:false}
   ]},
 
-  {question:"How do you select all <p> elements in CSS?", difficulty:"medium", basePoints:10, answers:[
+  {question:"How do you select all <p> elements in CSS?", difficulty:"medium", basePoints:20, answers:[
     {text:"p", correct:true},
     {text:".p", correct:false},
     {text:"#p", correct:false},
@@ -6574,7 +6739,7 @@ answers: [
     {text:"<text>", correct:false}
   ]},
 
-  {question:"Which CSS property adds space inside an element?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property adds space inside an element?", difficulty:"medium", basePoints:20, answers:[
     {text:"margin", correct:false},
     {text:"padding", correct:true},
     {text:"spacing", correct:false},
@@ -6588,28 +6753,28 @@ answers: [
     {text:"<list>", correct:false}
   ]},
 
-  {question:"Which CSS property sets the font of an element?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property sets the font of an element?", difficulty:"medium", basePoints:20, answers:[
     {text:"font-style", correct:false},
     {text:"font-family", correct:true},
     {text:"text-font", correct:false},
     {text:"font-weight", correct:false}
   ]},
 
-  {question:"How do you make list bullets square in CSS?", difficulty:"hard", basePoints:10, answers:[
+  {question:"How do you make list bullets square in CSS?", difficulty:"hard", basePoints:20, answers:[
     {text:"list-style-type: square;", correct:true},
     {text:"list: square;", correct:false},
     {text:"marker: square;", correct:false},
     {text:"bullet-shape: square;", correct:false}
   ]},
 
-  {question:"Which HTML attribute specifies alternate text for an image?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which HTML attribute specifies alternate text for an image?", difficulty:"medium", basePoints:20, answers:[
     {text:"alt", correct:true},
     {text:"title", correct:false},
     {text:"src", correct:false},
     {text:"text", correct:false}
   ]},
 
-  {question:"Which CSS property changes the left margin?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property changes the left margin?", difficulty:"medium", basePoints:20, answers:[
     {text:"margin-left", correct:true},
     {text:"padding-left", correct:false},
     {text:"indent", correct:false},
@@ -6623,14 +6788,14 @@ answers: [
     {text:"<line>", correct:false}
   ]},
 
-  {question:"Which CSS property controls element visibility without removing its space?", difficulty:"hard", basePoints:10, answers:[
+  {question:"Which CSS property controls element visibility without removing its space?", difficulty:"hard", basePoints:20, answers:[
     {text:"display", correct:false},
     {text:"visibility", correct:true},
     {text:"opacity", correct:false},
     {text:"hidden", correct:false}
   ]},
 
-  {question:"Which HTML tag defines a table row?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which HTML tag defines a table row?", difficulty:"medium", basePoints:20, answers:[
     {text:"<tr>", correct:true},
     {text:"<table-row>", correct:false},
     {text:"<td>", correct:false},
@@ -6644,14 +6809,14 @@ answers: [
     {text:"line-height", correct:false}
   ]},
 
-  {question:"Which HTML tag is used for a table header cell?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which HTML tag is used for a table header cell?", difficulty:"medium", basePoints:20, answers:[
     {text:"<th>", correct:true},
     {text:"<thead>", correct:false},
     {text:"<header>", correct:false},
     {text:"<table-head>", correct:false}
   ]},
 
-  {question:"Which CSS property changes the spacing between letters?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property changes the spacing between letters?", difficulty:"medium", basePoints:20, answers:[
     {text:"letter-spacing", correct:true},
     {text:"word-spacing", correct:false},
     {text:"text-spacing", correct:false},
@@ -6665,7 +6830,7 @@ answers: [
     {text:"# comment", correct:false}
   ]},
 
-  {question:"Which CSS property adds shadow to text?", difficulty:"hard", basePoints:10, answers:[
+  {question:"Which CSS property adds shadow to text?", difficulty:"hard", basePoints:20, answers:[
     {text:"text-shadow", correct:true},
     {text:"shadow-text", correct:false},
     {text:"box-shadow", correct:false},
@@ -6679,7 +6844,7 @@ answers: [
     {text:"<section>", correct:false}
   ]},
 
-  {question:"Which CSS property aligns text horizontally?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property aligns text horizontally?", difficulty:"medium", basePoints:20, answers:[
     {text:"text-align", correct:true},
     {text:"align-text", correct:false},
     {text:"text-position", correct:false},
@@ -6693,7 +6858,7 @@ answers: [
     {text:"url", correct:false}
   ]},
 
-  {question:"Which CSS property creates rounded corners?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property creates rounded corners?", difficulty:"medium", basePoints:20, answers:[
     {text:"border-radius", correct:true},
     {text:"radius-border", correct:false},
     {text:"corner-radius", correct:false},
@@ -6713,14 +6878,14 @@ answers: [
     {text:"font-style", correct:false}
   ]},
 
-  {question:"Which HTML tag is used to create a checkbox?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which HTML tag is used to create a checkbox?", difficulty:"medium", basePoints:20, answers:[
     {text:"<input type='checkbox'>", correct:true},
     {text:"<checkbox>", correct:false},
     {text:"<check>", correct:false},
     {text:"<box>", correct:false}
   ]},
 
-  {question:"Which CSS property controls the stacking order of elements?", difficulty:"hard", basePoints:10, answers:[
+  {question:"Which CSS property controls the stacking order of elements?", difficulty:"hard", basePoints:20, answers:[
     {text:"z-index", correct:true},
     {text:"position", correct:false},
     {text:"stack", correct:false},
@@ -6734,28 +6899,28 @@ answers: [
     {text:"<code>", correct:false}
   ]},
 
-  {question:"Which CSS property makes an element a flex container?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property makes an element a flex container?", difficulty:"medium", basePoints:20, answers:[
     {text:"display: flex;", correct:true},
     {text:"flex: true;", correct:false},
     {text:"position: flex;", correct:false},
     {text:"flex-container: yes;", correct:false}
   ]},
 
-  {question:"Which HTML tag is used for inserting a video?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which HTML tag is used for inserting a video?", difficulty:"medium", basePoints:20, answers:[
     {text:"<video>", correct:true},
     {text:"<media>", correct:false},
     {text:"<movie>", correct:false},
     {text:"<mp4>", correct:false}
   ]},
 
-  {question:"Which CSS property changes the cursor type?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property changes the cursor type?", difficulty:"medium", basePoints:20, answers:[
     {text:"cursor", correct:true},
     {text:"pointer-style", correct:false},
     {text:"mouse", correct:false},
     {text:"hover-type", correct:false}
   ]},
 
-  {question:"Which HTML tag is used to create a dropdown list?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which HTML tag is used to create a dropdown list?", difficulty:"medium", basePoints:20, answers:[
     {text:"<select>", correct:true},
     {text:"<dropdown>", correct:false},
     {text:"<option-list>", correct:false},
@@ -6769,14 +6934,14 @@ answers: [
     {text:"width-max", correct:false}
   ]},
 
-  {question:"Which HTML tag defines metadata about the document?", difficulty:"hard", basePoints:10, answers:[
+  {question:"Which HTML tag defines metadata about the document?", difficulty:"hard", basePoints:20, answers:[
     {text:"<meta>", correct:true},
     {text:"<data>", correct:false},
     {text:"<info>", correct:false},
     {text:"<head-info>", correct:false}
   ]},
 
-  {question:"Which CSS property is used to hide an element completely?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property is used to hide an element completely?", difficulty:"medium", basePoints:20, answers:[
     {text:"display: none;", correct:true},
     {text:"visibility: hidden;", correct:false},
     {text:"opacity: 0;", correct:false},
@@ -6790,7 +6955,7 @@ answers: [
     {text:"<submit>", correct:false}
   ]},
 
-  {question:"Which CSS property sets space between lines of text?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property sets space between lines of text?", difficulty:"medium", basePoints:20, answers:[
     {text:"line-height", correct:true},
     {text:"text-spacing", correct:false},
     {text:"font-gap", correct:false},
@@ -6804,35 +6969,35 @@ answers: [
     {text:"type='address'", correct:false}
   ]},
 
-  {question:"Which CSS property changes the background image?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property changes the background image?", difficulty:"medium", basePoints:20, answers:[
     {text:"background-image", correct:true},
     {text:"image-bg", correct:false},
     {text:"bg-image", correct:false},
     {text:"background-photo", correct:false}
   ]},
 
-  {question:"Which HTML tag defines navigation links?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which HTML tag defines navigation links?", difficulty:"medium", basePoints:20, answers:[
     {text:"<nav>", correct:true},
     {text:"<navigation>", correct:false},
     {text:"<links>", correct:false},
     {text:"<menu-bar>", correct:false}
   ]},
 
-  {question:"Which CSS property controls overflow content?", difficulty:"hard", basePoints:10, answers:[
+  {question:"Which CSS property controls overflow content?", difficulty:"hard", basePoints:20, answers:[
     {text:"overflow", correct:true},
     {text:"flow", correct:false},
     {text:"content-flow", correct:false},
     {text:"clip", correct:false}
   ]},
 
-  {question:"Which HTML tag is used for audio files?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which HTML tag is used for audio files?", difficulty:"medium", basePoints:20, answers:[
     {text:"<audio>", correct:true},
     {text:"<sound>", correct:false},
     {text:"<music>", correct:false},
     {text:"<mp3>", correct:false}
   ]},
 
-  {question:"Which CSS property applies a blur effect?", difficulty:"insane", basePoints:10, answers:[
+  {question:"Which CSS property applies a blur effect?", difficulty:"insane", basePoints:30, answers:[
     {text:"filter: blur();", correct:true},
     {text:"blur-effect", correct:false},
     {text:"background-blur", correct:false},
@@ -6846,7 +7011,7 @@ answers: [
     {text:"<area>", correct:false}
   ]},
 
-  {question:"Which CSS property changes text to uppercase?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property changes text to uppercase?", difficulty:"medium", basePoints:20, answers:[
     {text:"text-transform", correct:true},
     {text:"font-case", correct:false},
     {text:"uppercase", correct:false},
@@ -6860,14 +7025,14 @@ answers: [
     {text:"<block>", correct:false}
   ]},
 
-  {question:"Which CSS property fixes an element relative to the viewport?", difficulty:"hard", basePoints:10, answers:[
+  {question:"Which CSS property fixes an element relative to the viewport?", difficulty:"hard", basePoints:20, answers:[
     {text:"position: fixed;", correct:true},
     {text:"position: absolute;", correct:false},
     {text:"fixed: true;", correct:false},
     {text:"lock-position;", correct:false}
   ]},
 
-  {question:"Which HTML tag is used for emphasized text?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which HTML tag is used for emphasized text?", difficulty:"medium", basePoints:20, answers:[
     {text:"<em>", correct:true},
     {text:"<i>", correct:false},
     {text:"<strong>", correct:false},
@@ -6881,14 +7046,14 @@ answers: [
     {text:"spacing", correct:false}
   ]},
 
-  {question:"Which HTML tag defines important text?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which HTML tag defines important text?", difficulty:"medium", basePoints:20, answers:[
     {text:"<strong>", correct:true},
     {text:"<important>", correct:false},
     {text:"<b>", correct:false},
     {text:"<imp>", correct:false}
   ]},
 
-  {question:"Which CSS property rotates an element?", difficulty:"hard", basePoints:10, answers:[
+  {question:"Which CSS property rotates an element?", difficulty:"hard", basePoints:20, answers:[
     {text:"transform: rotate();", correct:true},
     {text:"rotate-element;", correct:false},
     {text:"rotation;", correct:false},
@@ -6902,21 +7067,21 @@ answers: [
     {text:"<break-line>", correct:false}
   ]},
 
-  {question:"Which CSS property sets transparency?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which CSS property sets transparency?", difficulty:"medium", basePoints:20, answers:[
     {text:"opacity", correct:true},
     {text:"visibility", correct:false},
     {text:"transparent", correct:false},
     {text:"alpha", correct:false}
   ]},
 
-  {question:"Which HTML tag defines a label for an input?", difficulty:"medium", basePoints:10, answers:[
+  {question:"Which HTML tag defines a label for an input?", difficulty:"medium", basePoints:20, answers:[
     {text:"<label>", correct:true},
     {text:"<input-label>", correct:false},
     {text:"<caption>", correct:false},
     {text:"<title>", correct:false}
   ]},
 
-  {question:"Which CSS property creates a grid layout?", difficulty:"hard", basePoints:10, answers:[
+  {question:"Which CSS property creates a grid layout?", difficulty:"hard", basePoints:20, answers:[
     {text:"display: grid;", correct:true},
     {text:"layout: grid;", correct:false},
     {text:"grid: true;", correct:false},
@@ -6953,7 +7118,7 @@ const DIFFICULTY_SETTINGS = {
     // لازم يجاوب ولسه فاضل 75% من الوقت
     // يعني لو الوقت 20 ثانية لازم يجاوب قبل ما الوقت ينزل أقل من 15
 
-    penaltyStart: 0.40,
+    penaltyStart: 0.50,
     // يبدأ يخصم بعد ما الوقت يوصل لـ 50%
     // يعني بعد نص الوقت
 
@@ -6974,16 +7139,16 @@ const DIFFICULTY_SETTINGS = {
     // يقلل 15% من وقت الكاتيجوري
     // لو الوقت 20 ثانية → يبقى 17 ثانية تقريبًا
 
-    earlyBonusPercent: 0.10,
+    earlyBonusPercent: 0.0,
     // بونص 30% لو جاوب بدري
 
     earlyThreshold: 0.65,
     // نفس شرط السرعة
 
-    penaltyStart: 0.50,
+    penaltyStart: 0.60,
     // يبدأ الخصم بعد نص الوقت
 
-    penaltyPerSecond: 0.15,
+    penaltyPerSecond: 0.05,
     // يخصم 4% كل ثانية (أسرع من easy)
 
     maxPenalty: 0.30
@@ -6992,13 +7157,13 @@ const DIFFICULTY_SETTINGS = {
 
   hard: {
 
-    multiplier: 1.4,
+    multiplier: 1,
     // يضاعف النقاط ×2
 
-    timeReductionPercent: 0.35,
+    timeReductionPercent: 0.30,
     // يقلل 30% من وقت الكاتيجوري
 
-    earlyBonusPercent: 0.25,
+    earlyBonusPercent: 0.20,
     // بونص أقل (25%)
 
     earlyThreshold: 0.75,
@@ -7008,23 +7173,23 @@ const DIFFICULTY_SETTINGS = {
     // يبدأ الخصم بعد 60% من الوقت
     // يعني بدري شوية
 
-    penaltyPerSecond: 0.20,
+    penaltyPerSecond: 0.30,
     // يخصم 6% كل ثانية (سريع)
 
-    maxPenalty: 0.50
+    maxPenalty: 0.70
     // ممكن يخسر لحد 80% من النقاط
   },
 
   insane: {
 
-    multiplier: 2,
+    multiplier: 1.2,
     // يضرب النقاط ×3 (مكافأة ضخمة)
 
-    timeReductionPercent: 0.50,
+    timeReductionPercent: 0.40,
     // يقلل 45% من الوقت
     // لو الوقت 20 → يبقى حوالي 11 ثانية
 
-    earlyBonusPercent: 0.50,
+    earlyBonusPercent: 0.20,
     // بونص قليل جدًا
 
     earlyThreshold: 0.80,
@@ -7034,10 +7199,10 @@ const DIFFICULTY_SETTINGS = {
     penaltyStart: 0.70,
     // يبدأ يخصم بدري جدًا
 
-    penaltyPerSecond: 0.30,
+    penaltyPerSecond: 0.16666666,
     // يخصم 8% كل ثانية (عنيف جدًا)
 
-    maxPenalty: 0.80
+    maxPenalty: 0.90
     // ممكن يخسر 90% من النقاط
   }
 
@@ -7053,6 +7218,25 @@ function shuffle(array) {
   }
   return arr;
 }
+
+async function updateUserScoreOnline(points) {
+
+  if (!window.firebaseUser) return;
+
+  const userRef = doc(db, "users", window.firebaseUser.uid);
+  const snap = await getDoc(userRef);
+
+  let currentScore = 0;
+
+  if (snap.exists()) {
+    currentScore = snap.data().score || 0;
+  }
+
+  await updateDoc(userRef, {
+    score: currentScore + points
+  });
+}
+
 
 /* ===== START QUIZ ===== */
 function startQuiz(level){
@@ -7090,13 +7274,13 @@ function startQuiz(level){
   const categoryTimers = {
     1: 15,
     2: 20,
-    3: 20,
-    4: 15,
+    3: 25,
+    4: 20,
     5: 20,
-    6: 15,
+    6: 20,
     7: 25,
     8: 20,
-    9: 30
+    9: 25
   };
   categoryTime = categoryTimers[level] || 20;
 
@@ -7177,6 +7361,8 @@ function showQuestion() {
   correctSound.play();
   correctAnswers++;
   combo++;
+  
+
   if (combo > maxCombo) maxCombo = combo;
   
 
@@ -7194,7 +7380,16 @@ function showQuestion() {
 
   // 👇 أضف للسكور
   score += finalPoints;
-  showComboAnimation(btn, finalPoints);
+showComboAnimation(btn, finalPoints);
+
+const comboBonus = getComboBonus();
+if (comboBonus > 0) {
+  showComboAnimation(btn, comboBonus, true);
+}
+
+
+// 🔥 أضف السطر ده
+updateUserScoreOnline(finalPoints);
 
   // 👇 أضف البونص فقط للـ extraPoints
   if (bonusOnly > 0) {
@@ -7328,11 +7523,20 @@ function nextQuestion(){
 }
 
 /* ===== COMBO MULTIPLIER ===== */
-function getComboMultiplier(){
-  if(combo >= 15) return 2.5;
-  if(combo >= 10) return 2;
-  if(combo >= 5) return 1.5;
-  return 1;
+function getComboBonus(){
+
+  const comboRewards = {
+    5: 3,
+    10: 5,
+    15: 8,
+    20: 10,
+    30: 15,
+    50: 20,
+    70: 30,
+    100: 50
+  };
+
+  return comboRewards[combo] || 0;
 }
 
 /* ===== CALCULATE BONUS ===== */
@@ -7365,7 +7569,7 @@ function calculateBonus(q){
   }
 
   /* ===== COMBO ===== */
-  basePoints *= getComboMultiplier();
+basePoints += getComboBonus();
 
   return Math.max(0, Math.round(basePoints));
 }
@@ -7642,8 +7846,58 @@ if (button.id === "finishBtn") return;
 
   playClick();
 });
+
+
+
+const myAccountBtn = document.getElementById("myAccountBtn");
+
+myAccountBtn.addEventListener("click", () => {
+
+  if(window.firebaseUser){
+    alert("Logged in as: " + window.firebaseUser.email);
+    // هنا تقدر توديه لصفحة الحساب
+  } else {
+    alert("You are not logged in");
+    // هنا تفتح مودال تسجيل الدخول
+  }
+
+});
+
+function showComboAnimation(button, value, isCombo = false) {
+
+  const popup = document.createElement("div");
+  popup.className = isCombo ? "combo-popup-bonus" : "combo-popup";
+  popup.innerText = "+" + value;
+
+  const rect = button.getBoundingClientRect();
+
+  popup.style.left = rect.left + rect.width / 2 + "px";
+  popup.style.top = rect.top + "px";
+
+  document.body.appendChild(popup);
+
+  setTimeout(() => {
+    popup.remove();
+  }, 800);
+}
+
 </script>
 
+
+<div id="authModal" class="auth-modal">
+  <div class="auth-box">
+    <span class="close-auth" id="closeAuth">&times;</span>
+    <h2>My Account</h2>
+
+    <input type="email" id="authEmail" placeholder="Email">
+    <input type="password" id="authPassword" placeholder="Password">
+
+    <button id="loginSubmit">Login</button>
+    <button id="registerSubmit">Register</button>
+
+    <p id="authMessage"></p>
+  </div>
+</div>
 
 
 </body>
