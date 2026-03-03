@@ -548,14 +548,6 @@ body * {
   z-index:9999;
 }
 
-.auth-box{
-  background:#111;
-  padding:30px;
-  border-radius:12px;
-  width:300px;
-  text-align:center;
-  box-shadow:0 0 20px #00f2ff;
-}
 
 .auth-box input{
   width:100%;
@@ -665,6 +657,194 @@ body * {
     transform: translate(-500%, -50px) scale(1);
   }
 }
+.auth-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.auth-box{
+  background: linear-gradient(145deg,#0f0f18,#141422);
+  width:420px;
+  padding:35px;
+  border-radius:25px;
+  text-align:center;
+  box-shadow:0 0 25px #00f2ff, 0 0 60px rgba(0,242,255,0.3);
+  border:1px solid rgba(0,242,255,0.4);
+  animation:fadeIn 0.3s ease;
+  position:relative;
+}
+
+.auth-box input{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border-radius:12px;
+  border:1px solid #222;
+  background:#0d0d15;
+  color:#fff;
+  outline:none;
+  transition:0.3s;
+}
+
+.auth-box input:focus{
+  border:1px solid #00f2ff;
+  box-shadow:0 0 10px #00f2ff;
+}
+
+.auth-box button{
+  width:100%;
+  padding:14px;
+  margin-top:12px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(90deg,#00f2ff,#6c5ce7);
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.auth-box button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 15px #00f2ff;
+}
+
+.close-btn{
+  float:right;
+  cursor:pointer;
+  font-size:20px;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:scale(0.9);}
+  to{opacity:1;transform:scale(1);}
+}
+
+
+
+#googleBtn{
+  background:white !important;
+  color:black !important;
+  font-weight:bold;
+}
+
+
+
+.profile-wrapper {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+}
+
+.profile-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #00f7ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+  transition: 0.3s ease;
+}
+
+.profile-circle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 12px #00f7ff;
+}
+
+#profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.switchAuth{
+  margin-top:15px;
+  font-size:14px;
+}
+
+.switchAuth span{
+  color:#00f2ff;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.switchAuth span:hover{
+  text-decoration:underline;
+}
+
+.auth-modal{
+  backdrop-filter:blur(6px);
+}
+
+
+.profile-dropdown{
+  position:absolute;
+  top:70px;
+  right:20px;
+  display:none;
+  z-index:9999;
+}
+
+.profile-card{
+  width:300px;
+  background:linear-gradient(145deg,#0f0f18,#141422);
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 0 20px #00f2ff;
+  text-align:center;
+  border:1px solid rgba(0,242,255,0.4);
+}
+
+.profile-card img{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-bottom:10px;
+  border:2px solid #00f2ff;
+}
+
+.profile-card h3{
+  margin:5px 0;
+  color:#00f2ff;
+}
+
+.profile-card p{
+  font-size:14px;
+  margin:3px 0;
+  color:#ccc;
+}
+
+.profile-card button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+#editProfileBtn{
+  background:#6c5ce7;
+  color:white;
+}
+
+#logoutBtn{
+  background:#ff3b3b;
+  color:white;
+}
+
 
 </style>
 </head>
@@ -680,8 +860,15 @@ body * {
     <div class="logo">ALeGoClash YT</div>
     <img  src="AG-logo.png" alt="Logo" loading="lazy">
   </div>
-  <li id="myAccountBtn">My Account</li>
   
+   <li id="myAccountBtn" class="profile-wrapper">
+  <div class="profile-circle">
+    <img id="profileImage" src="avatars/avatar1.png">
+  </div>
+</li>
+
+
+
   <div class="nav-right">
     <ul id="menu">
       <li data-section="home"><a>Home</a></li>
@@ -862,44 +1049,363 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
   </div>
 </div>
 
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script type="module">
+  import { GoogleAuthProvider, signInWithPopup } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import { getStorage, ref, uploadBytes, getDownloadURL } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { serverTimestamp } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDHa6ehG1vQoodbxNDfJuEN0UUg2Ymv-1s",
   authDomain: "alegoclashyt.firebaseapp.com",
-  databaseURL: "https://alegoclashyt-default-rtdb.firebaseio.com",
-  projectId: "alegoclashyt",
-  storageBucket: "alegoclashyt.firebasestorage.app",
-  messagingSenderId: "199878543888",
-  appId: "1:199878543888:web:1d964fa5a1830111925895",
-  measurementId: "G-15ZKJXPSWS"
+  projectId: "alegoclashyt"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+import { setPersistence, browserLocalPersistence } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+await setPersistence(auth, browserLocalPersistence);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
-window.db = db;
-window.auth = auth;
+const profileBtn = document.getElementById("myAccountBtn");
+const profileImage = document.getElementById("profileImage");
+const authModal = document.getElementById("authModal");
+const closeAuth = document.getElementById("closeAuth");
+const authTitle = document.getElementById("authTitle");
+const authContent = document.getElementById("authContent");
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    window.firebaseUser = user;
-    console.log("Logged in:", user.email);
+profileBtn.onclick = () => {
+  authModal.style.display = "flex";
+  if(window.firebaseUser){
+    showUserPanel();
   } else {
-    window.firebaseUser = null;
-    console.log("No user");
+    showLoginPanel();
   }
+};
+
+closeAuth.onclick = () => authModal.style.display="none";
+
+function showLoginPanel(){
+  authTitle.innerText = "Login";
+
+  authContent.innerHTML = `
+    <input type="email" id="authEmail" placeholder="Email">
+    <input type="password" id="authPassword" placeholder="Password">
+    <button id="loginBtn">Login</button>
+    <button id="googleBtn">Continue with Google</button>
+    <p class="switchAuth">Don't have an account? <span id="goRegister">Sign Up</span></p>
+    <p id="authMessage"></p>
+  `;
+
+  document.getElementById("loginBtn").onclick = loginUser;
+  document.getElementById("googleBtn").onclick = googleLogin;
+  document.getElementById("goRegister").onclick = showRegisterPanel;
+}
+
+async function googleLogin(){
+
+  const provider = new GoogleAuthProvider();
+
+  // يخلي جوجل يختار الحساب كل مرة
+  provider.setCustomParameters({
+    prompt: "select_account"
+  });
+
+  try{
+
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    await setDoc(doc(db,"users",user.uid),{
+      email: user.email,
+      username: user.displayName || "Google User",
+      age: null,
+      avatar: user.photoURL || "userpic.jpg",
+      createdAt: serverTimestamp()
+    }, { merge:true });
+
+    authModal.style.display="none";
+location.reload();
+
+  
+
+  }catch(err){
+
+    const msg = document.getElementById("authMessage");
+
+    if(err.code === "auth/popup-closed-by-user"){
+      msg.innerText = "Login cancelled.";
+    }else{
+      msg.innerText = "Google login failed. Try again.";
+      console.error(err);
+    }
+
+  }
+}
+
+
+function showRegisterPanel(){
+  authTitle.innerText = "Sign Up";
+
+  authContent.innerHTML = `
+    <input type="text" id="authUsername" placeholder="Username" required minlength="3">
+
+    <input type="number" id="authAge" placeholder="Age" required min="13">
+
+    <input type="email" id="authEmail" placeholder="Email" required>
+
+    <input type="password" 
+           id="authPassword" 
+           placeholder="Create Password (min 6 characters)" 
+           required 
+           minlength="6">
+
+    <button id="registerBtn">Create Account</button>
+
+    <button id="googleBtn">Continue with Google</button>
+
+    <p class="switchAuth">
+      Already have an account? 
+      <span id="goLogin">Login</span>
+    </p>
+
+    <p id="authMessage"></p>
+  `;
+
+  document.getElementById("registerBtn").onclick = registerUser;
+  document.getElementById("googleBtn").onclick = googleLogin;
+  document.getElementById("goLogin").onclick = showLoginPanel;
+}
+
+async function showUserPanel(){
+
+  const user = window.firebaseUser;
+  const snap = await getDoc(doc(db,"users",user.uid));
+
+  if(!snap.exists()) return;
+
+  const data = snap.data();
+
+  authTitle.innerText = "My Profile";
+
+  authContent.innerHTML = `
+    <p><strong>Username:</strong> ${data.username}</p>
+    <p><strong>Email:</strong> ${data.email}</p>
+    <p><strong>Age:</strong> ${data.age ?? "Not set"}</p>
+    <button id="logoutBtn">Logout</button>
+  `;
+
+  document.getElementById("logoutBtn").onclick = async ()=>{
+    await signOut(auth);
+    authModal.style.display="none";
+  };
+}
+
+async function registerUser(){
+
+  const username = document.getElementById("authUsername").value.trim();
+  const age = document.getElementById("authAge").value.trim();
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value.trim();
+  const msg = document.getElementById("authMessage");
+
+  // تحقق من الفراغ
+  if(!username || !age || !email || !password){
+    msg.innerText = "All fields are required!";
+    return;
+  }
+
+  // تحقق من العمر
+  if(age < 13){
+    msg.innerText = "You must be at least 13 years old.";
+    return;
+  }
+
+  // تحقق من قوة الباسورد
+  if(password.length < 6){
+    msg.innerText = "Password must be at least 6 characters.";
+    return;
+  }
+
+  try{
+    const cred = await createUserWithEmailAndPassword(auth,email,password);
+
+  await setDoc(doc(db,"users",cred.user.uid),{
+  email: email,
+  username: username,
+  age: age,
+  avatar:"userpic.jpg",
+  createdAt: serverTimestamp(),
+  role: "user",
+  xp: 0
 });
+
+
+await fetch("/api/notify", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    username: username,
+    email: email,
+    age: age,
+    uid: cred.user.uid
+  })
+});
+
+
+authModal.style.display="none";
+location.reload();
+
+}catch(err){
+  msg.innerText = err.message;
+}
+}
+
+async function loginUser(){
+
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value.trim();
+  const msg = document.getElementById("authMessage");
+
+  // تحقق من الفراغ
+  if(!email || !password){
+    msg.innerText = "Email and Password are required!";
+    return;
+  }
+
+  try{
+
+    const cred = await signInWithEmailAndPassword(auth,email,password);
+
+    authModal.style.display="none";
+msg.innerText = "";
+location.reload();
+
+
+  }catch(err){
+
+    if(err.code === "auth/invalid-credential"){
+      msg.innerText = "Wrong email or password.";
+    }else if(err.code === "auth/user-not-found"){
+      msg.innerText = "No account found with this email.";
+    }else{
+      msg.innerText = "Login failed. Try again.";
+    }
+
+  }
+}
+
+onAuthStateChanged(auth, async (user)=>{
+
+  const profileImage = document.getElementById("profileImage");
+  const profileCardImage = document.getElementById("profileCardImage");
+  const profileCardName = document.getElementById("profileCardName");
+  const profileCardEmail = document.getElementById("profileCardEmail");
+  const profileCardAge = document.getElementById("profileCardAge");
+  const profileCardDate = document.getElementById("profileCardDate");
+
+  if(user){
+
+    window.firebaseUser = user;
+
+    const snap = await getDoc(doc(db,"users",user.uid));
+
+    if(snap.exists()){
+
+      const data = snap.data();
+
+      profileImage.src = data.avatar || "userpic.jpg";
+      profileCardImage.src = data.avatar || "userpic.jpg";
+
+      profileCardName.innerText = data.username;
+      profileCardEmail.innerText = data.email;
+      profileCardAge.innerText = "Age: " + (data.age ?? "Not set");
+      profileCardDate.innerText = "Joined: " + data.createdAt?.toDate().toLocaleDateString();
+
+    }
+
+  }else{
+
+    window.firebaseUser = null;
+    profileImage.src = "userpic.jpg";
+    profileCardImage.src = "userpic.jpg";
+
+  }
+
+});
+
+document.addEventListener("click", async function(e){
+
+  if(e.target.id === "changeAvatarBtn"){
+    document.getElementById("avatarInput").click();
+  }
+
+});
+
+const avatarInput = document.getElementById("avatarInput");
+
+if(avatarInput){
+  avatarInput.addEventListener("change", async function(e){
+
+    const file = e.target.files[0];
+    if(!file) return;
+
+    const user = auth.currentUser;
+    if(!user) return;
+
+    const storageRef = ref(storage, "avatars/" + user.uid);
+
+    await uploadBytes(storageRef, file);
+
+    const downloadURL = await getDownloadURL(storageRef);
+
+    await updateDoc(doc(db,"users",user.uid),{
+      avatar: downloadURL
+    });
+
+    document.getElementById("profileImage").src = downloadURL;
+    document.getElementById("profileCardImage").src = downloadURL;
+
+    alert("Photo Updated ✅");
+
+  });
+}
+
+
 </script>
+
+
 
 
 <script>
@@ -7862,7 +8368,7 @@ backBtn.addEventListener('click', () => {
 
 
 
-</script>
+
 
 
 <button id="scrollTopBtn">⬆</button>
@@ -7913,20 +8419,6 @@ if (button.id === "finishBtn") return;
 
 
 
-const myAccountBtn = document.getElementById("myAccountBtn");
-
-myAccountBtn.addEventListener("click", () => {
-
-  if(window.firebaseUser){
-    alert("Logged in as: " + window.firebaseUser.email);
-    // هنا تقدر توديه لصفحة الحساب
-  } else {
-    alert("You are not logged in");
-    // هنا تفتح مودال تسجيل الدخول
-  }
-
-});
-
 function showComboAnimation(button, value, isCombo = false) {
 
   const popup = document.createElement("div");
@@ -7945,23 +8437,39 @@ function showComboAnimation(button, value, isCombo = false) {
   }, 800);
 }
 
-</script>
 
+
+</script>
 
 <div id="authModal" class="auth-modal">
   <div class="auth-box">
-    <span class="close-auth" id="closeAuth">&times;</span>
-    <h2>My Account</h2>
-
-    <input type="email" id="authEmail" placeholder="Email">
-    <input type="password" id="authPassword" placeholder="Password">
-
-    <button id="loginSubmit">Login</button>
-    <button id="registerSubmit">Register</button>
-
-    <p id="authMessage"></p>
+    <span id="closeAuth" class="close-btn">×</span>
+    <h2 id="authTitle"></h2>
+    <div id="authContent"></div>
   </div>
 </div>
+
+</div>
+
+
+<div id="profileDropdown" class="profile-dropdown">
+  <div class="profile-card">
+    <input type="file" id="avatarInput" accept="image/*" hidden>
+<button id="changeAvatarBtn">Change Photo</button>
+
+    <img id="profileCardImage" src="userpic.jpg">
+    
+    <h3 id="profileCardName"></h3>
+    <p id="profileCardEmail"></p>
+    <p id="profileCardAge"></p>
+    <p id="profileCardDate"></p>
+
+    <button id="editProfileBtn">Edit Profile</button>
+    <button id="logoutBtn">Logout</button>
+  </div>
+</div>
+
+
 
 
 </body>
