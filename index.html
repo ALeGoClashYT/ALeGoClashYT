@@ -112,8 +112,31 @@ img[alt="Logo"] {
 @media(max-width:900px){
   nav{flex-wrap:nowrap;justify-content:space-between;align-items:center;}
   .nav-right{flex-wrap:nowrap;justify-content:flex-end;width:auto;margin-top:0;}
-  nav ul{position:absolute;top:60px;right:10px;background:#111;flex-direction:column;width:180px;display:none;padding:10px;z-index:1001;}
-  nav ul.active{display:flex;}
+  nav ul{
+  position:absolute;
+  top:70px;
+  right:10px;
+  background:#111;
+  flex-direction:column;
+  width:200px;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 0 25px #00f2ff;
+  z-index:1001;
+
+  opacity:0;
+  transform:translateY(-15px);
+  pointer-events:none;
+
+  transition:all 0.35s ease;
+}
+
+nav ul.active{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
   .social-icons{display:flex;align-items:center;gap:15px;}
   .menu-toggle{display:block;}
   .hero{flex-direction:column;text-align:center;}
@@ -902,8 +925,49 @@ particlesJS("particles-js", {
 
 /* ===== NAVBAR MENU TOGGLE ===== */
 function toggleMenu() {
-  document.getElementById("menu").classList.toggle("active");
+  const menu = document.getElementById("menu");
+  menu.classList.toggle("active");
 }
+
+// يقفل فورًا بدون تأخير
+document.addEventListener("pointerdown", function (e) {
+  const menu = document.getElementById("menu");
+  const toggleBtn = document.querySelector(".menu-toggle");
+
+  if (menu.classList.contains("active") &&
+      !menu.contains(e.target) &&
+      !toggleBtn.contains(e.target)) {
+        
+    menu.classList.remove("active");
+  }
+});
+
+// يقفل بعد اختيار قسم
+document.querySelectorAll("#menu li").forEach(item => {
+  item.addEventListener("pointerdown", () => {
+    document.getElementById("menu").classList.remove("active");
+  });
+});
+
+// يقفل المينيو لو ضغطت براها
+document.addEventListener("pointerdown", function(e) {
+  const menu = document.getElementById("menu");
+  const toggleBtn = document.querySelector(".menu-toggle");
+
+  if (menu.classList.contains("active") &&
+      !menu.contains(e.target) &&
+      !toggleBtn.contains(e.target)) {
+        
+    menu.classList.remove("active");
+  }
+});
+
+// يقفلها بعد ما تختار لينك
+document.querySelectorAll("#menu li").forEach(item => {
+  item.addEventListener("click", () => {
+    document.getElementById("menu").classList.remove("active");
+  });
+});
 /* ===== TABS SWITCHING ===== */
 const tabs = document.querySelectorAll('#menu li');
 const sections = document.querySelectorAll('section');
