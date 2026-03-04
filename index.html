@@ -929,6 +929,36 @@ body * {
   transform:scale(1.05);
 }
 
+.password-field{
+  position:relative;
+}
+
+.password-field span{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  font-size:14px;
+}
+
+.forgot-pass{
+  text-align:right;
+  margin:5px 0 10px;
+}
+
+.forgot-pass span{
+  color:#00c3ff;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.forgot-pass span:hover{
+  text-decoration:underline;
+}
+
+
+
 </style>
 </head>
 <body>
@@ -1048,7 +1078,7 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
   <div style="text-align:center;margin-top:40px;">
     
     <a class="btn">Coming soon </a>
-    <a class="btn" onclick="openPuzzle()">Solve Puzzles</a>
+    <a class="btn" onclick="openPuzzle()">⚔️ Brain battle ⚔️</a>
     <a class="btn">Coming soon</a>
   </div>
 
@@ -1144,6 +1174,9 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
   import { GoogleAuthProvider, signInWithPopup } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+import { sendPasswordResetEmail } 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
 import { getStorage, ref, uploadBytes, getDownloadURL } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -1159,7 +1192,8 @@ import {
   doc,
   getDoc,
   setDoc,
-  updateDoc
+  updateDoc,
+  increment
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { serverTimestamp } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1197,22 +1231,74 @@ profileBtn.onclick = () => {
 
 closeAuth.onclick = () => authModal.style.display="none";
 
+
+
 function showLoginPanel(){
   authTitle.innerText = "Login";
 
   authContent.innerHTML = `
     <input type="email" id="authEmail" placeholder="Email">
-    <input type="password" id="authPassword" placeholder="Password">
+    <div class="password-field">
+  <input type="password" id="authPassword" placeholder="Password">
+  <span id="togglePass">👁</span>
+</div>
     <button id="loginBtn">Login</button>
-    <button id="googleBtn">Continue with Google</button>
-    <p class="switchAuth">Don't have an account? <span id="goRegister">Sign Up</span></p>
+
+<p class="forgot-pass">
+  <span id="forgotPassword">Forgot Password?</span>
+</p>
+
+<button id="googleBtn">Continue with Google</button>
+
+<p class="switchAuth">
+  Don't have an account? 
+  <span id="goRegister">Sign Up</span>
+</p>
+
     <p id="authMessage"></p>
   `;
+
+const toggle = document.getElementById("togglePass");
+if(toggle){
+  toggle.onclick = ()=>{
+    const input = document.getElementById("authPassword");
+    input.type = input.type === "password" ? "text" : "password";
+  };
+}
 
   document.getElementById("loginBtn").onclick = loginUser;
   document.getElementById("googleBtn").onclick = googleLogin;
   document.getElementById("goRegister").onclick = showRegisterPanel;
+  document.getElementById("forgotPassword").onclick = resetPassword;
 }
+
+async function resetPassword(){
+
+  const email = document.getElementById("authEmail").value.trim();
+  const msg = document.getElementById("authMessage");
+
+  if(!email){
+    msg.innerText = "Please enter your email first.";
+    return;
+  }
+
+  try{
+    await sendPasswordResetEmail(auth, email);
+    msg.innerText = "Password reset email sent. Check your inbox.";
+  }catch(err){
+
+    if(err.code === "auth/user-not-found"){
+      msg.innerText = "No account found with this email.";
+    }else if(err.code === "auth/invalid-email"){
+      msg.innerText = "Invalid email address.";
+    }else{
+      msg.innerText = "Something went wrong. Try again.";
+      console.error(err);
+    }
+
+  }
+}
+
 
 function showRegisterPanel(){
 
@@ -1222,14 +1308,38 @@ function showRegisterPanel(){
     <input type="text" id="authUsername" placeholder="Username">
     <input type="number" id="authAge" placeholder="Age">
     <input type="email" id="authEmail" placeholder="Email">
-    <input type="password" id="authPassword" placeholder="Password">
+
+    <div class="password-field">
+      <input type="password" id="authPassword" placeholder="Password">
+      <span class="togglePass">👁</span>
+    </div>
+
+    <div class="password-field">
+      <input type="password" id="authConfirmPassword" placeholder="Confirm Password">
+      <span class="togglePass">👁</span>
+    </div>
+
+    <small id="passwordHint" style="color:#888;">
+      Password must contain at least 6 characters.
+    </small>
+
     <button id="registerBtn">Create Account</button>
+
     <p class="switchAuth">
       Already have an account? 
       <span id="goLogin">Login</span>
     </p>
+
     <p id="authMessage"></p>
   `;
+
+  // 🔥 Toggle لكل الباسوردات
+  document.querySelectorAll(".togglePass").forEach(toggle=>{
+    toggle.onclick = ()=>{
+      const input = toggle.previousElementSibling;
+      input.type = input.type === "password" ? "text" : "password";
+    };
+  });
 
   document.getElementById("registerBtn").onclick = registerUser;
   document.getElementById("goLogin").onclick = showLoginPanel;
@@ -1239,69 +1349,77 @@ function showRegisterPanel(){
 async function googleLogin(){
 
   const provider = new GoogleAuthProvider();
-
-  // يخلي جوجل يختار الحساب كل مرة
-  provider.setCustomParameters({
-    prompt: "select_account"
-  });
+  provider.setCustomParameters({ prompt:"select_account" });
 
   try{
 
-    const result = await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth,provider);
     const user = result.user;
 
-  await setDoc(doc(db,"users",user.uid),{
-  email: user.email,
-  username: user.displayName || "Google User",
-  age: null,
-  avatar: user.photoURL || "userpic.jpg",
-  xp: 0,
-  role: "user",
-  provider: "google",
-  createdAt: serverTimestamp()
-}, { merge:true });
+    const userRef = doc(db,"users",user.uid);
+    const snap = await getDoc(userRef);
 
+    if(!snap.exists()){
 
-// 🔥 نبعت كل البيانات للبوت
-await fetch("/api/notify", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    type: "google_signup",
-    uid: user.uid,
-    email: user.email,
-    username: user.displayName || "Google User",
-    age: null,
-    xp: 0,
-    role: "user",
-    avatar: user.photoURL || "userpic.jpg",
-    provider: "google",
-    createdAt: new Date().toISOString()
-  })
-});
+      await setDoc(userRef,{
 
-authModal.style.display = "none";
-location.reload();
+        uid:user.uid,
+        email:user.email,
+        username:user.displayName || "Google User",
+        age:null,
+        avatar:user.photoURL || "userpic.jpg",
 
+        xp:0,
+        extraPoints:0,
+        level:1,
 
-  }catch(err){
+        role:"user",
+        isBlocked:false,
+        isVerified:true,
 
-    const msg = document.getElementById("authMessage");
+        provider:"google",
+        totalLogins:1,
+        streakDays:0,
 
-    if(err.code === "auth/popup-closed-by-user"){
-      msg.innerText = "Login cancelled.";
+        createdAt:serverTimestamp(),
+        updatedAt:serverTimestamp(),
+        lastLogin:serverTimestamp()
+
+      });
+
     }else{
-      msg.innerText = "Google login failed. Try again.";
-      console.error(err);
+
+      const data = snap.data();
+
+      if(data.isBlocked){
+        await signOut(auth);
+        alert("Your account has been blocked.");
+        return;
+      }
+
+      await updateDoc(userRef,{
+        avatar:user.photoURL || data.avatar,
+        lastLogin:serverTimestamp(),
+        updatedAt:serverTimestamp(),
+        totalLogins:increment(1)
+      });
+
     }
 
+    authModal.style.display="none";
+
+  }catch(err){
+    console.error(err);
   }
 }
+
 
 
 async function showUserPanel(){
 
   const user = window.firebaseUser;
+  if(!user) return;
+
   const snap = await getDoc(doc(db,"users",user.uid));
   if(!snap.exists()) return;
 
@@ -1327,11 +1445,10 @@ async function showUserPanel(){
     </div>
 
     <div class="pro-right">
-      <h2 class="pro-name">${data.username}</h2>
+      <h2 class="pro-name" id="liveUsername">${data.username}</h2>
       <p class="pro-email">${data.email}</p>
 
       <div class="stats-box">
-
         <div class="stat">
           <span>XP</span>
           <h3>${data.xp || 0}</h3>
@@ -1341,16 +1458,24 @@ async function showUserPanel(){
           <span>Extra Points</span>
           <h3>${data.extraPoints || 0}</h3>
         </div>
-
       </div>
+
+      <button id="editProfileBtn" class="edit-btn">
+        Edit Profile
+      </button>
 
       <button id="logoutBtn" class="logout-btn">
         Logout
       </button>
-    </div>
 
+    </div>
   </div>
   `;
+
+  // زرار تعديل البروفايل
+  document.getElementById("editProfileBtn").onclick = ()=>{
+    showEditProfilePanel(data);
+  };
 
   // فتح اختيار الصورة
   document.getElementById("changePhotoBtn").onclick = ()=>{
@@ -1359,30 +1484,62 @@ async function showUserPanel(){
 
   // رفع الصورة
   document.getElementById("avatarUpload").addEventListener("change", async (e)=>{
+
     const file = e.target.files[0];
     if(!file) return;
 
-    const storageRef = ref(storage, "avatars/" + user.uid);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
+    // لازم يكون صورة
+    if(!file.type.startsWith("image/")){
+      alert("Please upload an image file.");
+      return;
+    }
 
-    await updateDoc(doc(db,"users",user.uid),{
-      avatar: url
-    });
+    // حد أقصى 2MB
+    if(file.size > 2 * 1024 * 1024){
+      alert("Image must be less than 2MB.");
+      return;
+    }
 
-    document.getElementById("profileImage").src = url;
+    const uploadInput = document.getElementById("avatarUpload");
+    const profileImg = document.getElementById("profileImage");
 
-    // تبعت للبوت
-    await fetch("/api/notify",{
-      method:"POST",
-      headers:{ "Content-Type":"application/json"},
-      body: JSON.stringify({
-        type:"avatar_updated",
-        uid:user.uid,
-        username:data.username,
-        avatar:url
-      })
-    });
+    uploadInput.disabled = true;
+    profileImg.style.opacity = "0.5";
+
+    try{
+
+      const storageRef = ref(storage, "avatars/" + user.uid);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+
+      await updateDoc(doc(db,"users",user.uid),{
+        avatar: url,
+        updatedAt: serverTimestamp()
+      });
+
+      profileImg.src = url;
+
+      // إرسال إشعار للبوت
+      await fetch("/api/notify",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json"},
+        body: JSON.stringify({
+          type:"avatar_updated",
+          uid:user.uid,
+          email:user.email,
+          username:data.username,
+          avatar:url,
+          updatedAt:new Date().toISOString()
+        })
+      });
+
+    }catch(err){
+      console.error(err);
+      alert("Upload failed.");
+    }
+
+    uploadInput.disabled = false;
+    profileImg.style.opacity = "1";
 
   });
 
@@ -1394,113 +1551,237 @@ async function showUserPanel(){
 
 }
 
-async function registerUser(){
+function showEditProfilePanel(data){
 
-  const username = document.getElementById("authUsername").value.trim();
-  const age = document.getElementById("authAge").value.trim();
-  const email = document.getElementById("authEmail").value.trim();
-  const password = document.getElementById("authPassword").value.trim();
+  authTitle.innerText = "Edit Profile";
+
+  authContent.innerHTML = `
+    <input type="text" id="editUsername" 
+           value="${data.username || ''}" 
+           placeholder="Username">
+
+    <input type="number" id="editAge"
+${data.age ? "readonly" : ""}
+
+           value="${data.age || ''}" 
+           placeholder="Age">
+
+    <button id="saveProfileBtn">Save Changes</button>
+    <button id="cancelEditBtn">Cancel</button>
+
+    <p id="authMessage"></p>
+  `;
+
+  document.getElementById("saveProfileBtn").onclick = saveProfileChanges;
+  document.getElementById("cancelEditBtn").onclick = ()=>{
+  showUserPanel();
+};
+}
+async function saveProfileChanges(){
+
+  const user = window.firebaseUser;
+  const username = document.getElementById("editUsername").value.trim();
+  const ageValue = document.getElementById("editAge").value.trim();
   const msg = document.getElementById("authMessage");
 
-  // تحقق من الفراغ
-  if(!username || !age || !email || !password){
-    msg.innerText = "All fields are required!";
+  msg.innerText="";
+
+  if(!user){
+    msg.innerText="User not authenticated.";
     return;
   }
 
-  // تحقق من العمر
-  if(age < 13){
-    msg.innerText = "You must be at least 13 years old.";
+  if(!username || !ageValue){
+    msg.innerText="All fields are required.";
     return;
   }
 
-  // تحقق من قوة الباسورد
-  if(password.length < 6){
-    msg.innerText = "Password must be at least 6 characters.";
+  const age=parseInt(ageValue);
+
+  if(isNaN(age) || age<13){
+    msg.innerText="You must be at least 13 years old.";
     return;
   }
 
   try{
 
-    // إنشاء الحساب
+    await updateDoc(doc(db,"users",user.uid),{
+      username:username,
+      age:age,
+      updatedAt:serverTimestamp()
+    });
+
+    await fetch("/api/notify",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json"},
+      body:JSON.stringify({
+        type:"profile_updated",
+        uid:user.uid,
+        email:user.email,
+        username:username,
+        age:age,
+        updatedAt:new Date().toISOString()
+      })
+    });
+
+    msg.innerText="Profile updated successfully!";
+
+    setTimeout(()=>{ showUserPanel(); },800);
+
+  }catch(err){
+    msg.innerText="Update failed.";
+    console.error(err);
+  }
+}
+
+
+
+async function registerUser(){
+
+  const username = document.getElementById("authUsername").value.trim();
+  const ageValue = document.getElementById("authAge").value.trim();
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  const confirmPassword = document.getElementById("authConfirmPassword").value;
+  const msg = document.getElementById("authMessage");
+
+  msg.innerText = "";
+
+  if(!username || !ageValue || !email || !password || !confirmPassword){
+    msg.innerText = "All fields are required.";
+    return;
+  }
+
+  if(password !== confirmPassword){
+    msg.innerText = "Passwords do not match.";
+    return;
+  }
+
+  const age = parseInt(ageValue);
+  if(isNaN(age) || age < 13){
+    msg.innerText = "You must be at least 13 years old.";
+    return;
+  }
+
+  try{
+
     const cred = await createUserWithEmailAndPassword(auth,email,password);
     const user = cred.user;
 
-    // حفظ البيانات في Firestore
     await setDoc(doc(db,"users",user.uid),{
-      email: email,
-      username: username,
-      age: age,
-      avatar: "userpic.jpg",
-      xp: 0,
-      role: "user",
-      provider: "email",
-      createdAt: serverTimestamp()
+
+      uid:user.uid,
+      username:username,
+      email:user.email,
+      age:age,
+      avatar:"userpic.jpg",
+
+      xp:0,
+      extraPoints:0,
+      level:1,
+
+      role:"user",
+      isBlocked:false,
+      isVerified:user.emailVerified || false,
+
+      provider:"password",
+      totalLogins:1,
+      streakDays:0,
+
+      createdAt:serverTimestamp(),
+      updatedAt:serverTimestamp(),
+      lastLogin:serverTimestamp()
+
     });
 
-    // إرسال كل البيانات للبوت مرة واحدة فقط
-    await fetch("/api/notify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "new_user",
-        uid: user.uid,
-        email: email,
-        username: username,
-        age: age,
-        xp: 0,
-        role: "user",
-        avatar: "userpic.jpg",
-        provider: "email",
-        createdAt: new Date().toISOString()
+    // إشعار للبوت
+    await fetch("/api/notify",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json"},
+      body:JSON.stringify({
+        type:"new_email_user",
+        uid:user.uid,
+        email:user.email,
+        username:username,
+        role:"user",
+        provider:"password",
+        createdAt:new Date().toISOString()
       })
     });
 
     authModal.style.display="none";
-    location.reload();
 
   }catch(err){
-    msg.innerText = err.message;
+    msg.innerText="Registration failed.";
+    console.error(err);
   }
 }
+
 
 async function loginUser(){
 
   const email = document.getElementById("authEmail").value.trim();
-  const password = document.getElementById("authPassword").value.trim();
+  const password = document.getElementById("authPassword").value;
   const msg = document.getElementById("authMessage");
 
-  // تحقق من الفراغ
+  msg.innerText="";
+
   if(!email || !password){
-    msg.innerText = "Email and Password are required!";
+    msg.innerText="All fields are required.";
     return;
   }
 
   try{
 
     const cred = await signInWithEmailAndPassword(auth,email,password);
+    const user = cred.user;
+
+    const userRef = doc(db,"users",user.uid);
+    const snap = await getDoc(userRef);
+
+    if(!snap.exists()){
+      msg.innerText="User data missing.";
+      return;
+    }
+
+    const data = snap.data();
+
+    if(data.isBlocked){
+      await signOut(auth);
+      msg.innerText="Your account has been blocked.";
+      return;
+    }
+
+    await updateDoc(userRef,{
+      lastLogin:serverTimestamp(),
+      updatedAt:serverTimestamp(),
+      totalLogins:increment(1)
+    });
 
     authModal.style.display="none";
-msg.innerText = "";
-location.reload();
-
 
   }catch(err){
 
-    if(err.code === "auth/invalid-credential"){
-      msg.innerText = "Wrong email or password.";
-    }else if(err.code === "auth/user-not-found"){
-      msg.innerText = "No account found with this email.";
+    if(err.code==="auth/user-not-found"){
+      msg.innerText="No account found.";
+    }else if(err.code==="auth/wrong-password"){
+      msg.innerText="Incorrect password.";
     }else{
-      msg.innerText = "Login failed. Try again.";
+      msg.innerText="Login failed.";
     }
 
+    console.error(err);
   }
 }
 
+const profileCardImage = document.getElementById("profileCardImage");
+const profileCardName = document.getElementById("profileCardName");
+const profileCardEmail = document.getElementById("profileCardEmail");
+const profileCardAge = document.getElementById("profileCardAge");
+const profileCardDate = document.getElementById("profileCardDate");
+
 onAuthStateChanged(auth, async (user)=>{
 
-  const profileImage = document.getElementById("profileImage");
  
   if(user){
 
@@ -1512,23 +1793,40 @@ onAuthStateChanged(auth, async (user)=>{
 
       const data = snap.data();
 
-      profileImage.src = data.avatar || "userpic.jpg";
-      profileCardImage.src = data.avatar || "userpic.jpg";
+     if(profileImage)
+  profileImage.src = data.avatar || "userpic.jpg";
 
-      profileCardName.innerText = data.username;
-      profileCardEmail.innerText = data.email;
-      profileCardAge.innerText = "Age: " + (data.age ?? "Not set");
-      profileCardDate.innerText = "Joined: " + data.createdAt?.toDate().toLocaleDateString();
+if(profileCardImage)
+  profileCardImage.src = data.avatar || "userpic.jpg";
+
+if(profileCardName)
+  profileCardName.innerText = data.username;
+
+if(profileCardEmail)
+  profileCardEmail.innerText = data.email;
+
+if(profileCardAge)
+  profileCardAge.innerText = "Age: " + (data.age ?? "Not set");
+
+if(profileCardDate && data.createdAt)
+  profileCardDate.innerText = 
+    "Joined: " + data.createdAt.toDate().toLocaleDateString();
+    
 
     }
 
   }else{
 
-    window.firebaseUser = null;
+  window.firebaseUser = null;
+
+  if(profileImage)
     profileImage.src = "userpic.jpg";
+
+  if(profileCardImage)
     profileCardImage.src = "userpic.jpg";
 
-  }
+}
+
 
 });
 
