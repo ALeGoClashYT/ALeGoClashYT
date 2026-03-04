@@ -1561,10 +1561,9 @@ function showEditProfilePanel(data){
            placeholder="Username">
 
     <input type="number" id="editAge"
-${data.age ? "readonly" : ""}
+value="${data.age || ''}" 
+placeholder="Age">
 
-           value="${data.age || ''}" 
-           placeholder="Age">
 
     <button id="saveProfileBtn">Save Changes</button>
     <button id="cancelEditBtn">Cancel</button>
