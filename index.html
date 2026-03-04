@@ -1814,8 +1814,9 @@ async function showAdminPanel(){
         usersHTML += `
           <div class="admin-user">
             <div class="admin-user-info">
-              <strong>${u.username}</strong>
-              <span>${u.email}</span>
+              <strong>${u.username || "No Name"}</strong>
+<span>${u.email || "No Email"}</span>
+
               <div class="admin-meta">
                 <span class="role-tag">${u.role || "user"}</span>
                 <span class="${u.isBlocked ? "blocked" : "active"}">
@@ -1909,31 +1910,39 @@ async function showAdminPanel(){
 
     document.getElementById("closeAdminPanel").onclick = showUserPanel;
     document.getElementById("refreshAdmin").onclick = showAdminPanel;
+    
+    console.log(users);
 
     function applyFilters(){
-      const search = document.getElementById("searchUser").value.toLowerCase();
-      const roleFilter = document.getElementById("filterRole").value;
-      const statusFilter = document.getElementById("filterStatus").value;
 
-      let filtered = users.filter(u=>{
-        const matchSearch =
-          u.username.toLowerCase().includes(search) ||
-          u.email.toLowerCase().includes(search);
+  const search = document.getElementById("searchUser").value.toLowerCase();
+  const roleFilter = document.getElementById("filterRole").value;
+  const statusFilter = document.getElementById("filterStatus").value;
 
-        const matchRole =
-          roleFilter === "all" || u.role === roleFilter;
+  let filtered = users.filter(u=>{
 
-        const matchStatus =
-          statusFilter === "all" ||
-          (statusFilter === "active" && !u.isBlocked) ||
-          (statusFilter === "blocked" && u.isBlocked);
+    const username = (u.username || "").toLowerCase();
+    const email = (u.email || "").toLowerCase();
 
-        return matchSearch && matchRole && matchStatus;
-      });
+    const matchSearch =
+      username.includes(search) ||
+      email.includes(search);
 
-      currentPage = 1;
-      renderPanel(filtered);
-    }
+    const matchRole =
+      roleFilter === "all" || u.role === roleFilter;
+
+    const matchStatus =
+      statusFilter === "all" ||
+      (statusFilter === "active" && !u.isBlocked) ||
+      (statusFilter === "blocked" && u.isBlocked);
+
+    return matchSearch && matchRole && matchStatus;
+  });
+
+  currentPage = 1;
+  renderPanel(filtered);
+}
+
 
     document.getElementById("searchUser").addEventListener("input", applyFilters);
     document.getElementById("filterRole").addEventListener("change", applyFilters);
@@ -9418,3 +9427,6 @@ function showComboAnimation(button, value, isCombo = false) {
 
 </body>
 </html>
+
+
+
