@@ -1951,9 +1951,9 @@ async function showAdminPanel(){
     renderPanel(users);
 
   }catch(err){
-    console.error(err);
-    alert("Failed to load admin panel.");
-  }
+  console.error("ADMIN ERROR FULL:", err);
+  alert(err.message);
+}
 }
 
 
