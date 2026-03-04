@@ -1041,12 +1041,16 @@ backdrop-filter:blur(25px);
 .admin-container{
   width:95%;
   max-width:1200px;
-  background:linear-gradient(145deg,#0b1228,#0e1633);
-  border-radius:20px;
-  padding:30px;
+  background:linear-gradient(145deg,#16213e,#1a1f4d); /* أفتح */
+  border-radius:25px;
+  padding:35px;
   margin:auto;
-  min-height:auto;        /* شيلنا 100vh */
   box-sizing:border-box;
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(0,255,255,.15);
+  box-shadow:
+    0 0 40px rgba(0,247,255,.1),
+    0 0 80px rgba(108,92,231,.05);
 }
 
 .admin-container{
@@ -1073,33 +1077,46 @@ backdrop-filter:blur(25px);
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:18px;
-  margin-bottom:15px;
-  border-radius:18px;
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(0,247,255,.1);
-  transition:.3s;
+  padding:20px;
+  margin-bottom:18px;
+  border-radius:20px;
+  background:rgba(255,255,255,.04);
+  backdrop-filter:blur(15px);
+  border:1px solid rgba(0,247,255,.08);
+  transition:.35s;
 }
 
 .admin-user:hover{
-  background:rgba(0,247,255,.05);
-  transform:translateY(-2px);
+  background:rgba(0,247,255,.08);
+  transform:translateY(-4px) scale(1.01);
+  box-shadow:0 0 25px rgba(0,247,255,.15);
 }
 
 .admin-actions button{
-  padding:8px 14px;
-  border-radius:10px;
-  border:none;
+  padding:8px 16px;
+  border-radius:12px;
   font-size:12px;
-  cursor:pointer;
-  background:#111a33;
+  background:linear-gradient(90deg,#00f2ff,#6c5ce7);
+  border:none;
   color:white;
+  font-weight:600;
   transition:.3s;
 }
 
 .admin-actions button:hover{
-  background:linear-gradient(90deg,#00f2ff,#6c5ce7);
+  transform:translateY(-2px);
+  box-shadow:0 0 15px rgba(0,247,255,.4);
 }
+
+
+.admin-header{
+  padding:15px 20px;
+  background:rgba(255,255,255,.05);
+  border-radius:18px;
+  backdrop-filter:blur(15px);
+  margin-bottom:20px;
+}
+
 
 button{
   transition:all .25s ease;
@@ -1301,6 +1318,44 @@ color:#E0F7FF;
 
 }
   
+  
+  /* ===== MOBILE NAVBAR FIX ===== */
+@media (max-width:768px){
+
+  html, body{
+    overflow-x:hidden;
+  }
+
+  nav{
+    padding:10px 12px;
+    width:100%;
+  }
+
+  .logo{
+    font-size:14px;
+  }
+
+  .logo-container img{
+    width:28px;
+    height:28px;
+  }
+
+  .profile-wrapper{
+    margin:0 10px 0 auto; /* كان 40px */
+  }
+
+  .menu-toggle{
+    font-size:22px;
+    margin-left:5px;
+  }
+
+  .nav-right{
+    gap:10px;
+  }
+
+}
+
+
   
 
 </style>
