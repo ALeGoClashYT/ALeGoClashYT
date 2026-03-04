@@ -957,6 +957,172 @@ body * {
   text-decoration:underline;
 }
 
+.admin-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.65);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.admin-container{
+  background:#111;
+  width:520px;
+  max-height:75vh;
+  border-radius:16px;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 0 30px rgba(0,0,0,0.6);
+}
+
+.admin-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.admin-header button{
+  background:none;
+  border:none;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+}
+
+.admin-users{
+  overflow-y:auto;
+  padding-right:6px;
+}
+
+.admin-user{
+  background:#1c1c1c;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
+  font-size:14px;
+}
+
+.admin-user-info span{
+  display:block;
+  font-size:12px;
+  opacity:0.7;
+}
+
+.admin-meta{
+  margin-top:6px;
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+}
+
+.blocked{
+  color:#ff4d4d;
+}
+
+.active{
+  color:#4caf50;
+}
+
+.admin-actions{
+  margin-top:8px;
+}
+
+.admin-actions button{
+  margin:3px;
+  padding:4px 8px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:12px;
+  background:#2a2a2a;
+  color:white;
+}
+
+.admin-actions button:hover{
+  background:#444;
+}
+
+.admin-controls{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.admin-controls input,
+.admin-controls select{
+  padding:6px;
+  border-radius:6px;
+  border:none;
+  background:#1f1f1f;
+  color:white;
+  font-size:13px;
+}
+
+.pagination{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+.pagination button{
+  background:#2a2a2a;
+  border:none;
+  padding:4px 10px;
+  border-radius:6px;
+  color:white;
+  cursor:pointer;
+}
+
+.pagination button:disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+}
+
+.role-tag{
+  background:#2a2a2a;
+  padding:2px 6px;
+  border-radius:10px;
+  font-size:11px;
+}
+
+
+.header-right{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.online-count{
+  font-size:12px;
+  background:#1f1f1f;
+  padding:4px 8px;
+  border-radius:10px;
+}
+
+.online-dot{
+  color:#4caf50;
+  font-size:12px;
+}
+
+.offline-dot{
+  color:#888;
+  font-size:12px;
+}
+
+.extra-data{
+  margin-top:6px;
+  font-size:11px;
+  opacity:0.7;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
 
 
 </style>
@@ -1200,6 +1366,16 @@ import {
 import { serverTimestamp } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+import { 
+  getDatabase, 
+  ref as rRef, 
+  get, 
+  onDisconnect, 
+  set,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+
 const firebaseConfig = {
   apiKey: "AIzaSyDHa6ehG1vQoodbxNDfJuEN0UUg2Ymv-1s",
   authDomain: "alegoclashyt.firebaseapp.com",
@@ -1208,12 +1384,14 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
 import { setPersistence, browserLocalPersistence } 
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 await setPersistence(auth, browserLocalPersistence);
 const db = getFirestore(app);
 const storage = getStorage(app);
+const rtdb = getDatabase(app);
 
 const profileBtn = document.getElementById("myAccountBtn");
 const profileImage = document.getElementById("profileImage");
@@ -1591,65 +1769,184 @@ async function showAdminPanel(){
   try{
 
     const currentUser = window.firebaseUser;
+    if(!currentUser) return alert("Login required.");
 
-    // لازم يكون مسجل دخول
-    if(!currentUser){
-      alert("You must be logged in.");
-      return;
+    const snap = await getDoc(doc(db,"users",currentUser.uid));
+    if(!snap.exists() || snap.data().role !== "admin"){
+      return alert("Admins only.");
     }
 
-    // نجيب بياناته من Firestore
-    const currentSnap = await getDoc(doc(db,"users",currentUser.uid));
-
-    if(!currentSnap.exists()){
-      alert("User data not found.");
-      return;
-    }
-
-    const currentData = currentSnap.data();
-
-    // تحقق إنه Admin
-    if(currentData.role !== "admin"){
-      alert("Access denied. Admins only.");
-      return;
-    }
-
-    // لو عدّى كل الفحوصات نجيب كل المستخدمين
+    // Firestore users
     const usersSnap = await getDocs(collection(db,"users"));
-
-    let html = `
-      <div class="admin-panel">
-        <h2>Admin Panel</h2>
-    `;
-
-    usersSnap.forEach(docSnap=>{
-      const u = docSnap.data();
-
-      html += `
-        <div class="admin-user">
-          <p>${u.username} (${u.email})</p>
-          <p>Role: <strong>${u.role || "user"}</strong></p>
-          <p>Status: ${u.isBlocked ? "Blocked" : "Active"}</p>
-
-          <button onclick="changeUserRole('${docSnap.id}','vip')">VIP</button>
-          <button onclick="changeUserRole('${docSnap.id}','worker')">Worker</button>
-          <button onclick="changeUserRole('${docSnap.id}','user')">User</button>
-
-          <button onclick="blockUser('${docSnap.id}')">Block</button>
-          <button onclick="unblockUser('${docSnap.id}')">Unblock</button>
-        </div>
-      `;
+    const users = [];
+    usersSnap.forEach(d=>{
+      users.push({ id:d.id, ...d.data() });
     });
 
-    html += `</div>`;
+    // Online users from Realtime DB
+    const onlineRef = rRef(rtdb, "onlineUsers");
+    const onlineSnap = await get(onlineRef);
+    const onlineUsers = onlineSnap.exists() ? onlineSnap.val() : {};
+    const onlineCount = Object.keys(onlineUsers).length;
 
-    authContent.innerHTML = html;
+    // Stats
+    const totalUsers = users.length;
+    const vipCount = users.filter(u=>u.role==="vip").length;
+    const blockedCount = users.filter(u=>u.isBlocked).length;
+
+    let currentPage = 1;
+    const perPage = 5;
+
+    function renderPanel(filteredUsers){
+
+      const totalPages = Math.ceil(filteredUsers.length / perPage);
+      if(currentPage > totalPages) currentPage = 1;
+
+      const start = (currentPage - 1) * perPage;
+      const pageUsers = filteredUsers.slice(start, start + perPage);
+
+      let usersHTML = "";
+
+      pageUsers.forEach(u=>{
+
+        const isOnline = onlineUsers[u.id] ? true : false;
+
+        usersHTML += `
+          <div class="admin-user">
+            <div class="admin-user-info">
+              <strong>${u.username}</strong>
+              <span>${u.email}</span>
+              <div class="admin-meta">
+                <span class="role-tag">${u.role || "user"}</span>
+                <span class="${u.isBlocked ? "blocked" : "active"}">
+                  ${u.isBlocked ? "Blocked" : "Active"}
+                </span>
+                <span class="${isOnline ? "online-dot" : "offline-dot"}">
+                  ${isOnline ? "Online" : "Offline"}
+                </span>
+              </div>
+
+              <div class="extra-data">
+                <span>XP: ${u.xp || 0}</span>
+                <span>Points: ${u.extraPoints || 0}</span>
+                <span>UID: ${u.id}</span>
+              </div>
+            </div>
+
+            <div class="admin-actions">
+              <button onclick="changeUserRole('${u.id}','vip')">VIP</button>
+              <button onclick="changeUserRole('${u.id}','worker')">Worker</button>
+              <button onclick="changeUserRole('${u.id}','user')">User</button>
+              <button onclick="blockUser('${u.id}')">Block</button>
+              <button onclick="unblockUser('${u.id}')">Unblock</button>
+            </div>
+          </div>
+        `;
+      });
+
+      document.querySelector(".admin-users").innerHTML = usersHTML;
+
+      document.querySelector(".pagination").innerHTML = `
+        <button ${currentPage===1?"disabled":""} id="prevPage">◀</button>
+        <span>Page ${currentPage} / ${totalPages || 1}</span>
+        <button ${currentPage===totalPages?"disabled":""} id="nextPage">▶</button>
+      `;
+
+      document.getElementById("prevPage")?.addEventListener("click",()=>{
+        currentPage--;
+        renderPanel(filteredUsers);
+      });
+
+      document.getElementById("nextPage")?.addEventListener("click",()=>{
+        currentPage++;
+        renderPanel(filteredUsers);
+      });
+    }
+
+    authContent.innerHTML = `
+      <div class="admin-overlay">
+        <div class="admin-container">
+
+          <div class="admin-header">
+            <h2>Admin Dashboard</h2>
+            <div class="header-right">
+              <span class="online-count">Online: ${onlineCount}</span>
+              <button id="refreshAdmin">⟳</button>
+              <button id="closeAdminPanel">✖</button>
+            </div>
+          </div>
+
+          <div class="admin-stats">
+            <div class="stat-card">Users<br><strong>${totalUsers}</strong></div>
+            <div class="stat-card">VIP<br><strong>${vipCount}</strong></div>
+            <div class="stat-card">Blocked<br><strong>${blockedCount}</strong></div>
+            <div class="stat-card">Online<br><strong>${onlineCount}</strong></div>
+          </div>
+
+          <div class="admin-controls">
+            <input type="text" id="searchUser" placeholder="Search by name or email...">
+            
+            <select id="filterRole">
+              <option value="all">All Roles</option>
+              <option value="user">User</option>
+              <option value="vip">VIP</option>
+              <option value="worker">Worker</option>
+            </select>
+
+            <select id="filterStatus">
+              <option value="all">All Status</option>
+              <option value="active">Active</option>
+              <option value="blocked">Blocked</option>
+            </select>
+          </div>
+
+          <div class="admin-users"></div>
+          <div class="pagination"></div>
+
+        </div>
+      </div>
+    `;
+
+    document.getElementById("closeAdminPanel").onclick = showUserPanel;
+    document.getElementById("refreshAdmin").onclick = showAdminPanel;
+
+    function applyFilters(){
+      const search = document.getElementById("searchUser").value.toLowerCase();
+      const roleFilter = document.getElementById("filterRole").value;
+      const statusFilter = document.getElementById("filterStatus").value;
+
+      let filtered = users.filter(u=>{
+        const matchSearch =
+          u.username.toLowerCase().includes(search) ||
+          u.email.toLowerCase().includes(search);
+
+        const matchRole =
+          roleFilter === "all" || u.role === roleFilter;
+
+        const matchStatus =
+          statusFilter === "all" ||
+          (statusFilter === "active" && !u.isBlocked) ||
+          (statusFilter === "blocked" && u.isBlocked);
+
+        return matchSearch && matchRole && matchStatus;
+      });
+
+      currentPage = 1;
+      renderPanel(filtered);
+    }
+
+    document.getElementById("searchUser").addEventListener("input", applyFilters);
+    document.getElementById("filterRole").addEventListener("change", applyFilters);
+    document.getElementById("filterStatus").addEventListener("change", applyFilters);
+
+    renderPanel(users);
 
   }catch(err){
     console.error(err);
     alert("Failed to load admin panel.");
   }
 }
+
 
 
 
@@ -2045,10 +2342,31 @@ if(profileCardDate && data.createdAt)
 
 });
 
+onAuthStateChanged(auth, (user) => {
+  if (user) {
 
+    const userStatusRef = rRef(rtdb, "onlineUsers/" + user.uid);
+    const connectedRef = rRef(rtdb, ".info/connected");
+
+    onValue(connectedRef, (snapshot) => {
+      if (snapshot.val() === true) {
+
+        // المستخدم Online
+        set(userStatusRef, {
+          email: user.email,
+          lastActive: Date.now()
+        });
+
+        // لما يخرج أو يقفل التاب
+        onDisconnect(userStatusRef).remove();
+
+      }
+    });
+
+  }
+});
 
 </script>
-
 
 
 
