@@ -1191,6 +1191,8 @@ import {
   getFirestore,
   doc,
   getDoc,
+  getDocs,
+  collection,
   setDoc,
   updateDoc,
   increment
@@ -1425,6 +1427,13 @@ async function showUserPanel(){
 
   const data = snap.data();
 
+  // 🔴 لو متعمله بلوك
+  if(data.isBlocked){
+    await signOut(auth);
+    alert("Your account has been blocked.");
+    return;
+  }
+
   authTitle.innerText = "";
 
   authContent.innerHTML = `
@@ -1445,8 +1454,17 @@ async function showUserPanel(){
     </div>
 
     <div class="pro-right">
-      <h2 class="pro-name" id="liveUsername">${data.username}</h2>
+      <h2 class="pro-name" id="liveUsername">
+        ${data.username}
+      </h2>
+
       <p class="pro-email">${data.email}</p>
+
+      <p class="pro-role">
+        Role: <strong>${data.role || "user"}</strong>
+      </p>
+
+      ${data.isBlocked ? `<p style="color:red;">Blocked</p>` : ``}
 
       <div class="stats-box">
         <div class="stat">
@@ -1468,40 +1486,56 @@ async function showUserPanel(){
         Logout
       </button>
 
+      ${data.role === "admin" ? `
+        <button id="adminPanelBtn" class="edit-btn">
+          Admin Panel
+        </button>
+      ` : ``}
+
     </div>
   </div>
   `;
 
-  // زرار تعديل البروفايل
+  // =========================
+  // Edit Profile
+  // =========================
   document.getElementById("editProfileBtn").onclick = ()=>{
     showEditProfilePanel(data);
   };
 
-  // فتح اختيار الصورة
+  // =========================
+  // Admin Panel
+  // =========================
+  if(data.role === "admin"){
+    document.getElementById("adminPanelBtn").onclick = ()=>{
+      showAdminPanel();
+    };
+  }
+
+  // =========================
+  // Change Photo
+  // =========================
+  const uploadInput = document.getElementById("avatarUpload");
+  const profileImg = document.getElementById("profileImage");
+
   document.getElementById("changePhotoBtn").onclick = ()=>{
-    document.getElementById("avatarUpload").click();
+    uploadInput.click();
   };
 
-  // رفع الصورة
-  document.getElementById("avatarUpload").addEventListener("change", async (e)=>{
+  uploadInput.addEventListener("change", async (e)=>{
 
     const file = e.target.files[0];
     if(!file) return;
 
-    // لازم يكون صورة
     if(!file.type.startsWith("image/")){
       alert("Please upload an image file.");
       return;
     }
 
-    // حد أقصى 2MB
     if(file.size > 2 * 1024 * 1024){
       alert("Image must be less than 2MB.");
       return;
     }
-
-    const uploadInput = document.getElementById("avatarUpload");
-    const profileImg = document.getElementById("profileImage");
 
     uploadInput.disabled = true;
     profileImg.style.opacity = "0.5";
@@ -1519,7 +1553,6 @@ async function showUserPanel(){
 
       profileImg.src = url;
 
-      // إرسال إشعار للبوت
       await fetch("/api/notify",{
         method:"POST",
         headers:{ "Content-Type":"application/json"},
@@ -1540,16 +1573,199 @@ async function showUserPanel(){
 
     uploadInput.disabled = false;
     profileImg.style.opacity = "1";
-
   });
 
-  // تسجيل الخروج
+  // =========================
+  // Logout
+  // =========================
   document.getElementById("logoutBtn").onclick = async ()=>{
     await signOut(auth);
     authModal.style.display="none";
   };
 
 }
+
+
+async function showAdminPanel(){
+
+  try{
+
+    const currentUser = window.firebaseUser;
+
+    // لازم يكون مسجل دخول
+    if(!currentUser){
+      alert("You must be logged in.");
+      return;
+    }
+
+    // نجيب بياناته من Firestore
+    const currentSnap = await getDoc(doc(db,"users",currentUser.uid));
+
+    if(!currentSnap.exists()){
+      alert("User data not found.");
+      return;
+    }
+
+    const currentData = currentSnap.data();
+
+    // تحقق إنه Admin
+    if(currentData.role !== "admin"){
+      alert("Access denied. Admins only.");
+      return;
+    }
+
+    // لو عدّى كل الفحوصات نجيب كل المستخدمين
+    const usersSnap = await getDocs(collection(db,"users"));
+
+    let html = `
+      <div class="admin-panel">
+        <h2>Admin Panel</h2>
+    `;
+
+    usersSnap.forEach(docSnap=>{
+      const u = docSnap.data();
+
+      html += `
+        <div class="admin-user">
+          <p>${u.username} (${u.email})</p>
+          <p>Role: <strong>${u.role || "user"}</strong></p>
+          <p>Status: ${u.isBlocked ? "Blocked" : "Active"}</p>
+
+          <button onclick="changeUserRole('${docSnap.id}','vip')">VIP</button>
+          <button onclick="changeUserRole('${docSnap.id}','worker')">Worker</button>
+          <button onclick="changeUserRole('${docSnap.id}','user')">User</button>
+
+          <button onclick="blockUser('${docSnap.id}')">Block</button>
+          <button onclick="unblockUser('${docSnap.id}')">Unblock</button>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+
+    authContent.innerHTML = html;
+
+  }catch(err){
+    console.error(err);
+    alert("Failed to load admin panel.");
+  }
+}
+
+
+
+async function changeUserRole(uid, newRole){
+
+  try{
+
+    const currentUser = window.firebaseUser;
+    if(!currentUser){
+      alert("You must be logged in.");
+      return;
+    }
+
+    const snap = await getDoc(doc(db,"users",currentUser.uid));
+    if(!snap.exists() || snap.data().role !== "admin"){
+      alert("Not authorized.");
+      return;
+    }
+
+    // منع الأدمن يغير نفسه
+    if(uid === currentUser.uid){
+      alert("You cannot change your own role.");
+      return;
+    }
+
+    // السماح فقط برتب معينة
+    const allowedRoles = ["user","vip","worker"];
+    if(!allowedRoles.includes(newRole)){
+      alert("Invalid role.");
+      return;
+    }
+
+    await updateDoc(doc(db,"users",uid),{
+      role:newRole,
+      updatedAt:serverTimestamp()
+    });
+
+    alert("Role updated successfully.");
+
+  }catch(err){
+    console.error(err);
+    alert("Failed to update role.");
+  }
+}
+
+
+
+async function blockUser(uid){
+
+  try{
+
+    const currentUser = window.firebaseUser;
+    if(!currentUser){
+      alert("You must be logged in.");
+      return;
+    }
+
+    const snap = await getDoc(doc(db,"users",currentUser.uid));
+    if(!snap.exists() || snap.data().role !== "admin"){
+      alert("Not authorized.");
+      return;
+    }
+
+    // منع الأدمن يعمل بلوك لنفسه
+    if(uid === currentUser.uid){
+      alert("You cannot block yourself.");
+      return;
+    }
+
+    await updateDoc(doc(db,"users",uid),{
+      isBlocked:true,
+      updatedAt:serverTimestamp()
+    });
+
+    alert("User blocked successfully.");
+
+  }catch(err){
+    console.error(err);
+    alert("Failed to block user.");
+  }
+}
+
+
+
+async function unblockUser(uid){
+
+  try{
+
+    const currentUser = window.firebaseUser;
+    if(!currentUser){
+      alert("You must be logged in.");
+      return;
+    }
+
+    const snap = await getDoc(doc(db,"users",currentUser.uid));
+    if(!snap.exists() || snap.data().role !== "admin"){
+      alert("Not authorized.");
+      return;
+    }
+
+    await updateDoc(doc(db,"users",uid),{
+      isBlocked:false,
+      updatedAt:serverTimestamp()
+    });
+
+    alert("User unblocked successfully.");
+
+  }catch(err){
+    console.error(err);
+    alert("Failed to unblock user.");
+  }
+}
+
+
+
+
 
 function showEditProfilePanel(data){
 
