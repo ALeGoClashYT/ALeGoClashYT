@@ -909,6 +909,26 @@ body * {
 
 }
 
+.switchAuth{
+  margin-top:14px;
+  font-size:13px;
+  opacity:.8;
+}
+
+.switchAuth span{
+  background:linear-gradient(90deg,#00f2ff,#6c5ce7);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.switchAuth span:hover{
+  text-shadow:0 0 10px #00f2ff;
+  transform:scale(1.05);
+}
+
 </style>
 </head>
 <body>
@@ -1193,6 +1213,28 @@ function showLoginPanel(){
   document.getElementById("googleBtn").onclick = googleLogin;
   document.getElementById("goRegister").onclick = showRegisterPanel;
 }
+
+function showRegisterPanel(){
+
+  authTitle.innerText = "Register";
+
+  authContent.innerHTML = `
+    <input type="text" id="authUsername" placeholder="Username">
+    <input type="number" id="authAge" placeholder="Age">
+    <input type="email" id="authEmail" placeholder="Email">
+    <input type="password" id="authPassword" placeholder="Password">
+    <button id="registerBtn">Create Account</button>
+    <p class="switchAuth">
+      Already have an account? 
+      <span id="goLogin">Login</span>
+    </p>
+    <p id="authMessage"></p>
+  `;
+
+  document.getElementById("registerBtn").onclick = registerUser;
+  document.getElementById("goLogin").onclick = showLoginPanel;
+}
+
 
 async function googleLogin(){
 
