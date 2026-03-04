@@ -11,6 +11,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Ballet&display=swap" rel="stylesheet">
 
 <style>
+
+body {
+  overflow-x: hidden;
+}
 /* ===== PRELOADER ===== */
 #preloader{position:fixed;width:100%;height:100%;background:#000;display:flex;justify-content:center;align-items:center;z-index:2000;}
 .loader{width:60px;height:60px;border:5px solid #111;border-top:5px solid #00f2ff;border-radius:50%;animation:spin 1s linear infinite;}
@@ -692,8 +696,8 @@ body * {
 .auth-modal{
   position:fixed;
   inset:0;
-  background:radial-gradient(circle at top,#0a0f2c,#050816 70%);
-  backdrop-filter:blur(25px);
+background: rgba(5,10,25,0.30); 
+backdrop-filter:blur(25px);
   display:none;
   justify-content:center;
   align-items:center;
@@ -1020,22 +1024,50 @@ body * {
   text-decoration:underline;
 }
 
+/* ================= ADMIN FIXED VERSION ================= */
+
 .admin-overlay{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,0.65);
   display:flex;
   justify-content:center;
-  align-items:center;
+  align-items:flex-start; /* بدل center */
+  overflow-y:auto;        /* مهم جدا */
+  padding:40px 0;         /* عشان يبقى فيه مسافة فوق وتحت */
   z-index:9999;
 }
 
 .admin-container{
-  width:100%;
-  min-height:100vh;
-  padding:40px;
+  width:95%;
+  max-width:1200px;
   background:linear-gradient(145deg,#0b1228,#0e1633);
+  border-radius:20px;
+  padding:30px;
+  margin:auto;
+  min-height:auto;        /* شيلنا 100vh */
+  box-sizing:border-box;
 }
+
+.admin-container{
+  box-shadow:0 0 40px rgba(0,247,255,.1);
+  backdrop-filter:blur(10px);
+}
+
+
+@media(max-width:768px){
+
+  .admin-overlay{
+    padding:20px 0;
+  }
+
+  .admin-container{
+    width:98%;
+    padding:20px;
+  }
+
+}
+
 
 .admin-user{
   display:flex;
@@ -1208,6 +1240,69 @@ button:active{
 }
 
 
+/* ============================= */
+/* MOBILE FIX - SAFE VERSION     */
+/* ============================= */
+
+@media (max-width: 768px) {
+
+  /* خلي أي حاجة عرضها ثابت تبقى مرنة */
+  * {
+    max-width: 100%;
+  }
+
+  /* الصور والفيديو ما يكبروش عن الشاشة */
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* الناف بار */
+  nav {
+    padding: 10px 15px;
+  }
+
+  #menu {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  /* البوكسات الكبيرة */
+  .auth-box,
+  .profile-card,
+  .admin-panel {
+    width: 90%;
+    max-width: 95%;
+  }
+
+  /* الخطوط الكبيرة قوي */
+  h1 {
+    font-size: 22px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  /* المسافات */
+  section {
+    padding: 20px 10px;
+  }
+
+}
+
+#quizContainer h3{
+  color: #f5f5f5;
+}
+
+#marvel,#anime,#gaming,#states{
+color:#E0F7FF;
+
+}
+  
+  
+
 </style>
 </head>
 <body>
@@ -1258,7 +1353,7 @@ button:active{
   </div>
 
 <h1>Welcome To ALeGO World</h1>
-<div class="main-tagline">
+<div class="main-tagline" style="color:white;">
 Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 </div>
 <div class="roles">
@@ -1280,8 +1375,8 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 </div>
 </section>
 
-<section id="gaming" data-aos="fade-up" data-aos-duration="1000">
-<h2>Gaming Section</h2>
+<section id="gaming" data-aos="fade-up"   data-aos-duration="1000">
+<h2  >Gaming Section</h2>
 <div class="video-grid" id="gaming-grid"></div>
 </section>
 
@@ -8949,9 +9044,9 @@ function showQuestion() {
     .reduce((sum, q) => sum + q.basePoints, 0);
 
   container.innerHTML = `
-    <div style="text-align:left; font-weight:bold; font-size:16px; margin-bottom:5px;">
-      Question ${currentQuestionIndex + 1} / ${currentQuiz.length}
-    </div>
+    <div style="text-align:left; font-weight:bold; font-size:16px; margin-bottom:5px; color:white;">
+  Question ${currentQuestionIndex + 1} / ${currentQuiz.length}
+</div>
     <div class="combo-text">Combo x${combo}</div>
     <div class="timer-bar" id="timerBar"></div>
     <h3 class="fade-in">${q.question}</h3>
@@ -9318,11 +9413,11 @@ function showResult() {
         <div style="font-size:14px;">Correct</div>
       </div>
 
-      <p style="margin-top:40px;font-size:18px;">
+      <p style="margin-top:40px;font-size:18px; color:white;">
         You scored <span style="color:#FFD873">${score}</span> points
       </p>
 
-      <p style="margin-top:10px;font-size:18px;">
+      <p style="margin-top:10px;font-size:18px;color:white;">
         Highest Combo: <span style="color:#FFD873">${maxCombo}</span>
       </p>
 
