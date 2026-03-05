@@ -378,11 +378,25 @@ transform:scale(0.7);
 transform:scale(1);
 }
 
-/* فيديو البداية - ديسكتوب */
 .modal-content iframe{
 width:100%;
 aspect-ratio:16/9;
 height:auto;
+
+/* الإطار الأبيض */
+border:6px solid #ffffff;
+box-shadow:
+0 0 25px rgba(255,255,255,0.3),
+0 12px 40px rgba(0,0,0,0.7);
+
+border-radius:14px;
+
+/* ظل احترافي */
+box-shadow:
+0 12px 40px rgba(0,0,0,0.7),
+0 0 20px rgba(0,242,255,0.15) inset;
+
+background:#000;
 }
 
 /* فيديو البداية - موبايل */
@@ -457,55 +471,6 @@ gap:15px;
 }
 }
 
-@media(max-width:900px){
-
-nav ul{
-position:absolute;
-top:70px;
-right:10px;
-background:#111;
-flex-direction:column;
-width:200px;
-padding:15px;
-border-radius:15px;
-box-shadow:0 0 25px #00f2ff;
-z-index:1001;
-
-opacity:0;
-transform:translateY(-15px);
-pointer-events:none;
-transition:all 0.35s ease;
-}
-
-nav ul.active{
-opacity:1;
-transform:translateY(0);
-pointer-events:auto;
-}
-
-.menu-toggle{
-display:block;
-}
-
-.hero{
-flex-direction:column;
-}
-
-.video-grid{
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-}
-
-
-}
-
-@media(max-width:480px){
-
-nav ul{
-width:90%;
-right:5%;
-}
-
-}
 
 @media(max-width:600px){
 
@@ -2165,6 +2130,373 @@ display:block;
 margin:0 auto;
 }
 
+
+/* ===== MOBILE MENU NEW ===== */
+
+@media (max-width:768px){
+
+nav ul{
+position:fixed;
+top:70px;
+right:-100%;
+width:65%;
+max-width:260px;
+height:100vh;
+
+background:#0b0f2a;
+
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:flex-start;
+
+padding:30px 20px;
+gap:20px;
+
+border-radius:20px 0 0 20px;
+
+box-shadow:-10px 0 30px rgba(0,242,255,0.25);
+
+transition:0.4s;
+z-index:2000;
+}
+
+nav ul.active{
+right:0;
+}
+
+nav ul li{
+margin:10px 0;
+}
+
+nav ul li a{
+font-size:18px;
+}
+
+.menu-toggle{
+display:block;
+font-size:26px;
+}
+
+}
+
+
+/* موبايل وتابلت صغير */
+
+@media (max-width:768px){
+
+#puzzleButtons{
+display:grid !important;
+grid-template-columns:repeat(2,1fr) !important;
+gap:12px !important;
+width:95% !important;
+margin:20px auto !important;
+}
+
+#puzzleButtons .btn{
+width:100% !important;
+font-size:14px !important;
+padding:12px 10px !important;
+text-align:center !important;
+box-sizing:border-box !important;
+}
+
+}
+
+/* موبايلات صغيرة جدا */
+
+@media (max-width:420px){
+
+#puzzleButtons{
+grid-template-columns:1fr !important;
+}
+
+}
+
+/* ===== RESULT BOX (Quiz Result) ===== */
+/* ===== RESULT BOX (Quiz Result) — refined ===== */
+#quizContainer .result-box{
+  max-width: 900px;        /* بقيت أكبر للديسكتوب */
+  padding: 36px 34px;      /* زيادة البادينج */
+  padding-top: 64px;       /* space for extra-points */
+  margin: 36px auto;
+  box-shadow: 0 0 80px rgba(0,242,255,0.06), 0 0 120px rgba(108,92,231,0.06);
+  border: 1px solid rgba(0,242,255,0.08);
+  background: #0f1113;
+  border-radius: 18px;
+  color: #fff;
+  text-align: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Extra points centered inside the box */
+#quizContainer .extra-points{
+  position: absolute;
+  top: 16px;               
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  border-radius: 14px;
+  z-index: 10;             /* أعلى حتى يتفوق على الظلال */
+  box-shadow: 0 8px 30px rgba(0,242,255,0.06);
+  color: #00f2ff;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+#quizContainer .extra-points .ep-value{
+  color:#FFD873;
+  font-weight:900;
+  font-size:18px;
+}
+
+/* Circles row: more flexible */
+#quizContainer .result-circles{
+  display:flex;
+  justify-content:center;
+  gap:28px;
+  margin-top:14px;
+  align-items:center;
+  flex-wrap:wrap; /* مهم: يخليهم يلتفوا بدل ما يتقاطعوا */
+}
+
+/* Circles */
+#quizContainer .circle{
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-weight:700;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+#quizContainer .circle .circle-number{ font-size:24px; font-weight:900; }
+#quizContainer .circle .circle-label{ font-size:14px; margin-top:6px; }
+
+/* colours same as you set */
+#quizContainer .circle.wrong{ background:linear-gradient(145deg,#ff4d4d,#990000); }
+#quizContainer .circle.correct{ background:linear-gradient(145deg,#00cc66,#006633); }
+
+/* Texts & actions */
+#quizContainer .result-heading{ font-size:26px; margin-top:8px; color:#00f2ff; }
+#quizContainer .result-rank{ font-size:20px; color:#FFD873; margin-bottom:8px; line-height:1.1; }
+
+#quizContainer .score-text, #quizContainer .combo-text{ font-size:17px; color:#fff; }
+#quizContainer .score-value, #quizContainer .combo-value{ color:#FFD873; font-weight:900; }
+
+#quizContainer .accuracy-text{ color:#00ff88; font-size:18px; margin-top:6px; }
+
+#quizContainer .result-actions{ margin-top:18px; }
+#quizContainer .restart-btn{
+  display:inline-block;
+  padding:14px 42px;
+  border-radius:40px;
+  border:2px solid #00f2ff;
+  color:#00f2ff;
+  background:transparent;
+  font-weight:700;
+}
+#quizContainer .restart-btn:hover{ background:#00f2ff; color:#000; }
+
+/* Responsive tweaks */
+@media (max-width:768px){
+  #quizContainer .result-box{ max-width:92%; padding:28px 18px; padding-top:56px; margin:18px auto; }
+  #quizContainer .circle{ width:100px; height:100px; }
+  #quizContainer .result-heading{ font-size:22px; }
+  #quizContainer .result-rank{ font-size:18px; }
+  #quizContainer .score-text, #quizContainer .combo-text{ font-size:15px; }
+  #quizContainer .restart-btn{ padding:12px 30px; font-size:15px; }
+  #quizContainer .extra-points{ top:10px; padding:6px 12px; }
+}
+
+@media (max-width:420px){
+  #quizContainer .circle{ width:82px; height:82px; }
+  #quizContainer .result-box{ padding-top:48px; }
+  #quizContainer .result-heading{ font-size:20px; }
+  #quizContainer .result-rank{ font-size:16px; }
+}
+
+/* Smaller devices adjustments */
+@media (max-width:420px){
+
+  #quizContainer .result-box{
+    padding: 18px;
+    margin: 12px;
+    max-width: 380px;
+  }
+
+  #quizContainer .extra-points{
+    top: -14px;
+    padding: 6px 10px;
+    font-size:14px;
+  }
+
+  #quizContainer .result-circles{
+    gap: 16px;
+    margin-top:10px;
+    flex-wrap:wrap;
+  }
+
+  #quizContainer .circle{
+    width: 82px !important;
+    height: 82px !important;
+  }
+  #quizContainer .circle .circle-number{ font-size:18px; }
+  #quizContainer .circle .circle-label{ font-size:12px; }
+
+  #quizContainer .result-heading{ font-size:20px; }
+  #quizContainer .result-rank{ font-size:16px; }
+  #quizContainer .score-text, #quizContainer .combo-text{ font-size:14px; }
+  #quizContainer .accuracy-text{ font-size:16px; }
+
+  #quizContainer .restart-btn{ padding:10px 28px; font-size:15px; }
+
+}
+
+/* ===== RESULT BOX - FIXES FOR DESKTOP & EXTRA POINTS ===== */
+#quizContainer .result-box{
+  max-width: 900px;        /* كبرنا البوكس للديسكتوب */
+  padding: 36px 34px;      /* زيادة البادينج */
+  margin: 36px auto;
+  box-shadow: 0 0 80px rgba(0,242,255,0.06), 0 0 120px rgba(108,92,231,0.06);
+  border: 1px solid rgba(0,242,255,0.08);
+}
+
+/* ضع الـ extra-points داخل البوكس - أوسطناه */
+#quizContainer .extra-points{
+  position: absolute;
+  top: 16px;               /* داخل البوكس - يمكن تعديل لو عايز أعلى */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  border-radius: 14px;
+  z-index: 5;
+  box-shadow: 0 8px 30px rgba(0,242,255,0.06);
+}
+
+/* نزود مساحة أعلى البوكس علشان الـ extra-points ما يغطيش المحتوى */
+#quizContainer .result-box { padding-top: 64px; }
+
+/* دوائر Wrong/Correct أكبر على الديسكتوب */
+#quizContainer .circle{
+  width: 130px;
+  height: 130px;
+}
+
+/* نخلي صف الدوائر متجاوب أكتر */
+#quizContainer .result-circles{
+  gap: 28px;
+  margin-top: 14px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* نصوص العنوان والأرقام */
+#quizContainer .result-heading{ font-size: 26px; margin-top: 8px; }
+#quizContainer .result-rank{ font-size: 20px; margin-bottom: 8px; }
+#quizContainer .score-text, #quizContainer .combo-text{ font-size: 17px; }
+
+/* زر الريستارت أكبر ومركزي */
+#quizContainer .restart-btn{
+  padding: 14px 42px;
+  border-radius: 40px;
+  font-size: 16px;
+}
+
+/* ===== تظبيط للموبايل - أقل حجم وأماكن ===== */
+@media (max-width: 768px) {
+  #quizContainer .result-box{
+    max-width: 92%;
+    padding: 28px 18px;
+    padding-top: 56px; /* keep space for extra-points */
+    margin: 18px auto;
+  }
+
+  #quizContainer .circle{
+    width: 100px;
+    height: 100px;
+  }
+
+  #quizContainer .extra-points{
+    top: 10px;
+    padding: 6px 12px;
+  }
+
+  #quizContainer .result-heading{ font-size: 22px; }
+  #quizContainer .result-rank{ font-size: 18px; }
+  #quizContainer .score-text, #quizContainer .combo-text{ font-size: 15px; }
+
+  #quizContainer .restart-btn{ padding: 12px 30px; font-size:15px; }
+}
+
+/* موبايلات صغيرة جدًا */
+@media (max-width: 420px){
+  #quizContainer .circle{ width: 82px; height: 82px; }
+  #quizContainer .result-box{ padding-top: 48px; }
+  #quizContainer .result-heading{ font-size:20px; }
+  #quizContainer .result-rank{ font-size:16px; }
+}
+
+/* لما تظهر شاشة النتيجة */
+.back-wrapper.result-fixed{
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 9999;
+}
+
+
+/* ==== back-wrapper fixed (always) ==== */
+.back-wrapper {
+  position: fixed;
+  right: 24px;            /* مسافة من يمين الشاشة */
+  bottom: 24px;           /* مسافة من أسفل الشاشة */
+  margin: 0;
+  z-index: 99999;         /* فوق كل العناصر */
+  pointer-events: auto;
+  text-align: center;
+  display: block;
+}
+
+/* زرار الباك داخل الـ wrapper */
+.back-wrapper .back-btn,
+.back-wrapper .btn.back-btn {
+  display: inline-block;
+  padding: 12px 18px;
+  border-radius: 28px;
+  border: 2px solid rgba(0,242,255,0.95);
+  background: rgba(0,242,255,0.06);
+  color: #00f2ff;
+  box-shadow: 0 10px 30px rgba(0,242,255,0.15);
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform .12s ease, background .12s ease, color .12s ease;
+}
+
+/* Hover */
+.back-wrapper .back-btn:hover {
+  background: #00f2ff;
+  color: #000;
+  transform: translateY(-3px);
+}
+
+/* Smaller screens */
+@media (max-width:768px) {
+  .back-wrapper { right: 18px; bottom: 18px; }
+  .back-wrapper .back-btn { padding: 10px 14px; border-radius: 26px; font-size: 15px; }
+}
+
+@media (max-width:420px) {
+  .back-wrapper { right: 12px; bottom: 12px; }
+  .back-wrapper .back-btn { padding: 8px 12px; font-size: 14px; }
+}
+
 </style>
 </head>
 <body>
@@ -2190,11 +2522,11 @@ margin:0 auto;
 
   <div class="nav-right">
     <ul id="menu">
-      <li data-section="home"><a>Home</a></li>
-      <li data-section="gaming"><a>Gaming</a></li>
-      <li data-section="anime"><a>Anime</a></li>
-      <li data-section="marvel"><a>Marvel</a></li>
-      <li data-section="states"><a>States</a></li>
+      <li data-section="home"><a href="#">Home</a></li>
+<li data-section="gaming"><a href="#">Gaming</a></li>
+<li data-section="anime"><a href="#">Anime</a></li>
+<li data-section="marvel"><a href="#">Marvel</a></li>
+<li data-section="states"><a href="#">States</a></li>
     </ul>
     <div class="social-icons">
       <a href="https://youtube.com/@alego.yt.1?si=1Z3qtFv2LeMa7kKB"><i class="fab fa-youtube"></i></a>
@@ -2228,11 +2560,11 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 </div>
 <div class="home-video-wrapper">
   <iframe 
-    src="https://www.youtube.com/embed/lRV7RbyxXcg?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0&playsinline=1"
-    allow="autoplay; encrypted-media"
-    allowfullscreen>
-  </iframe>
-</div>
+src="https://www.youtube.com/embed/lRV7RbyxXcg?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0&playsinline=1"
+allow="autoplay; encrypted-media"
+allowfullscreen
+loading="lazy">
+</iframe>
 </div>
 </div>
 </section>
@@ -3492,28 +3824,37 @@ document.querySelectorAll("#menu li").forEach(item => {
   });
 });
 /* ===== TABS SWITCHING ===== */
-const tabs = document.querySelectorAll('#menu li');
+/* ===== TABS SWITCHING ===== */
+
+const tabs = document.querySelectorAll('#menu li a');
 const sections = document.querySelectorAll('section');
 
 tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    const target = tab.getAttribute('data-section');
+
+  tab.addEventListener('click', (e) => {
+
+    e.preventDefault();
+
+    const target = tab.parentElement.getAttribute('data-section');
 
     sections.forEach(sec => sec.classList.remove('active'));
+
     const section = document.getElementById(target);
     section.classList.add('active');
 
     window.scrollTo(0,0);
 
-    // 🔥 إعادة تحميل فيديو الهوم كل مرة ندوس Home
     if(target === 'home'){
       const homeVideo = document.querySelector('#home iframe');
-      homeVideo.src = homeVideo.src;
+      if(homeVideo){
+        homeVideo.src = homeVideo.src;
+      }
     }
 
     if(window.innerWidth <= 900){
       document.getElementById("menu").classList.remove("active");
     }
+
   });
 
 });
@@ -9874,23 +10215,6 @@ function startQuiz(level){
   showQuestion();
 }
 
-function showComboAnimation(button, comboValue) {
-
-  const popup = document.createElement("div");
-  popup.className = "combo-popup";
-  popup.innerText = "+" + comboValue;
-
-  const rect = button.getBoundingClientRect();
-
-  popup.style.left = rect.left + rect.width / 2 + "px";
-  popup.style.top = rect.top + "px";
-
-  document.body.appendChild(popup);
-
-  setTimeout(() => {
-    popup.remove();
-  }, 800);
-}
 
 /* ===== SHOW QUESTION ===== */
 function showQuestion() {
@@ -10197,102 +10521,63 @@ function showResult() {
   const wrongAnswers = answeredCount - correctAnswers;
 
   document.getElementById("quizContainer").innerHTML = `
-    <div style="
-      background:#111;
-      padding:30px;
-      border-radius:20px;
-      text-align:center;
-      box-shadow:0 0 30px #00f2ff;
-      animation:fadeIn 0.5s;
-      position:relative;
-    ">
-
-      <!-- ⚡ Extra Points -->
-<div style="
-  position:absolute;
-  left:23px;       /* كان 25 → اتحرك يمين سنة بسيطة */
-  top:65px;        /* كان 15 → نزل تحت سنة بسيطة */
-  text-align:center;
-  color:#00f2ff;
-  font-size:18px;
-  font-weight:bold;
-">
-  <div>⚡ Extra Points</div>
-  <div style="
-      font-size:20px;
-      color:#FFD873;
-      font-weight:900;
-      margin-top:4px;
-  ">
-      +${extraPoints}
-  </div>
-</div>
-
-      <h2 style="color:#00f2ff">Quiz Finished!</h2>
-      <h2 style="color:#FFD873">${getRank(percent)}</h2>
-
-      <!-- 🔴 Wrong Circle -->
-      <div style="
-        position:absolute;
-        left:25px;
-        top:55%;
-        transform:translateY(-50%);
-        width:110px;
-        height:110px;
-        border-radius:50%;
-        background:linear-gradient(145deg,#ff4d4d,#990000);
-        display:flex;
-        flex-direction:column;
-        justify-content:center;
-        align-items:center;
-        color:white;
-        font-weight:bold;
-        box-shadow:0 0 20px rgba(255,0,0,0.5);
-      ">
-        <div style="font-size:14px;font-weight:900;">${wrongAnswers}</div>
-        <div style="font-size:14px;">Wrong</div>
-      </div>
-
-      <!-- 🟢 Correct Circle -->
-      <div style="
-        position:absolute;
-        right:25px;
-        top:55%;
-        transform:translateY(-50%);
-        width:110px;
-        height:110px;
-        border-radius:50%;
-        background:linear-gradient(145deg,#00cc66,#006633);
-        display:flex;
-        flex-direction:column;
-        justify-content:center;
-        align-items:center;
-        color:white;
-        font-weight:bold;
-        box-shadow:0 0 20px rgba(0,255,120,0.5);
-      ">
-        <div style="font-size:14px;font-weight:900;">${correctAnswers}</div>
-        <div style="font-size:14px;">Correct</div>
-      </div>
-
-      <p style="margin-top:40px;font-size:18px; color:white;">
-        You scored <span style="color:#FFD873">${score}</span> points
-      </p>
-
-      <p style="margin-top:10px;font-size:18px;color:white;">
-        Highest Combo: <span style="color:#FFD873">${maxCombo}</span>
-      </p>
-
-      <h3 style="margin-top:20px;color:#00ff88;">
-        ${percent}% Accuracy
-      </h3>
-
-      <div style="margin-top:25px;">
-        <a class="btn" onclick="restartQuiz()">Restart</a>
-      </div>
-
+  <div class="result-box">
+    <div class="extra-points">
+      <div class="ep-title">⚡ Extra Points</div>
+      <div class="ep-value">+${extraPoints}</div>
     </div>
-  `;
+
+    <h2 class="result-heading">Quiz Finished!</h2>
+    <h2 class="result-rank">${getRank(percent)}</h2>
+
+    <div class="result-circles">
+      <div class="circle wrong">
+        <div class="circle-number">${wrongAnswers}</div>
+        <div class="circle-label">Wrong</div>
+      </div>
+
+      <div class="circle correct">
+        <div class="circle-number">${correctAnswers}</div>
+        <div class="circle-label">Correct</div>
+      </div>
+    </div>
+
+    <p class="score-text">You scored <span class="score-value">${score}</span> points</p>
+    <p class="combo-text">Highest Combo: <span class="combo-value">${maxCombo}</span></p>
+    <h3 class="accuracy-text">${percent}% Accuracy</h3>
+
+    <div class="result-actions">
+      <a class="btn restart-btn" onclick="restartQuiz()">Restart</a>
+    </div>
+  </div>
+`;
+
+const backWrapper = document.querySelector('.back-wrapper');
+if(backWrapper){
+  backWrapper.classList.add('result-fixed');
+}
+const resultBox = document.querySelector('#quizContainer .result-box');
+const navBar = document.querySelector('header'); // أو .navbar حسب اسم عنصر الناف بار
+
+if(resultBox){
+
+  const navHeight = navBar ? navBar.offsetHeight : 80; // احتياطى لو مش لاقي العنصر
+
+  requestAnimationFrame(() => {
+
+    const rectTop = resultBox.getBoundingClientRect().top + window.pageYOffset;
+
+    const target = rectTop - navHeight - 6; 
+    // -6 علشان يبقى لازق تحت الناف بار مباشرة
+
+    window.scrollTo({
+      top: target,
+      behavior: "smooth"
+    });
+
+  }, 60);
+
+}
 
   winSound.play();
 }
@@ -10324,7 +10609,10 @@ function restartQuiz(){
   answeredQuestions = 0;
   currentQuestionIndex = 0;
   extraPoints = 0;
-
+  const backWrapper = document.querySelector('.back-wrapper');
+if(backWrapper){
+  backWrapper.classList.remove('result-fixed');
+}
   currentQuiz.forEach(q => q.answered = false);
   currentQuiz = shuffle(currentQuiz);
   currentQuiz.forEach(q => { if(q.answers) q.answers = shuffle(q.answers); });
@@ -10469,7 +10757,12 @@ function showComboAnimation(button, value, isCombo = false) {
 
 
 
-
+<script>
+AOS.init({
+duration:1000,
+once:true
+});
+</script>
 
 </body>
 </html>
