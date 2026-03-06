@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>ALeGoClash YT</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -2497,6 +2497,11 @@ grid-template-columns:1fr !important;
   .back-wrapper .back-btn { padding: 8px 12px; font-size: 14px; }
 }
 
+
+
+
+
+
 </style>
 </head>
 <body>
@@ -2532,7 +2537,7 @@ grid-template-columns:1fr !important;
       <a href="https://youtube.com/@alego.yt.1?si=1Z3qtFv2LeMa7kKB"><i class="fab fa-youtube"></i></a>
       <a href="https://www.facebook.com/share/1C4XhCpoLL/"><i class="fab fa-facebook"></i></a>
       <a href="https://vm.tiktok.com/ZS9eqAbKmbprC-OUw1C/"><i class="fab fa-tiktok"></i></a>
-      <span class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></span>
+      <span class="menu-toggle"><i class="fas fa-bars"></i></span>
     </div>
   </div>
 </nav>
@@ -3784,80 +3789,7 @@ function toggleMenu() {
   menu.classList.toggle("active");
 }
 
-// يقفل فورًا بدون تأخير
-document.addEventListener("pointerdown", function (e) {
-  const menu = document.getElementById("menu");
-  const toggleBtn = document.querySelector(".menu-toggle");
 
-  if (menu.classList.contains("active") &&
-      !menu.contains(e.target) &&
-      !toggleBtn.contains(e.target)) {
-        
-    menu.classList.remove("active");
-  }
-});
-
-// يقفل بعد اختيار قسم
-document.querySelectorAll("#menu li").forEach(item => {
-  item.addEventListener("pointerdown", () => {
-    document.getElementById("menu").classList.remove("active");
-  });
-});
-
-// يقفل المينيو لو ضغطت براها
-document.addEventListener("pointerdown", function(e) {
-  const menu = document.getElementById("menu");
-  const toggleBtn = document.querySelector(".menu-toggle");
-
-  if (menu.classList.contains("active") &&
-      !menu.contains(e.target) &&
-      !toggleBtn.contains(e.target)) {
-        
-    menu.classList.remove("active");
-  }
-});
-
-// يقفلها بعد ما تختار لينك
-document.querySelectorAll("#menu li").forEach(item => {
-  item.addEventListener("click", () => {
-    document.getElementById("menu").classList.remove("active");
-  });
-});
-/* ===== TABS SWITCHING ===== */
-/* ===== TABS SWITCHING ===== */
-
-const tabs = document.querySelectorAll('#menu li a');
-const sections = document.querySelectorAll('section');
-
-tabs.forEach(tab => {
-
-  tab.addEventListener('click', (e) => {
-
-    e.preventDefault();
-
-    const target = tab.parentElement.getAttribute('data-section');
-
-    sections.forEach(sec => sec.classList.remove('active'));
-
-    const section = document.getElementById(target);
-    section.classList.add('active');
-
-    window.scrollTo(0,0);
-
-    if(target === 'home'){
-      const homeVideo = document.querySelector('#home iframe');
-      if(homeVideo){
-        homeVideo.src = homeVideo.src;
-      }
-    }
-
-    if(window.innerWidth <= 900){
-      document.getElementById("menu").classList.remove("active");
-    }
-
-  });
-
-});
 
 /* ===== VIDEO ARRAYS ===== */
 let gamingCategories = {
@@ -10679,72 +10611,9 @@ backBtn.addEventListener('click', () => {
 <button id="scrollTopBtn">⬆</button>
 
 
-<script>
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-let clickBuffer;
-
-// تحميل الصوت مرة واحدة بس
-fetch("click.mp3")
-  .then(response => response.arrayBuffer())
-  .then(data => audioContext.decodeAudioData(data))
-  .then(buffer => {
-    clickBuffer = buffer;
-  });
-
-// تشغيل الصوت فورًا بدون delay
-function playClick() {
-  if (!clickBuffer) return;
-
-  const source = audioContext.createBufferSource();
-  source.buffer = clickBuffer;
-  source.connect(audioContext.destination);
-  source.start(0);
-}
-
-// يشغل الصوت فقط عند الضغط على زرار
-document.body.addEventListener("click", function(e) {
-
-  if (e.target.closest("#answers")) return;
-
-  const button = e.target.closest(".btn, button, .menu-toggle, .modal-nav, #fullscreenBtn, #menu li");
-
-if (!button) return;
-
-// 🚫 استثناء زرار Finish
-if (button.id === "finishBtn") return;
-
-
-  // بعض الموبايلات محتاجة resume
-  if (audioContext.state === "suspended") {
-    audioContext.resume();
-  }
-
-  playClick();
-});
 
 
 
-function showComboAnimation(button, value, isCombo = false) {
-
-  const popup = document.createElement("div");
-  popup.className = isCombo ? "combo-popup-bonus" : "combo-popup";
-  popup.innerText = "+" + value;
-
-  const rect = button.getBoundingClientRect();
-
-  popup.style.left = rect.left + rect.width / 2 + "px";
-  popup.style.top = rect.top + "px";
-
-  document.body.appendChild(popup);
-
-  setTimeout(() => {
-    popup.remove();
-  }, 800);
-}
-
-
-
-</script>
 
 <div id="authModal" class="auth-modal">
   <div class="auth-box">
@@ -10755,6 +10624,328 @@ function showComboAnimation(button, value, isCombo = false) {
 </div>
 
 
+<!-- ===== FIXED MOBILE-MENU + STRONG SUPPRESSION (replace previous final block) ===== -->
+<style>
+/* Minimal reliable mobile menu styles (single source) */
+@media (max-width: 768px) {
+  nav ul#menu {
+    position: fixed !important;
+    top: 68px !important;
+    right: -120% !important;
+    width: calc(100% - 36px) !important;
+    max-width: 320px !important;
+    max-height: calc(100vh - 130px) !important;
+    padding: 10px !important;
+    background: linear-gradient(180deg, rgba(18,22,36,0.98), rgba(8,10,16,0.98)) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.55) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+    overflow-y: auto !important;
+    transition: right .26s cubic-bezier(.2,.8,.2,1), opacity .18s ease, transform .22s ease !important;
+    z-index: 99999 !important;
+    border: 1px solid rgba(255,255,255,0.04) !important;
+    box-sizing: border-box !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  nav ul#menu.active {
+    right: 10px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateX(0) !important;
+  }
+
+  .menu-toggle {
+    display: block !important;
+    z-index: 100000 !important;
+    position: relative !important;
+    background: transparent !important;
+    padding: 6px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+  }
+
+  nav ul#menu li a {
+    display: block !important;
+    padding: 8px 10px !important;
+    border-radius: 10px !important;
+    color: #EAF6FF !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    pointer-events: auto !important;
+  }
+
+  /* menu-social inside menu */
+  #menu .menu-social {
+    display: flex !important;
+    gap: 10px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding-top: 8px !important;
+    margin-top: 6px !important;
+    border-top: 1px solid rgba(255,255,255,0.03) !important;
+    flex-wrap: wrap !important;
+    box-sizing: border-box !important;
+  }
+  #menu .menu-social a {
+    display: inline-flex !important;
+    width: 38px !important;
+    height: 38px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 8px !important;
+    font-size: 15px !important;
+    color: #EAF6FF !important;
+    background: rgba(255,255,255,0.02) !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+    pointer-events: auto !important;
+  }
+  #menu .menu-social a i { text-shadow: none !important; filter: none !important; }
+
+  /* hide header social while menu is used */
+  .nav-right > .social-icons { display: none !important; }
+}
+</style>
+
+<script>
+/* FINAL stable mobile menu handler with robust suppression of the first outside click
+   - Moves social icons into menu safely
+   - When menu is open: first outside click closes menu AND is consumed (does NOT activate underlying element)
+   - Second click on same spot behaves normally
+*/
+(function () {
+  function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+  // create temporary guard overlay that captures events (prevents tap-through)
+  function createGuard(ms = 260) {
+    try {
+      const guard = document.createElement('div');
+      guard.className = '__temp_menu_blocker';
+      guard.style.position = 'fixed';
+      guard.style.inset = '0';
+      guard.style.zIndex = '99998';
+      guard.style.background = 'transparent';
+      guard.style.pointerEvents = 'auto';
+      document.body.appendChild(guard);
+      setTimeout(() => { try { guard.remove(); } catch (e) {} }, Math.max(120, ms));
+      return guard;
+    } catch (e) { return null; }
+  }
+
+  // suppress the next pointerdown/click events globally for `ms` milliseconds
+  function suppressNextClicks(ms = 300) {
+    let removed = false;
+    const handler = function (ev) {
+      try {
+        ev.stopPropagation();
+        ev.preventDefault();
+        if (typeof ev.stopImmediatePropagation === 'function') ev.stopImmediatePropagation();
+      } catch (e) {}
+    };
+    // capture both pointerdown and click to be safe
+    document.addEventListener('pointerdown', handler, true);
+    document.addEventListener('click', handler, true);
+    // cleanup after timeout
+    setTimeout(() => {
+      if (removed) return;
+      try {
+        document.removeEventListener('pointerdown', handler, true);
+        document.removeEventListener('click', handler, true);
+      } catch (e) {}
+      removed = true;
+    }, Math.max(120, ms));
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const menu = document.getElementById('menu');         // <ul id="menu">
+    const toggle = document.querySelector('.menu-toggle'); // hamburger element
+    const nav = document.querySelector('nav');
+    const social = document.querySelector('.social-icons');
+
+    if (!menu || !toggle || !nav) {
+      console.warn('menu/toggle/nav missing - cannot init mobile menu.');
+      return;
+    }
+
+    // Ensure toggle sits inside nav so it never gets moved by other scripts
+    if (toggle.parentNode !== nav) try { nav.appendChild(toggle); } catch (e) { /*silent*/ }
+
+    // Remove duplicate social blocks (keep first)
+    const allSocial = document.querySelectorAll('.social-icons');
+    if (allSocial.length > 1) { for (let i = 1; i < allSocial.length; i++) { allSocial[i].remove(); } }
+
+    // Preserve original social location to restore later
+    const originalSocialParent = social && social.parentNode ? social.parentNode : null;
+    const originalSocialNext = social ? social.nextSibling : null;
+    let menuSocialLi = menu.querySelector('.menu-social');
+
+    function ensureMenuSocialLi() {
+      if (!menuSocialLi) {
+        menuSocialLi = document.createElement('li');
+        menuSocialLi.className = 'menu-social';
+        menu.appendChild(menuSocialLi);
+      }
+      return menuSocialLi;
+    }
+
+    function moveSocialForMobile() {
+      const isMobile = window.innerWidth <= 768;
+      if (!social) return;
+      if (isMobile) {
+        const li = ensureMenuSocialLi();
+        if (social.parentNode !== li) {
+          li.appendChild(social);
+          social.style.display = 'flex';
+        }
+      } else {
+        if (originalSocialParent && social.parentNode !== originalSocialParent) {
+          originalSocialParent.insertBefore(social, originalSocialNext);
+          social.style.display = '';
+        }
+        if (menuSocialLi && menuSocialLi.parentNode && menuSocialLi.children.length === 0) {
+          menuSocialLi.remove();
+          menuSocialLi = null;
+        }
+      }
+    }
+
+    // Toggle open/close safely
+    function toggleMenuOpen() {
+      const opened = menu.classList.toggle('active');
+      toggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
+      if (opened) {
+        menu.style.display = 'flex';
+        // guard to avoid immediate tap-through after opening
+        createGuard(220);
+      } else {
+        menu.style.display = '';
+      }
+    }
+
+    // Close on outside but CONSUME the outside event (first click closes and is NOT forwarded)
+    function closeMenuConsumeOutside(e) {
+      if (!menu.classList.contains('active')) return;
+
+      // if click/touch is inside menu or toggle, ignore (not outside)
+      if (menu.contains(e.target) || toggle.contains(e.target)) return;
+
+      // consume the event (prevent underlying activation) and close
+      try {
+        e.stopPropagation();
+        e.preventDefault();
+        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+      } catch (err) {}
+
+      menu.classList.remove('active');
+      toggle.setAttribute('aria-expanded', 'false');
+      menu.style.display = '';
+
+      // additional suppression to be safer (for browsers that may still dispatch click)
+      suppressNextClicks(300);
+      // also add a visual/functional guard overlay briefly
+      createGuard(260);
+    }
+
+    // Bind toggle
+    toggle.addEventListener('click', function (ev) { ev.preventDefault(); ev.stopPropagation(); toggleMenuOpen(); });
+
+    // Bind menu items (pointerdown for fast mobile)
+    function bindMenuItems() {
+      menu.querySelectorAll('li[data-section]').forEach(li => {
+        // remove old bound if present
+        if (li._bound) li.removeEventListener('pointerdown', li._bound);
+        const bound = function (ev) {
+          ev.stopPropagation();
+          ev.preventDefault();
+          const id = li.getAttribute('data-section');
+          if (id) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(id);
+            if (target) target.classList.add('active');
+            if (window.innerWidth <= 900) {
+              menu.classList.remove('active');
+              toggle.setAttribute('aria-expanded', 'false');
+              menu.style.display = '';
+            }
+            createGuard(200);
+            // also suppress any immediate click that might leak
+            suppressNextClicks(220);
+            window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+          }
+        };
+        li.addEventListener('pointerdown', bound);
+        li._bound = bound;
+        const a = li.querySelector('a');
+        if (a) {
+          a.addEventListener('click', function (ev) { ev.preventDefault(); ev.stopPropagation(); bound(ev); });
+        }
+      });
+    }
+
+    // Capture-phase listener to intercept outside pointerdown BEFORE it reaches targets - ensures closure + consumption
+    document.addEventListener('pointerdown', closeMenuConsumeOutside, true);
+
+    // Also a non-capture fallback (safety)
+    document.addEventListener('pointerdown', function (e) {
+      if (!menu.classList.contains('active')) return;
+      if (menu.contains(e.target) || toggle.contains(e.target)) return;
+      menu.classList.remove('active');
+      toggle.setAttribute('aria-expanded', 'false');
+      menu.style.display = '';
+      createGuard(220);
+      suppressNextClicks(220);
+    });
+
+    // Restore on resize
+    window.addEventListener('resize', debounce(function () {
+      moveSocialForMobile();
+      if (window.innerWidth > 768) {
+        menu.classList.remove('active');
+        toggle.setAttribute('aria-expanded', 'false');
+        menu.style.display = '';
+      }
+    }, 120));
+
+    // Close menu when Escape pressed (and consume)
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape' && menu.classList.contains('active')) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        menu.classList.remove('active');
+        toggle.setAttribute('aria-expanded', 'false');
+        menu.style.display = '';
+        createGuard(180);
+        suppressNextClicks(180);
+      }
+    }, true);
+
+    // Init
+    moveSocialForMobile();
+    bindMenuItems();
+
+    // Defensive cleanup of duplicate social nodes
+    setTimeout(function () {
+      const nodes = document.querySelectorAll('.social-icons');
+      if (nodes.length > 1) {
+        for (let i = 1; i < nodes.length; i++) {
+          const el = nodes[i];
+          if (el && el.parentNode) el.parentNode.removeChild(el);
+        }
+      }
+    }, 400);
+
+  }); // DOMContentLoaded
+})();
+</script>
+<!-- ===== END final block ===== -->
+
 
 
 <script>
@@ -10763,6 +10954,8 @@ duration:1000,
 once:true
 });
 </script>
+
+
 
 </body>
 </html>
