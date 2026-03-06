@@ -631,9 +631,9 @@ transition:width 1s linear;
 }
 
 .combo-text{
-text-align:center;
 color:#FFD873;
 margin-bottom:10px;
+left: 5px;
 font-weight:bold;
 text-shadow:0 0 10px #FFD873;
 }
@@ -2498,7 +2498,97 @@ grid-template-columns:1fr !important;
 }
 
 
+/* === Make hero image smaller & calmer on mobile === */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    align-items: center;
+    gap: 18px; /* أقل فراغ عمودي */
+  }
 
+  .hero img {
+    width: 45%;            /* عرض نسبي - يناسب أغلب الشاشات */
+    max-width: 220px;      /* أقصى عرض على الموبايل */
+    height: auto;
+    border-radius: 14px;
+    opacity: 1 !important;
+    margin: 0 auto;
+  }
+}
+
+/* لآجهزة أصغر جداً (اختياري) */
+@media (max-width: 420px) {
+  .hero img {
+    width: 62%;
+    max-width: 150px;
+    border-radius: 12px;
+  }
+
+  .hero .hero-text h1 { font-size: 20px; } /* لو عايز تقلل العنوان على الشاشات الصغيرة */
+  .hero .main-tagline { font-size: 14px; }
+}
+
+@media (max-width:768px){
+
+#puzzleButtons{
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 15px !important;
+  width: 90% !important;
+  margin: 30px auto !important;
+}
+
+#puzzleButtons .btn{
+  width: 100% !important;
+  text-align: center !important;
+}
+
+}
+
+#answers .btn.correct{
+background:green !important;
+color:white !important;
+}
+
+#answers .btn.wrong{
+background:red !important;
+color:white !important;
+}
+
+
+
+@keyframes pointsPop{
+
+0%{
+opacity:0;
+transform:translateY(0px) scale(0.8);
+}
+
+50%{
+opacity:1;
+transform:translateY(-20px) scale(1.2);
+}
+
+100%{
+opacity:0;
+transform:translateY(-40px) scale(1);
+}
+
+}
+
+.home-video-wrapper{
+position:relative;
+}
+
+.video-click-layer{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:5;
+cursor:pointer;
+}
 
 
 
@@ -2564,12 +2654,16 @@ Enter The Arena Where Games 🎮 Anime 🌏 <br> & Marvel Collide 🔥
 <a href="javascript:void(0)" class="btn" onclick="openContact()">Contact me</a>
 </div>
 <div class="home-video-wrapper">
-  <iframe 
+
+<div class="video-click-layer"></div>
+
+<iframe 
 src="https://www.youtube.com/embed/lRV7RbyxXcg?autoplay=1&mute=1&controls=1&modestbranding=1&rel=0&playsinline=1"
 allow="autoplay; encrypted-media"
 allowfullscreen
 loading="lazy">
 </iframe>
+
 </div>
 </div>
 </section>
@@ -10153,24 +10247,29 @@ function showQuestion() {
   const container = document.getElementById("quizContainer");
   const q = currentQuiz[currentQuestionIndex];
 
+  // safety: لو مافيش سؤال رجع
+  if (!q) {
+    container.innerHTML = "<h3 style='color:#fff'>No question available</h3>";
+    return;
+  }
+
   timeLeft = categoryTime;
   timeLeftStart = categoryTime;
 
-  // مجموع النقاط للأسئلة اللي جاوبتها فقط (قبل السؤال الحالي)
   const totalPointsAnswered = currentQuiz
-    .filter(q => q.answered)
-    .reduce((sum, q) => sum + q.basePoints, 0);
+    .filter(q2 => q2.answered)
+    .reduce((sum, q2) => sum + (q2.basePoints || 0), 0);
 
   container.innerHTML = `
     <div style="text-align:left; font-weight:bold; font-size:16px; margin-bottom:5px; color:white;">
-  Question ${currentQuestionIndex + 1} / ${currentQuiz.length}
-</div>
+      Question ${currentQuestionIndex + 1} / ${currentQuiz.length}
+    </div>
     <div class="combo-text">Combo x${combo}</div>
     <div class="timer-bar" id="timerBar"></div>
-    <h3 class="fade-in">${q.question}</h3>
+    <h3 class="fade-in">${q.question || ''}</h3>
     <div id="answers"></div>
     <div id="scoreCircle">
-      <span id="scoreText">${score} / ${totalPointsAnswered + q.basePoints}</span>
+      <span id="scoreText">${score} / ${totalPointsAnswered + (q.basePoints || 0)}</span>
     </div>
     <br>
   `;
@@ -10178,101 +10277,126 @@ function showQuestion() {
   startTimer();
 
   const answersDiv = document.getElementById("answers");
-  const shuffledAnswers = shuffle(q.answers);
+  const shuffledAnswers = shuffle(Array.isArray(q.answers) ? q.answers : []);
+  const btns = [];
 
-  shuffledAnswers.forEach((ans) => {
+  shuffledAnswers.forEach((ans, idx) => {
     const btn = document.createElement("div");
     btn.className = "btn fade-in";
     btn.style.display = "block";
     btn.style.margin = "10px 0";
-    btn.innerText = ans.text;
+    btn.innerText = ans.text || "";
 
-    btn.onclick = () => {
+    const handler = (e) => {
+      // منع الضغط المتكرر
       if (btn.classList.contains("answered")) return;
 
-      answeredQuestions++;
-      document.querySelectorAll("#answers .btn").forEach(b => b.classList.add("answered"));
-      q.answered = true;
+      try {
+        answeredQuestions++;
+        // امنع باقي الأزرار فوراً
+        document.querySelectorAll("#answers .btn").forEach(b => b.classList.add("answered","locked"));
+        q.answered = true;
 
-      shuffledAnswers.forEach(a => a.selected = false);
-      ans.selected = true;
+        // علم الاختيار
+        shuffledAnswers.forEach(a => a.selected = false);
+        ans.selected = true;
 
-      clearInterval(timer);
+        // أوقف المؤقت
+        clearInterval(timer);
 
-      if (ans.correct) {
+        if (ans.correct) {
+          try { correctSound.play(); } catch (e) {}
+          correctAnswers++;
+          combo++;
+          if (combo > maxCombo) maxCombo = combo;
 
-  correctSound.play();
-  correctAnswers++;
-  combo++;
-  
+          // حساب النقاط النهائي
+          let finalPoints = calculateBonus(q);
 
-  if (combo > maxCombo) maxCombo = combo;
-  
+          // حماية: لو diff أو basePoints مفقودين
+          const diffKey = ((q.difficulty || 'easy') + '').toLowerCase();
+          const diff = DIFFICULTY_SETTINGS[diffKey] || DIFFICULTY_SETTINGS.easy;
+          let baseOnly = (q.basePoints || 0) * (diff.multiplier || 1);
+          let bonusOnly = finalPoints - baseOnly;
 
-  // 👇 احسب النقاط النهائية
-  let finalPoints = calculateBonus(q);
+          // أضف للنقاط
+          score += finalPoints;
+          try {
+  showComboAnimation(btn, finalPoints);
+} catch(e) {
+  console.warn("combo animation error", e);
+}
 
-  // 👇 احسب النقاط الأساسية بدون أي مضاعفات
-  const diff = DIFFICULTY_SETTINGS[q.difficulty.toLowerCase()] 
-            || DIFFICULTY_SETTINGS.easy;
-
-  let baseOnly = q.basePoints * diff.multiplier;
-
-  // 👇 الفرق هو البونص الحقيقي
-  let bonusOnly = finalPoints - baseOnly;
-
-  // 👇 أضف للسكور
-  score += finalPoints;
-showComboAnimation(btn, finalPoints);
-
-const comboBonus = getComboBonus();
-if (comboBonus > 0) {
+          const comboBonus = getComboBonus();
+          if (comboBonus > 0) try {
   showComboAnimation(btn, comboBonus, true);
+} catch(e) {
+  console.warn("combo bonus error", e);
 }
 
-
-// 🔥 أضف السطر ده
-updateUserScoreOnline(finalPoints);
-
-  // 👇 أضف البونص فقط للـ extraPoints
-  if (bonusOnly > 0) {
-    extraPoints += Math.round(bonusOnly);
-  }
-
-  btn.style.background = "green";
-}
-
-      else {
-        wrongSound.play();
-        combo = 0;
-        btn.style.background = "red";
-        btn.classList.add("shake");
-
-        shuffledAnswers.forEach((a, j) => {
-          if (a.correct) {
-            document.querySelectorAll("#answers .btn")[j].style.background = "green";
+          // حدث السجل أونلاين بدون انتظار (لا يوقف الواجهة)
+          try {
+            updateUserScoreOnline(finalPoints).catch(e => console.warn('updateUserScoreOnline failed', e));
+          } catch(err) {
+            console.warn('updateUserScoreOnline call error', err);
           }
-        });
-      }
 
-      // ✅ تحديث النقاط حسب جميع الأسئلة اللي جاوبتها فعليًا
-      const totalPointsAnsweredNow = currentQuiz
-        .filter(q => q.answered)
-        .reduce((sum, q) => sum + q.basePoints, 0);
-      document.getElementById("scoreText").innerText = `${score} / ${totalPointsAnsweredNow}`;
+          if (bonusOnly > 0) extraPoints += Math.round(bonusOnly);
 
-      setTimeout(() => {
-        if (currentQuestionIndex < currentQuiz.length - 1) {
-          currentQuestionIndex++;
-          showQuestion();
+          btn.classList.add("correct");
         } else {
-          showResult();
+          try { wrongSound.play(); } catch (e) {}
+          combo = 0;
+          btn.classList.add("wrong");
+          btn.classList.add("shake");
+
+          // اظهر الاجابة الصحيحة
+          btns.forEach((bEl, j) => {
+            if (shuffledAnswers[j] && shuffledAnswers[j].correct) {
+              try { bEl.style.background = "green"; } catch(e) {}
+            }
+          });
         }
-      }, 400);
+
+        // تحديث نص النتيجة
+        const totalPointsAnsweredNow = currentQuiz
+          .filter(q2 => q2.answered)
+          .reduce((sum, q2) => sum + (q2.basePoints || 0), 0);
+        const scoreTextEl = document.getElementById("scoreText");
+        if (scoreTextEl) scoreTextEl.innerText = `${score} / ${totalPointsAnsweredNow}`;
+
+        // انتقل للسؤال التالى بعد تأخير بسيط
+        setTimeout(() => {
+          if (currentQuestionIndex < currentQuiz.length - 1) {
+            currentQuestionIndex++;
+            showQuestion();
+          } else {
+            showResult();
+          }
+        }, 400);
+
+      } catch (err) {
+        console.error('Answer handler error:', err);
+        // ضمان الانتقال حتى لو حصل خطأ
+        setTimeout(() => {
+          if (currentQuestionIndex < currentQuiz.length - 1) {
+            currentQuestionIndex++;
+            showQuestion();
+          } else {
+            showResult();
+          }
+        }, 400);
+      }
     };
 
+    btn.addEventListener('click', handler);
     answersDiv.appendChild(btn);
+    btns.push(btn);
   });
+
+  if (shuffledAnswers.length === 0) {
+    answersDiv.innerHTML = "<div style='color:#ccc;padding:10px;'>No answers available</div>";
+  }
 }
 
 /* ===== TIMER ===== */
@@ -10632,8 +10756,9 @@ backBtn.addEventListener('click', () => {
     position: fixed !important;
     top: 68px !important;
     right: -120% !important;
-    width: calc(100% - 36px) !important;
-    max-width: 320px !important;
+    width: fit-content !important;
+    max-width: 90vw !important;
+    height: fit-content !important;
     max-height: calc(100vh - 130px) !important;
     padding: 10px !important;
     background: linear-gradient(180deg, rgba(18,22,36,0.98), rgba(8,10,16,0.98)) !important;
@@ -10673,6 +10798,8 @@ backBtn.addEventListener('click', () => {
 
   nav ul#menu li a {
     display: block !important;
+    white-space: nowrap;
+padding: 8px 14px !important;
     padding: 8px 10px !important;
     border-radius: 10px !important;
     color: #EAF6FF !important;
@@ -10955,7 +11082,106 @@ once:true
 });
 </script>
 
+<script>
+function showComboAnimation(btn, points, isCombo = false){
+  const anim = document.createElement("div");
+  anim.className = isCombo ? "combo-popup combo-left" : "combo-popup combo-center";
+  anim.innerText = isCombo ? `+${points} Combo` : `+${points}`;
 
+  anim.style.position = "absolute";
+  anim.style.color = isCombo ? "#FFD873" : "#00ff90";
+  anim.style.fontWeight = "900";
+  anim.style.fontSize = "18px";
+  anim.style.pointerEvents = "none";
+  anim.style.animation = "pointsPop 0.8s ease forwards";
+  anim.style.zIndex = 999999;
+  anim.style.transform = "none"; // نتأكد إن مافيش transform سابق يؤثر
+
+  // أمان لو btn ماغيرش صحيح
+  const rect = (btn && btn.getBoundingClientRect) ? btn.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2, width: 0 };
+  const pageX = rect.left + window.pageXOffset;
+  const pageY = rect.top + window.pageYOffset;
+
+  // موضع مبدئي
+  anim.style.left = (pageX + 30) + "px";
+  anim.style.top = (pageY - 6) + "px";
+
+  document.body.appendChild(anim);
+
+  // بعد الإضافة نحسب عرض العنصر ونظبطه بدقة
+  const gap = 8;
+  if (isCombo) {
+    // لو Combo => نزبطه على الشمال من الزر (أو داخل الزر على الشمال)
+    anim.style.left = (pageX + gap) + "px";
+  } else {
+    // لو نقاط عادية => نوسطها فوق الزر
+    const centerLeft = pageX + (rect.width / 2) - (anim.offsetWidth / 2);
+    anim.style.left = Math.max(8, centerLeft) + "px";
+  }
+
+  // نرفع شوية فوق الزر
+  anim.style.top = (pageY - 16) + "px";
+
+  setTimeout(()=> {
+    if (anim && anim.parentNode) anim.parentNode.removeChild(anim);
+  }, 800);
+}
+
+
+
+
+let clickBuffer;
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+// تحميل الصوت مرة واحدة
+fetch("click.mp3")
+  .then(r => r.arrayBuffer())
+  .then(data => audioCtx.decodeAudioData(data))
+  .then(buffer => {
+    clickBuffer = buffer;
+  });
+
+// تشغيل الصوت
+function playClick(){
+  if(!clickBuffer) return;
+
+  const source = audioCtx.createBufferSource();
+  source.buffer = clickBuffer;
+  source.connect(audioCtx.destination);
+  source.start(0);
+}
+
+document.addEventListener("pointerdown", function(e){
+
+  // ❌ منع الصوت عند اختيار إجابة في الكويز
+  if(e.target.closest("#answers .btn")) return;
+
+  // ✅ عناصر الموقع
+  if(
+    e.target.closest("button") ||
+    e.target.closest(".btn") ||
+    e.target.closest("a") ||
+    e.target.closest("nav li") ||
+    e.target.closest(".menu-toggle") ||
+    e.target.closest(".modal-nav")
+  ){
+    playClick();
+    return;
+  }
+
+  // ✅ فيديوهات السكاشن
+  if(
+    e.target.closest(".video-card") ||
+    e.target.closest(".video-grid") ||
+    e.target.closest("#videoThumbWrapper") ||
+    e.target.closest("#videoFrame")
+  ){
+    playClick();
+  }
+
+});
+
+</script>
 
 </body>
 </html>
