@@ -8,7 +8,19 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Ballet&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="css/style.css">
+
+<meta name="description" content="A fun and interactive anime, Marvel, and gaming quiz platform where fans can test their knowledge through exciting quizzes, brain-teasing puzzles, and engaging mini games. Explore amazing trivia about anime characters, Marvel superheroes, and popular video games while earning points, unlocking combos, and discovering new facts in a unique entertainment and learning experience.">
+<meta name="theme-color" content="#0f172a">
+
+<link rel="preload" href="click.mp3" as="audio">
+<link rel="preload" href="correct.mp3" as="audio">
+<link rel="preload" href="wrong.mp3" as="audio">
+<link rel="preload" href="win.mp3" as="audio">
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="preconnect" href="https://i.ytimg.com">
+
 </head>
 <body>
 
@@ -170,7 +182,7 @@ loading="lazy">
     <span class="close-modal" onclick="closeVideo()">&times;</span>
     <iframe id="videoFrame" src="" frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen></iframe>
+      allowfullscreen  loading="lazy" ></iframe>
       <div id="videoThumbWrapper" 
      style="display:none;width:100%;height:90vh;background-size:cover;background-position:center;border-radius:15px;cursor:pointer;">
 </div>
@@ -213,7 +225,7 @@ loading="lazy">
 
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://www.youtube.com/iframe_api" defer></script>
 <script type="module" src="js/auth.js"></script>
 
 <script>
@@ -862,8 +874,10 @@ document.addEventListener("pointerdown", function(e){
 
 });
 </script>
-<script src="questions.js"></script>
-<script src="quiz.js"></script>
+<script src="js/main.js" defer></script>
+<script src="js/auth.js" defer></script>
+<script src="questions.js" defer></script>
+<script src="quiz.js" defer></script>
 
 </body>
 </html>
