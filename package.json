@@ -2,6 +2,7 @@
   "name": "visitor-counter",
   "version": "1.0.0",
   "dependencies": {
-    "firebase": "^10.12.0"
+    "firebase": "^10.12.0",
+    "node-fetch": "^3.3.2"
   }
 }
