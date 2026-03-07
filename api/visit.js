@@ -2,52 +2,45 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, doc, updateDoc, increment, getDoc } from "firebase/firestore";
 
 const firebaseConfig = {
-apiKey: process.env.FIREBASE_API_KEY,
-authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-projectId: process.env.FIREBASE_PROJECT_ID
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export default async function handler(req, res){
+export default async function handler(req, res) {
 
-if(req.method !== "POST"){
-return res.status(405).json({message:"Method not allowed"});
-}
+const ref = doc(db,"stats","global");
 
-const BOT_TOKEN = process.env.BOT_TOKEN;
-const CHAT_ID = process.env.CHAT_ID;
-
-const visitorRef = doc(db,"stats","visitors");
-
-await updateDoc(visitorRef,{
-total: increment(1)
+await updateDoc(ref,{
+totalVisitors: increment(1),
+liveUsers: increment(1),
+lastUpdate: Date.now()
 });
 
-const snap = await getDoc(visitorRef);
-const totalVisitors = snap.data().total;
+const snap = await getDoc(ref);
+const data = snap.data();
 
 const country = req.headers["x-vercel-ip-country"] || "Unknown";
-const userAgent = req.headers["user-agent"] || "Unknown";
 
 const message = `
 👀 New Visitor
 
 🌍 Country: ${country}
-🧭 User Agent: ${userAgent}
 
-📊 Total Visitors: ${totalVisitors}
-⏰ Time: ${new Date().toLocaleString()}
+📊 Total Visitors: ${data.totalVisitors}
+🟢 Live Users: ${data.liveUsers}
+
+⏰ ${new Date().toLocaleString()}
 `;
 
-await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+await fetch(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+headers:{ "Content-Type":"application/json"},
 body:JSON.stringify({
-chat_id:CHAT_ID,
+chat_id:process.env.CHAT_ID,
 text:message
 })
 });
