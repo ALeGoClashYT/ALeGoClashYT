@@ -7,44 +7,50 @@ const firebaseConfig = {
   projectId: process.env.FIREBASE_PROJECT_ID
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
 export default async function handler(req, res) {
+  try {
 
-  const ref = doc(db,"stats","global");
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  await setDoc(ref,{
-    totalVisitors: increment(1),
-    liveUsers: increment(1),
-    lastUpdate: Date.now()
-  },{merge:true});
+    const ref = doc(db, "stats", "global");
 
-  const snap = await getDoc(ref);
-  const data = snap.data();
+    await setDoc(ref,{
+      totalVisitors: increment(1),
+      liveUsers: increment(1),
+      lastUpdate: Date.now()
+    },{ merge:true });
 
-  const country = req.headers["x-vercel-ip-country"] || "Unknown";
+    const snap = await getDoc(ref);
+    const data = snap.data() || {};
 
-  const message = `
+    const country = req.headers["x-vercel-ip-country"] || "Unknown";
+
+    const message = `
 👀 New Visitor
-
 🌍 Country: ${country}
 
-📊 Total Visitors: ${data.totalVisitors}
-🟢 Live Users: ${data.liveUsers}
-
-⏰ ${new Date().toLocaleString()}
+📊 Total Visitors: ${data.totalVisitors || 1}
+🟢 Live Users: ${data.liveUsers || 1}
 `;
 
-  await fetch(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,{
-    method:"POST",
-    headers:{ "Content-Type":"application/json"},
-    body:JSON.stringify({
-      chat_id:process.env.CHAT_ID,
-      text:message
-    })
-  });
+    await fetch(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json"},
+      body: JSON.stringify({
+        chat_id: process.env.CHAT_ID,
+        text: message
+      })
+    });
 
-  res.status(200).json({success:true});
+    return res.status(200).json({ success:true });
 
+  } catch(err) {
+
+    return res.status(200).json({
+      success:false,
+      error: err.message
+    });
+
+  }
 }
