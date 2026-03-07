@@ -1,0 +1,7 @@
+{
+  "name": "visitor-counter",
+  "version": "1.0.0",
+  "dependencies": {
+    "firebase": "^10.12.0"
+  }
+}
