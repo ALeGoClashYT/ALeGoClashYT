@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, updateDoc, increment, getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, increment, getDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -12,20 +12,20 @@ const db = getFirestore(app);
 
 export default async function handler(req, res) {
 
-const ref = doc(db,"stats","global");
+  const ref = doc(db,"stats","global");
 
-await updateDoc(ref,{
-totalVisitors: increment(1),
-liveUsers: increment(1),
-lastUpdate: Date.now()
-});
+  await setDoc(ref,{
+    totalVisitors: increment(1),
+    liveUsers: increment(1),
+    lastUpdate: Date.now()
+  },{merge:true});
 
-const snap = await getDoc(ref);
-const data = snap.data();
+  const snap = await getDoc(ref);
+  const data = snap.data();
 
-const country = req.headers["x-vercel-ip-country"] || "Unknown";
+  const country = req.headers["x-vercel-ip-country"] || "Unknown";
 
-const message = `
+  const message = `
 👀 New Visitor
 
 🌍 Country: ${country}
@@ -36,15 +36,15 @@ const message = `
 ⏰ ${new Date().toLocaleString()}
 `;
 
-await fetch(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,{
-method:"POST",
-headers:{ "Content-Type":"application/json"},
-body:JSON.stringify({
-chat_id:process.env.CHAT_ID,
-text:message
-})
-});
+  await fetch(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json"},
+    body:JSON.stringify({
+      chat_id:process.env.CHAT_ID,
+      text:message
+    })
+  });
 
-res.status(200).json({success:true});
+  res.status(200).json({success:true});
 
 }
