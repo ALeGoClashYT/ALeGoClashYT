@@ -1647,18 +1647,18 @@ async function updateUserScoreOnline(points, bonus = 0) {
 
   } catch (err) {
 
-    console.error("updateUserScoreOnline failed:", err);
+  console.error("FIREBASE ERROR:", err);
 
-    pushPendingUpdate({
-      uid: window.firebaseUser ? window.firebaseUser.uid : null,
-      points,
-      bonus,
-      timestamp: Date.now(),
-      error: err.message || String(err)
-    });
+  pushPendingUpdate({
+    uid: window.firebaseUser ? window.firebaseUser.uid : null,
+    points,
+    bonus,
+    timestamp: Date.now(),
+    error: err.message || String(err)
+  });
 
-    return false;
-  }
+  return false;
+}
 
 }
 
