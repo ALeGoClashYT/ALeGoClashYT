@@ -1723,8 +1723,13 @@ window.addEventListener('online', () => {
 // عندك أصلاً onAuthStateChanged في الكود — لو فيه واحد فقط ضع هذا السطر هناك
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    // تأكد إن window.firebaseUser متحدّث (عادة موجود)
+
+    // 🔥 هذا السطر هو المهم
+    window.firebaseUser = user;
+
+    // إرسال النقاط المعلقة
     sendPendingScoreUpdates().catch(e => console.warn(e));
+
   }
 });
 async function updateLevel(uid){
