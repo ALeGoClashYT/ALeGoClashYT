@@ -2791,7 +2791,562 @@ const quizData = {
       { text: "5", correct: false },
       { text: "2", correct: false }
     ]
-  }
+  },
+  {
+  question: "من هو الصحابي الذي أرسله النبي ﷺ ليتعلم لغة اليهود في المدينة؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "زيد بن ثابت", correct: true },
+    { text: "عبد الله بن مسعود", correct: false },
+    { text: "أبي بن كعب", correct: false },
+    { text: "معاذ بن جبل", correct: false }
+  ]
+},
+
+{
+  question: "ما اسم السورة التي تسمى سنام القرآن؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "البقرة", correct: true },
+    { text: "آل عمران", correct: false },
+    { text: "النساء", correct: false },
+    { text: "الأعراف", correct: false }
+  ]
+},
+
+{
+  question: "في أي غزوة انشق القمر للنبي ﷺ كمعجزة؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "لم يكن في غزوة بل في مكة", correct: true },
+    { text: "غزوة بدر", correct: false },
+    { text: "غزوة أحد", correct: false },
+    { text: "غزوة الخندق", correct: false }
+  ]
+},
+
+{
+  question: "كم عدد السور التي تبدأ بالحروف المقطعة؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "29", correct: true },
+    { text: "27", correct: false },
+    { text: "30", correct: false },
+    { text: "24", correct: false }
+  ]
+},
+
+{
+  question: "ما هي السورة التي ذكر فيها اسم الله في كل آية؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "المجادلة", correct: true },
+    { text: "الإخلاص", correct: false },
+    { text: "الكوثر", correct: false },
+    { text: "الفلق", correct: false }
+  ]
+},
+
+{
+  question: "كم مرة ذكر اسم جبريل في القرآن صراحة؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "3", correct: true },
+    { text: "5", correct: false },
+    { text: "7", correct: false },
+    { text: "9", correct: false }
+  ]
+},
+
+{
+  question: "ما اسم الجبل الذي استوت عليه سفينة نوح؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "الجودي", correct: true },
+    { text: "سيناء", correct: false },
+    { text: "حراء", correct: false },
+    { text: "أحد", correct: false }
+  ]
+},
+
+{
+  question: "ما اسم السورة التي تسمى المقشقشة؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "الكافرون", correct: true },
+    { text: "الإخلاص", correct: false },
+    { text: "الفلق", correct: false },
+    { text: "الناس", correct: false }
+  ]
+},
+
+{
+  question: "من هو النبي الذي لقب بذو النون؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "يونس عليه السلام", correct: true },
+    { text: "أيوب عليه السلام", correct: false },
+    { text: "يوسف عليه السلام", correct: false },
+    { text: "إدريس عليه السلام", correct: false }
+  ]
+},
+
+{
+  question: "كم مرة ذكر اسم موسى في القرآن؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "136", correct: true },
+    { text: "120", correct: false },
+    { text: "150", correct: false },
+    { text: "100", correct: false }
+  ]
+},
+
+{
+  question: "من هو الصحابي الذي لقبه النبي ﷺ بأمين الأمة؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "أبو عبيدة بن الجراح", correct: true },
+    { text: "معاذ بن جبل", correct: false },
+    { text: "سعد بن أبي وقاص", correct: false },
+    { text: "عبد الرحمن بن عوف", correct: false }
+  ]
+},
+
+{
+  question: "ما السورة التي نزلت كاملة دفعة واحدة وشيعها 70 ألف ملك؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "الأنعام", correct: true },
+    { text: "الكهف", correct: false },
+    { text: "يس", correct: false },
+    { text: "الرحمن", correct: false }
+  ]
+},
+
+{
+  question: "من هو الصحابي الذي قتل أبي جهل؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "معاذ ومعوذ ابنا عفراء", correct: true },
+    { text: "علي بن أبي طالب", correct: false },
+    { text: "خالد بن الوليد", correct: false },
+    { text: "سعد بن أبي وقاص", correct: false }
+  ]
+},
+
+{
+  question: "كم مرة ذكر اسم عيسى في القرآن؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "25", correct: true },
+    { text: "30", correct: false },
+    { text: "20", correct: false },
+    { text: "18", correct: false }
+  ]
+},
+
+{
+  question: "ما السورة التي تسمى المنجية من عذاب القبر؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "الملك", correct: true },
+    { text: "يس", correct: false },
+    { text: "الرحمن", correct: false },
+    { text: "الواقعة", correct: false }
+  ]
+},
+
+{
+  question: "كم عدد الملائكة الذين حملوا عرش الله يوم القيامة؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "ثمانية", correct: true },
+    { text: "أربعة", correct: false },
+    { text: "سبعة", correct: false },
+    { text: "اثنا عشر", correct: false }
+  ]
+},
+
+{
+  question: "ما اسم السورة التي تسمى بني إسرائيل؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "الإسراء", correct: true },
+    { text: "الكهف", correct: false },
+    { text: "يوسف", correct: false },
+    { text: "النحل", correct: false }
+  ]
+},
+
+{
+  question: "كم مرة ذكر اسم مريم في القرآن؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "34", correct: true },
+    { text: "30", correct: false },
+    { text: "25", correct: false },
+    { text: "40", correct: false }
+  ]
+},
+
+{
+  question: "ما السورة التي بدأت باسم ثمرتين؟",
+  basePoints: 10,
+  difficulty: "easy",
+  answers: [
+    { text: "التين", correct: true },
+    { text: "الأنعام", correct: false },
+    { text: "النحل", correct: false },
+    { text: "الفيل", correct: false }
+  ]
+},
+
+{
+  question: "ما اسم الملك الموكل بالنفخ في الصور؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "إسرافيل", correct: true },
+    { text: "جبريل", correct: false },
+    { text: "ميكائيل", correct: false },
+    { text: "مالك", correct: false }
+  ]
+},
+
+{
+  question: "كم عدد الملائكة الموكلين بالنار؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "19", correct: true },
+    { text: "18", correct: false },
+    { text: "20", correct: false },
+    { text: "25", correct: false }
+  ]
+},
+
+{
+  question: "في أي غزوة استشهد حمزة بن عبد المطلب؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "غزوة أحد", correct: true },
+    { text: "غزوة بدر", correct: false },
+    { text: "غزوة الخندق", correct: false },
+    { text: "غزوة حنين", correct: false }
+  ]
+},
+
+{
+  question: "من هو الصحابي الذي نام في فراش النبي ليلة الهجرة؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "علي بن أبي طالب", correct: true },
+    { text: "أبو بكر الصديق", correct: false },
+    { text: "عمر بن الخطاب", correct: false },
+    { text: "الزبير بن العوام", correct: false }
+  ]
+},
+
+{
+  question: "ما هي السورة التي تسمى عروس القرآن؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "الرحمن", correct: true },
+    { text: "يس", correct: false },
+    { text: "الواقعة", correct: false },
+    { text: "الملك", correct: false }
+  ]
+},
+
+{
+  question: "كم عدد الغزوات التي قادها النبي ﷺ بنفسه؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "27", correct: true },
+    { text: "25", correct: false },
+    { text: "30", correct: false },
+    { text: "19", correct: false }
+  ]
+},
+
+{
+  question: "من هو النبي الذي سخر الله له الرياح؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "سليمان عليه السلام", correct: true },
+    { text: "داود عليه السلام", correct: false },
+    { text: "موسى عليه السلام", correct: false },
+    { text: "إبراهيم عليه السلام", correct: false }
+  ]
+},
+
+{
+  question: "كم عدد أبواب الجنة؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "8", correct: true },
+    { text: "7", correct: false },
+    { text: "6", correct: false },
+    { text: "9", correct: false }
+  ]
+},
+
+{
+  question: "كم عدد أبواب النار؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "7", correct: true },
+    { text: "8", correct: false },
+    { text: "6", correct: false },
+    { text: "9", correct: false }
+  ]
+},
+{
+  question: "كم كان عمر النبي ﷺ عند وفاته؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "63 سنة", correct: true },
+    { text: "60 سنة", correct: false },
+    { text: "65 سنة", correct: false },
+    { text: "70 سنة", correct: false }
+  ]
+},
+
+{
+  question: "من هو أول مؤذن في الإسلام؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "بلال بن رباح", correct: true },
+    { text: "عبد الله بن أم مكتوم", correct: false },
+    { text: "أبو موسى الأشعري", correct: false },
+    { text: "سعد بن أبي وقاص", correct: false }
+  ]
+},
+
+{
+  question: "كم مرة حج النبي ﷺ بعد الهجرة؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "مرة واحدة", correct: true },
+    { text: "مرتين", correct: false },
+    { text: "ثلاث مرات", correct: false },
+    { text: "لم يحج", correct: false }
+  ]
+},
+
+{
+  question: "ما اسم الناقة التي كانت للنبي ﷺ؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "القصواء", correct: true },
+    { text: "العنقاء", correct: false },
+    { text: "العضباء", correct: false },
+    { text: "البرقاء", correct: false }
+  ]
+},
+
+{
+  question: "من هو الصحابي الذي تستحي منه الملائكة؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "عثمان بن عفان", correct: true },
+    { text: "علي بن أبي طالب", correct: false },
+    { text: "عمر بن الخطاب", correct: false },
+    { text: "طلحة بن عبيد الله", correct: false }
+  ]
+},
+{
+  question: "ما اسم السورة التي تسمى الفاضحة لأنها فضحت المنافقين؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "التوبة", correct: true },
+    { text: "المنافقون", correct: false },
+    { text: "الحشر", correct: false },
+    { text: "الفتح", correct: false }
+  ]
+},
+{
+  question: "ما أول معركة في الإسلام؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "غزوة بدر", correct: true },
+    { text: "غزوة أحد", correct: false },
+    { text: "غزوة الخندق", correct: false },
+    { text: "غزوة تبوك", correct: false }
+  ]
+},
+
+{
+  question: "من هو النبي الذي لقب بخليل الله؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "إبراهيم عليه السلام", correct: true },
+    { text: "موسى عليه السلام", correct: false },
+    { text: "نوح عليه السلام", correct: false },
+    { text: "داود عليه السلام", correct: false }
+  ]
+},
+
+{
+  question: "ما اسم السورة التي تعدل ثلث القرآن؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "الإخلاص", correct: true },
+    { text: "الفلق", correct: false },
+    { text: "الناس", correct: false },
+    { text: "الكافرون", correct: false }
+  ]
+},
+
+{
+  question: "كم سنة استمرت خلافة عمر بن الخطاب؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "10 سنوات", correct: true },
+    { text: "8 سنوات", correct: false },
+    { text: "12 سنة", correct: false },
+    { text: "15 سنة", correct: false }
+  ]
+},
+{
+  question: "ما اسم زوجة فرعون التي آمنت بموسى؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "آسية بنت مزاحم", correct: true },
+    { text: "مارية القبطية", correct: false },
+    { text: "هاجر", correct: false },
+    { text: "صفورة", correct: false }
+  ]
+},
+
+{
+  question: "ما اسم السورة التي بدأت وانتهت بالتسبيح؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "الحشر", correct: true },
+    { text: "الحديد", correct: false },
+    { text: "الصف", correct: false },
+    { text: "الجمعة", correct: false }
+  ]
+},
+
+{
+  question: "من هو أول نبي كتب بالقلم؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "إدريس عليه السلام", correct: true },
+    { text: "نوح عليه السلام", correct: false },
+    { text: "إبراهيم عليه السلام", correct: false },
+    { text: "يوسف عليه السلام", correct: false }
+  ]
+},
+{
+  question: "كم عدد السجدات في القرآن الكريم؟",
+  basePoints: 10,
+  difficulty: "Easy",
+  answers: [
+    { text: "15", correct: true },
+    { text: "13", correct: false },
+    { text: "17", correct: false },
+    { text: "11", correct: false }
+  ]
+},
+
+{
+  question: "ما اسم والد النبي محمد ﷺ؟",
+  basePoints: 10,
+  difficulty: "Easy",
+  answers: [
+    { text: "عبد الله", correct: true },
+    { text: "عبد المطلب", correct: false },
+    { text: "أبو طالب", correct: false },
+    { text: "العباس", correct: false }
+  ]
+},
+
+{
+  question: "في أي شهر فرض صيام رمضان؟",
+  basePoints: 10,
+  difficulty: "Easy",
+  answers: [
+    { text: "شعبان", correct: true },
+    { text: "رمضان", correct: false },
+    { text: "رجب", correct: false },
+    { text: "محرم", correct: false }
+  ]
+},
+{
+  question: "كم استمرت دعوة النبي ﷺ في مكة؟",
+  basePoints: 20,
+  difficulty: "Medium",
+  answers: [
+    { text: "13 سنة", correct: true },
+    { text: "10 سنوات", correct: false },
+    { text: "15 سنة", correct: false },
+    { text: "20 سنة", correct: false }
+  ]
+},
+{
+  question: "كم عدد السنوات التي نامها أصحاب الكهف؟",
+  basePoints: 20,
+  difficulty: "Hard",
+  answers: [
+    { text: "309 سنوات", correct: true },
+    { text: "300 سنة", correct: false },
+    { text: "250 سنة", correct: false },
+    { text: "150 سنة", correct: false }
+  ]
+},
+{
+  question: "كم عدد المرات التي ذكر فيها اسم النبي محمد ﷺ في القرآن؟",
+  basePoints: 30,
+  difficulty: "Insane",
+  answers: [
+    { text: "4", correct: true },
+    { text: "5", correct: false },
+    { text: "6", correct: false },
+    { text: "7", correct: false }
+  ]
+}
 ],
     
   5:[
