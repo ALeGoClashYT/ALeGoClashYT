@@ -1544,35 +1544,189 @@ function shuffle(array) {
   }
   return arr;
 }
-async function updateUserScoreOnline(points, bonus) {
-
-  if (!window.firebaseUser) return;
-
-  const userRef = doc(db, "users", window.firebaseUser.uid);
-
-  const snap = await getDoc(userRef);
-
-  let currentScore = 0;
-  let currentXP = 0;
-  let currentExtra = 0;
-
-  if (snap.exists()) {
-
-    currentScore = snap.data().score || 0;
-    currentXP = snap.data().xp || 0;
-    currentExtra = snap.data().extraPoints || 0;
-
+// استبدل الدالة القديمة بها
+async function updateUserScoreOnline(points, bonus = 0) {
+  // helper داخلي لحفظ التحديثات محلياً لو فشل الاتصال
+  function pushPendingUpdate(item) {
+    try {
+      const key = 'pendingScoreUpdates';
+      const prev = JSON.parse(localStorage.getItem(key) || "[]");
+      prev.push(item);
+      localStorage.setItem(key, JSON.stringify(prev));
+      console.warn("Saved pending score update to localStorage", item);
+    } catch (e) {
+      console.warn("Failed to save pending update to localStorage:", e);
+    }
   }
 
-  await updateDoc(userRef,{
-  score: currentScore + points,
-  xp: currentXP + points,
-  extraPoints: currentExtra + bonus
-});
+  try {
+    if (!window.firebaseUser) {
+      console.warn("updateUserScoreOnline: no firebaseUser — queuing locally");
+      pushPendingUpdate({
+        uid: null,
+        points,
+        bonus,
+        timestamp: Date.now()
+      });
+      return false;
+    }
 
-await updateLevel(window.firebaseUser.uid);
+    const uid = window.firebaseUser.uid;
+    const userRef = doc(db, "users", uid);
+
+    // استخدم increment لتجنّب race conditions
+    await updateDoc(userRef, {
+      score: increment(points),
+      xp: increment(points),
+      extraPoints: increment(bonus),
+      updatedAt: serverTimestamp()
+    });
+
+    // حدث المستوى بعد الكتابة (انتظرها)
+    await updateLevel(uid);
+
+    // جلب البيانات المحدثة لعرضها فوراً
+    try {
+      const updatedSnap = await getDoc(userRef);
+      if (updatedSnap.exists()) {
+        const data = updatedSnap.data();
+
+        // جلب عناصر الـ DOM وقت التنفيذ (عشان المودال ممكن يتعمل ديناميك)
+        const _profileImage = document.getElementById("profileImage");
+        const _profileCardImage = document.getElementById("profileCardImage");
+        const _profileCardName = document.getElementById("profileCardName");
+        const _profileCardEmail = document.getElementById("profileCardEmail");
+        const _profileCardAge = document.getElementById("profileCardAge");
+
+        if (_profileImage) _profileImage.src = data.avatar || "userpic.jpg";
+        if (_profileCardImage) _profileCardImage.src = data.avatar || "userpic.jpg";
+        if (_profileCardName) _profileCardName.innerText = data.username || "";
+        if (_profileCardEmail) _profileCardEmail.innerText = data.email || "";
+        if (_profileCardAge) _profileCardAge.innerText = "Age: " + (data.age ?? "Not set");
+
+        // لو البروفايل مفتوح، اعمل ريفرش لمحتوى المودال
+        const profilePanel = document.querySelector('.pro-profile');
+        if (profilePanel && typeof showUserPanel === 'function') {
+          // لا تمنع الواجهة — نقدر نشغّلها بدون await أو ننتظرها
+          showUserPanel().catch(e => console.warn("showUserPanel refresh failed:", e));
+        }
+      }
+    } catch (refreshErr) {
+      console.warn("Failed to refresh profile DOM after update:", refreshErr);
+    }
+
+    // لو فيه دالة لإرسال pending معرفة في مكان تاني - حاول تعملها
+    if (typeof sendPendingScoreUpdates === 'function') {
+      // لا تمنع التنفيذ الرئيسي
+      sendPendingScoreUpdates().catch(e => console.warn("sendPendingScoreUpdates failed:", e));
+    }
+
+    console.log("Score updated:", { uid, points, bonus });
+    return true;
+  } catch (err) {
+    console.error("updateUserScoreOnline failed:", err);
+
+    // لو حصل خطأ، خزّن التحديث محلياً وبلاش تكسر واجهة المستخدم
+    pushPendingUpdate({
+      uid: window.firebaseUser ? window.firebaseUser.uid : null,
+      points,
+      bonus,
+      timestamp: Date.now(),
+      error: err.message || String(err)
+    });
+
+    // ممكن تضيف إشعار للمستخدم هنا بدل throw
+    // showToast && showToast("Saving score failed — will retry automatically.");
+
+    return false;
+  }
 }
 
+// ======================
+// إرسال التحديثات المعلقة (pending) إلى Firestore
+// ضع هذه الدالة مباشرة بعد updateUserScoreOnline
+// ======================
+async function sendPendingScoreUpdates() {
+  try {
+    const key = 'pendingScoreUpdates';
+    const pending = JSON.parse(localStorage.getItem(key) || "[]");
+    if (!pending || !pending.length) return;
+
+    // لو ما فيش يوزر مسجّل، ارجع وخليه ينتظر تسجيل دخول
+    if (!window.firebaseUser) {
+      console.warn("sendPendingScoreUpdates: no firebaseUser, aborting");
+      return;
+    }
+
+    const uid = window.firebaseUser.uid;
+    const userRef = doc(db, "users", uid);
+
+    // نعمل نسخة لأننا سنعدل الـ localStorage بعد نجاح الإرسال
+    const remaining = [];
+
+    for (const item of pending) {
+      // إذا الـ item.uid موجود ومختلف عن اليوزر الحالي، خزن للاستخدام لاحقاً
+      if (item.uid && item.uid !== uid) {
+        remaining.push(item);
+        continue;
+      }
+
+      try {
+        // حدّث Firestore مباشرة باستخدام increment لتجنّب race conditions
+        await updateDoc(userRef, {
+          score: increment(item.points || 0),
+          xp: increment(item.points || 0),
+          extraPoints: increment(item.bonus || 0),
+          updatedAt: serverTimestamp()
+        });
+
+        // بعد التحديث، حدّث المستوى
+        await updateLevel(uid);
+
+      } catch (err) {
+        // لو فشل، خزن العنصر للّمحاولة لاحقاً واطلع من الليوب (نحافظ على ترتيب المحاولات)
+        console.warn("Failed to send pending item, will retry later:", err, item);
+        remaining.push(item);
+        break;
+      }
+    }
+
+    if (remaining.length) {
+      localStorage.setItem(key, JSON.stringify(remaining));
+    } else {
+      localStorage.removeItem(key);
+      console.log("All pending score updates sent.");
+    }
+
+    // لو فتح البروفايل، حدّثه
+    try {
+      const profilePanel = document.querySelector('.pro-profile');
+      if (profilePanel && typeof showUserPanel === 'function') {
+        showUserPanel().catch(e => console.warn("showUserPanel refresh failed:", e));
+      }
+    } catch(e) {
+      console.warn("refresh profile DOM failed:", e);
+    }
+
+  } catch (err) {
+    console.error("sendPendingScoreUpdates error:", err);
+  }
+}
+
+// ربط الأحداث:
+// 1) لما يرجع الاتصال (online) نجرّب نرسل المعلّقات
+window.addEventListener('online', () => {
+  sendPendingScoreUpdates().catch(e => console.warn(e));
+});
+
+// 2) لما اليوزر يسجل الدخول، نجرب نرسل المعلّقات
+// عندك أصلاً onAuthStateChanged في الكود — لو فيه واحد فقط ضع هذا السطر هناك
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // تأكد إن window.firebaseUser متحدّث (عادة موجود)
+    sendPendingScoreUpdates().catch(e => console.warn(e));
+  }
+});
 async function updateLevel(uid){
 
   const refUser = doc(db,"users",uid);
@@ -1678,7 +1832,9 @@ function showQuestion() {
     btn.style.display = "block";
     btn.style.margin = "10px 0";
     btn.innerText = ans.text || "";
-    const handler = (e) => {
+
+    // handler صار async عشان نعمل await للـ update على الفايرستور
+    const handler = async (e) => {
       // منع الضغط المتكرر
       if (btn.classList.contains("answered")) return;
       try {
@@ -1691,11 +1847,13 @@ function showQuestion() {
         ans.selected = true;
         // أوقف المؤقت
         clearInterval(timer);
+
         if (ans.correct) {
           try { correctSound.play(); } catch (e) {}
           correctAnswers++;
           combo++;
           if (combo > maxCombo) maxCombo = combo;
+
           // حساب النقاط النهائي
           let finalPoints = calculateBonus(q);
           // حماية: لو diff أو basePoints مفقودين
@@ -1703,26 +1861,50 @@ function showQuestion() {
           const diff = DIFFICULTY_SETTINGS[diffKey] || DIFFICULTY_SETTINGS.easy;
           let baseOnly = (q.basePoints || 0) * (diff.multiplier || 1);
           let bonusOnly = finalPoints - baseOnly;
-          // أضف للنقاط
+
+          // أضف للنقاط محلياً
           score += finalPoints;
-          try {
-  showComboAnimation(btn, finalPoints);
-} catch(e) {
-  console.warn("combo animation error", e);
-}
+
+          try { showComboAnimation(btn, finalPoints); } catch(e) { console.warn("combo animation error", e); }
           const comboBonus = getComboBonus();
-          if (comboBonus > 0) try {
-  showComboAnimation(btn, comboBonus, true);
-} catch(e) {
-  console.warn("combo bonus error", e);
-}
-          // حدث السجل أونلاين بدون انتظار (لا يوقف الواجهة)
+          if (comboBonus > 0) try { showComboAnimation(btn, comboBonus, true); } catch(e) { console.warn("combo bonus error", e); }
+
+          // حاول تحفظ أونلاين وانتظر النتيجة
           try {
-            updateUserScoreOnline(finalPoints, bonusOnly).catch(e => console.warn('updateUserScoreOnline failed', e));
-          } catch(err) {
-            console.warn('updateUserScoreOnline call error', err);
+            await updateUserScoreOnline(finalPoints, bonusOnly);
+            console.log("updateUserScoreOnline OK:", { finalPoints, bonusOnly });
+          } catch (err) {
+            console.warn("updateUserScoreOnline failed, saving pending:", err);
+
+            // خزن التحديث محلياً عشان تبعته لاحقاً عند الاستعادة (اختياري)
+            try {
+              const key = 'pendingScoreUpdates';
+              const prev = JSON.parse(localStorage.getItem(key) || "[]");
+              prev.push({
+                uid: window.firebaseUser ? window.firebaseUser.uid : null,
+                points: finalPoints,
+                bonus: bonusOnly,
+                timestamp: Date.now()
+              });
+              localStorage.setItem(key, JSON.stringify(prev));
+            } catch (lsErr) {
+              console.warn("localStorage save failed:", lsErr);
+            }
           }
+
+          // لو فيه بونص حقيقي خلّيه يظهر محلياً
           if (bonusOnly > 0) extraPoints += Math.round(bonusOnly);
+
+          // لو البروفايل مفتوح عايزين نحدثه فوراً
+          try {
+            const profilePanel = document.querySelector('.pro-profile');
+            if (profilePanel && typeof showUserPanel === 'function') {
+              await showUserPanel();
+            }
+          } catch (refreshErr) {
+            console.warn("refresh profile failed:", refreshErr);
+          }
+
           btn.classList.add("correct");
         } else {
           try { wrongSound.play(); } catch (e) {}
@@ -1736,12 +1918,14 @@ function showQuestion() {
             }
           });
         }
+
         // تحديث نص النتيجة
         const totalPointsAnsweredNow = currentQuiz
           .filter(q2 => q2.answered)
           .reduce((sum, q2) => sum + (q2.basePoints || 0), 0);
         const scoreTextEl = document.getElementById("scoreText");
         if (scoreTextEl) scoreTextEl.innerText = `${score} / ${totalPointsAnsweredNow}`;
+
         // انتقل للسؤال التالى بعد تأخير بسيط
         setTimeout(() => {
           if (currentQuestionIndex < currentQuiz.length - 1) {
@@ -1764,6 +1948,7 @@ function showQuestion() {
         }, 400);
       }
     };
+
     btn.addEventListener('click', handler);
     answersDiv.appendChild(btn);
     btns.push(btn);
@@ -1772,6 +1957,7 @@ function showQuestion() {
     answersDiv.innerHTML = "<div style='color:#ccc;padding:10px;'>No answers available</div>";
   }
 }
+
 /* ===== TIMER ===== */
 function startTimer(){
   clearInterval(timer)
