@@ -1591,7 +1591,7 @@ async function updateUserScoreOnline(points, bonus = 0) {
     // تحديث النقاط
     await updateDoc(userRef, {
       score: increment(points),
-      xp: increment(points),
+      xp: currentXP + points,
       extraPoints: increment(bonus),
       updatedAt: serverTimestamp()
     });
@@ -1647,18 +1647,18 @@ async function updateUserScoreOnline(points, bonus = 0) {
 
   } catch (err) {
 
-  console.error("FIREBASE ERROR:", err);
+    console.error("updateUserScoreOnline failed:", err);
 
-  pushPendingUpdate({
-    uid: window.firebaseUser ? window.firebaseUser.uid : null,
-    points,
-    bonus,
-    timestamp: Date.now(),
-    error: err.message || String(err)
-  });
+    pushPendingUpdate({
+      uid: window.firebaseUser ? window.firebaseUser.uid : null,
+      points,
+      bonus,
+      timestamp: Date.now(),
+      error: err.message || String(err)
+    });
 
-  return false;
-}
+    return false;
+  }
 
 }
 
@@ -1673,7 +1673,6 @@ async function sendPendingScoreUpdates() {
     const pending = JSON.parse(localStorage.getItem(key) || "[]");
     if (!pending || !pending.length) return;
 
-    // لو ما فيش يوزر مسجّل، ارجع وخليه ينتظر تسجيل دخول
     if (!window.firebaseUser) {
       console.warn("sendPendingScoreUpdates: no firebaseUser, aborting");
       return;
@@ -1682,30 +1681,32 @@ async function sendPendingScoreUpdates() {
     const uid = window.firebaseUser.uid;
     const userRef = doc(db, "users", uid);
 
-    // نعمل نسخة لأننا سنعدل الـ localStorage بعد نجاح الإرسال
     const remaining = [];
 
     for (const item of pending) {
-      // إذا الـ item.uid موجود ومختلف عن اليوزر الحالي، خزن للاستخدام لاحقاً
+
       if (item.uid && item.uid !== uid) {
         remaining.push(item);
         continue;
       }
 
       try {
-        // حدّث Firestore مباشرة باستخدام increment لتجنّب race conditions
+
+        // 🔹 نقرأ الـ XP الحالي
+        const snap = await getDoc(userRef);
+        const currentXP = snap.data()?.xp || 0;
+
+        // 🔹 نحدث البيانات
         await updateDoc(userRef, {
           score: increment(item.points || 0),
-          xp: increment(item.points || 0),
+          xp: currentXP + (item.points || 0),
           extraPoints: increment(item.bonus || 0),
           updatedAt: serverTimestamp()
         });
 
-        // بعد التحديث، حدّث المستوى
         await updateLevel(uid);
 
       } catch (err) {
-        // لو فشل، خزن العنصر للّمحاولة لاحقاً واطلع من الليوب (نحافظ على ترتيب المحاولات)
         console.warn("Failed to send pending item, will retry later:", err, item);
         remaining.push(item);
         break;
@@ -1719,7 +1720,6 @@ async function sendPendingScoreUpdates() {
       console.log("All pending score updates sent.");
     }
 
-    // لو فتح البروفايل، حدّثه
     try {
       const profilePanel = document.querySelector('.pro-profile');
       if (profilePanel && typeof showUserPanel === 'function') {
@@ -1733,6 +1733,7 @@ async function sendPendingScoreUpdates() {
     console.error("sendPendingScoreUpdates error:", err);
   }
 }
+
 
 // ربط الأحداث:
 // 1) لما يرجع الاتصال (online) نجرّب نرسل المعلّقات
