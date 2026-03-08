@@ -1546,6 +1546,15 @@ function shuffle(array) {
 }
 // استبدل الدالة القديمة بها
 async function updateUserScoreOnline(points, bonus = 0) {
+
+  // تأكد أن القيم أرقام
+  points = Number(points) || 0;
+  bonus = Number(bonus) || 0;
+
+  // حماية إضافية
+  if (points > 50) points = 50;
+  if (bonus > 20) bonus = 20;
+
   // helper داخلي لحفظ التحديثات محلياً لو فشل الاتصال
   function pushPendingUpdate(item) {
     try {
@@ -1560,21 +1569,26 @@ async function updateUserScoreOnline(points, bonus = 0) {
   }
 
   try {
-    if (!window.firebaseUser) {
+
+    // تأكد من وجود المستخدم
+    const user = window.firebaseUser;
+    if (!user) {
       console.warn("updateUserScoreOnline: no firebaseUser — queuing locally");
+
       pushPendingUpdate({
         uid: null,
         points,
         bonus,
         timestamp: Date.now()
       });
+
       return false;
     }
 
-    const uid = window.firebaseUser.uid;
+    const uid = user.uid;
     const userRef = doc(db, "users", uid);
 
-    // استخدم increment لتجنّب race conditions
+    // تحديث النقاط
     await updateDoc(userRef, {
       score: increment(points),
       xp: increment(points),
@@ -1582,16 +1596,20 @@ async function updateUserScoreOnline(points, bonus = 0) {
       updatedAt: serverTimestamp()
     });
 
-    // حدث المستوى بعد الكتابة (انتظرها)
-    await updateLevel(uid);
+    // تحديث المستوى
+    if (typeof updateLevel === "function") {
+      await updateLevel(uid);
+    }
 
-    // جلب البيانات المحدثة لعرضها فوراً
+    // جلب البيانات الجديدة
     try {
+
       const updatedSnap = await getDoc(userRef);
+
       if (updatedSnap.exists()) {
+
         const data = updatedSnap.data();
 
-        // جلب عناصر الـ DOM وقت التنفيذ (عشان المودال ممكن يتعمل ديناميك)
         const _profileImage = document.getElementById("profileImage");
         const _profileCardImage = document.getElementById("profileCardImage");
         const _profileCardName = document.getElementById("profileCardName");
@@ -1604,29 +1622,33 @@ async function updateUserScoreOnline(points, bonus = 0) {
         if (_profileCardEmail) _profileCardEmail.innerText = data.email || "";
         if (_profileCardAge) _profileCardAge.innerText = "Age: " + (data.age ?? "Not set");
 
-        // لو البروفايل مفتوح، اعمل ريفرش لمحتوى المودال
         const profilePanel = document.querySelector('.pro-profile');
+
         if (profilePanel && typeof showUserPanel === 'function') {
-          // لا تمنع الواجهة — نقدر نشغّلها بدون await أو ننتظرها
           showUserPanel().catch(e => console.warn("showUserPanel refresh failed:", e));
         }
+
       }
+
     } catch (refreshErr) {
       console.warn("Failed to refresh profile DOM after update:", refreshErr);
     }
 
-    // لو فيه دالة لإرسال pending معرفة في مكان تاني - حاول تعملها
+    // إرسال التحديثات المؤجلة
     if (typeof sendPendingScoreUpdates === 'function') {
-      // لا تمنع التنفيذ الرئيسي
-      sendPendingScoreUpdates().catch(e => console.warn("sendPendingScoreUpdates failed:", e));
+      sendPendingScoreUpdates().catch(e =>
+        console.warn("sendPendingScoreUpdates failed:", e)
+      );
     }
 
     console.log("Score updated:", { uid, points, bonus });
+
     return true;
+
   } catch (err) {
+
     console.error("updateUserScoreOnline failed:", err);
 
-    // لو حصل خطأ، خزّن التحديث محلياً وبلاش تكسر واجهة المستخدم
     pushPendingUpdate({
       uid: window.firebaseUser ? window.firebaseUser.uid : null,
       points,
@@ -1635,12 +1657,11 @@ async function updateUserScoreOnline(points, bonus = 0) {
       error: err.message || String(err)
     });
 
-    // ممكن تضيف إشعار للمستخدم هنا بدل throw
-    // showToast && showToast("Saving score failed — will retry automatically.");
-
     return false;
   }
+
 }
+
 
 // ======================
 // إرسال التحديثات المعلقة (pending) إلى Firestore
