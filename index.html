@@ -34,11 +34,11 @@
 </li>
   <div class="nav-right">
     <ul id="menu">
-      <li data-section="home"><a href="#">Home</a></li>
-<li data-section="gaming"><a href="#">Gaming</a></li>
-<li data-section="anime"><a href="#">Anime</a></li>
-<li data-section="marvel"><a href="#">Marvel</a></li>
-<li data-section="states"><a href="#">States</a></li>
+      <li data-section="home"><a href="#">HOME</a></li>
+<li data-section="gaming"><a href="#">GAMING</a></li>
+<li data-section="anime"><a href="#">ANIME</a></li>
+<li data-section="marvel"><a href="#">MARVEL</a></li>
+<li data-section="states"><a href="#">STATS</a></li>
     </ul>
     <div class="social-icons">
       <a href="https://youtube.com/@alego.yt.1?si=1Z3qtFv2LeMa7kKB"><i class="fab fa-youtube"></i></a>
@@ -981,6 +981,7 @@ async function registerUser(){
       avatar:"userpic.jpg",
       xp:0,
       extraPoints:0,
+      score:0,
       level:1,
       role:"user",
       isBlocked:false,
@@ -1395,7 +1396,7 @@ document.getElementById("contactModal").addEventListener("click", function(e){
 ========================= */
 const puzzleButtonNames = [
   "Anime questions",
-  "Mathimatical problems",
+  "Mathematical problems",
   "Generl information",
   "معلومات دينية",
   "أسئلة انمي",
@@ -1543,7 +1544,7 @@ function shuffle(array) {
   }
   return arr;
 }
-async function updateUserScoreOnline(points) {
+async function updateUserScoreOnline(points, bonus) {
 
   if (!window.firebaseUser) return;
 
@@ -1563,12 +1564,13 @@ async function updateUserScoreOnline(points) {
 
   }
 
-  await updateDoc(userRef, {
-    score: currentScore + points,
-    xp: currentXP + (points * 0.5),
-    extraPoints: currentExtra + extraPoints
-  });
+  await updateDoc(userRef,{
+  score: currentScore + points,
+  xp: currentXP + points,
+  extraPoints: currentExtra + bonus
+});
 
+await updateLevel(window.firebaseUser.uid);
 }
 
 async function updateLevel(uid){
@@ -1716,7 +1718,7 @@ function showQuestion() {
 }
           // حدث السجل أونلاين بدون انتظار (لا يوقف الواجهة)
           try {
-            updateUserScoreOnline(finalPoints).catch(e => console.warn('updateUserScoreOnline failed', e));
+            updateUserScoreOnline(finalPoints, bonusOnly).catch(e => console.warn('updateUserScoreOnline failed', e));
           } catch(err) {
             console.warn('updateUserScoreOnline call error', err);
           }
