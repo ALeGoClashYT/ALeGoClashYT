@@ -224,7 +224,8 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyDHa6ehG1vQoodbxNDfJuEN0UUg2Ymv-1s",
   authDomain: "alegoclashyt.firebaseapp.com",
-  projectId: "alegoclashyt"
+  projectId: "alegoclashyt",
+  storageBucket: "alegoclashyt.appspot.com"
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -389,109 +390,236 @@ async function googleLogin(){
     console.error(err);
   }
 }
+
+function getLevelData(xp){
+
+  const levels = [
+    0,
+    100,
+    300,
+    500,
+    700,
+    1000,
+    1500,
+    2000,
+    3000,
+    5000,
+    10000,
+    20000,
+    50000,
+    100000,
+    150000
+  ];
+
+  let level = 1;
+
+  for(let i=levels.length-1;i>=0;i--){
+    if(xp >= levels[i]){
+      level = i+1;
+      break;
+    }
+  }
+
+  const currentLevelXP = levels[level-1] || 0;
+  const nextLevelXP = levels[level] || levels[level-1];
+
+  const progressXP = xp - currentLevelXP;
+  const neededXP = nextLevelXP - currentLevelXP;
+
+  const percent = Math.min(100,(progressXP / neededXP) * 100);
+
+  return {
+    level,
+    progressXP,
+    neededXP,
+    percent
+  };
+
+}
+
+
 async function showUserPanel(){
+
   const user = window.firebaseUser;
   if(!user) return;
-  const snap = await getDoc(doc(db,"users",user.uid));
+
+  const userRef = doc(db,"users",user.uid);
+
+  const snap = await getDoc(userRef);
   if(!snap.exists()) return;
-  const data = snap.data();
-  // 🔴 لو متعمله بلوك
+
+  let data = snap.data();
+
+  // 🔥 Migration للمستخدمين القدامى
+  await setDoc(userRef,{
+    xp: data.xp ?? 0,
+    extraPoints: data.extraPoints ?? 0,
+    level: data.level ?? 1,
+    joinDate: data.joinDate ?? serverTimestamp()
+  },{merge:true});
+
+  // تحديث البيانات بعد الميجريشن
+  const updatedSnap = await getDoc(userRef);
+  data = updatedSnap.data();
+
+  const levelData = getLevelData(data.xp || 0);
+
+  // 🔴 لو الحساب متعمله بلوك
   if(data.isBlocked){
     await signOut(auth);
     alert("Your account has been blocked.");
     return;
   }
+
   authTitle.innerText = "";
+
   authContent.innerHTML = `
   <div class="pro-profile">
     <div class="pro-left">
-      <img id="profileImage" 
-           src="${data.avatar || 'userpic.jpg'}" 
+
+      <img id="profileImage"
+           src="${data.avatar || 'userpic.jpg'}"
            class="big-avatar">
-      <input type="file" id="avatarUpload" 
-             accept="image/*" 
+
+      <input type="file"
+             id="avatarUpload"
+             accept="image/*"
              style="display:none;">
+
       <button class="change-photo-btn" id="changePhotoBtn">
         Change Photo
       </button>
+
     </div>
+
     <div class="pro-right">
+
       <h2 class="pro-name" id="liveUsername">
         ${data.username}
       </h2>
+
       <p class="pro-email">${data.email}</p>
+
       <p class="pro-role">
         Role: <strong>${data.role || "user"}</strong>
       </p>
+
       ${data.isBlocked ? `<p style="color:red;">Blocked</p>` : ``}
+
+      <!-- ⭐ LEVEL PROGRESS -->
+      <div class="level-box">
+
+        <p class="level-text">
+          Level ${levelData.level} / 15
+        </p>
+
+        <div class="level-bar">
+          <div class="level-fill"
+               style="width:${levelData.percent}%">
+          </div>
+        </div>
+
+        <small>
+          ${formatNumber(levelData.progressXP)} /
+          ${formatNumber(levelData.neededXP)} XP
+        </small>
+
+      </div>
+
       <div class="stats-box">
+
         <div class="stat">
           <span>XP</span>
-          <h3>${data.xp || 0}</h3>
+          <h3>${formatNumber(data.xp || 0)}</h3>
         </div>
+
         <div class="stat">
           <span>Extra Points</span>
-          <h3>${data.extraPoints || 0}</h3>
+          <h3>${formatNumber(data.extraPoints || 0)}</h3>
         </div>
+
       </div>
+
       <button id="editProfileBtn" class="edit-btn">
         Edit Profile
       </button>
+
       <button id="logoutBtn" class="logout-btn">
         Logout
       </button>
+
       ${data.role === "admin" ? `
         <button id="adminPanelBtn" class="edit-btn">
           Admin Panel
         </button>
       ` : ``}
+
     </div>
   </div>
   `;
+
   // =========================
   // Edit Profile
   // =========================
+
   document.getElementById("editProfileBtn").onclick = ()=>{
     showEditProfilePanel(data);
   };
+
   // =========================
   // Admin Panel
   // =========================
+
   if(data.role === "admin"){
     document.getElementById("adminPanelBtn").onclick = ()=>{
       showAdminPanel();
     };
   }
+
   // =========================
   // Change Photo
   // =========================
+
   const uploadInput = document.getElementById("avatarUpload");
   const profileImg = document.getElementById("profileImage");
+
   document.getElementById("changePhotoBtn").onclick = ()=>{
     uploadInput.click();
   };
+
   uploadInput.addEventListener("change", async (e)=>{
+
     const file = e.target.files[0];
     if(!file) return;
+
     if(!file.type.startsWith("image/")){
       alert("Please upload an image file.");
       return;
     }
+
     if(file.size > 2 * 1024 * 1024){
       alert("Image must be less than 2MB.");
       return;
     }
+
     uploadInput.disabled = true;
     profileImg.style.opacity = "0.5";
+
     try{
-      const storageRef = ref(storage, "avatars/" + user.uid);
-      await uploadBytes(storageRef, file);
+
+      const storageRef = ref(storage,"avatars/" + user.uid);
+
+      await uploadBytes(storageRef,file);
+
       const url = await getDownloadURL(storageRef);
-      await updateDoc(doc(db,"users",user.uid),{
-        avatar: url,
-        updatedAt: serverTimestamp()
+
+      await updateDoc(userRef,{
+        avatar:url,
+        updatedAt:serverTimestamp()
       });
+
       profileImg.src = url;
+
       await fetch("/api/notify",{
         method:"POST",
         headers:{ "Content-Type":"application/json"},
@@ -504,21 +632,31 @@ async function showUserPanel(){
           updatedAt:new Date().toISOString()
         })
       });
+
     }catch(err){
+
       console.error(err);
       alert("Upload failed.");
+
     }
+
     uploadInput.disabled = false;
     profileImg.style.opacity = "1";
+
   });
+
   // =========================
   // Logout
   // =========================
+
   document.getElementById("logoutBtn").onclick = async ()=>{
     await signOut(auth);
-    authModal.style.display="none";
+    authModal.style.display = "none";
   };
+
 }
+
+
 async function showAdminPanel(){
   try{
     const currentUser = window.firebaseUser;
@@ -925,6 +1063,16 @@ onAuthStateChanged(auth, async (user)=>{
     window.firebaseUser = user;
     const snap = await getDoc(doc(db,"users",user.uid));
     if(snap.exists()){
+  const data = snap.data();
+
+  // FIX OLD USERS DATA
+  await setDoc(doc(db,"users",user.uid),{
+    xp: data.xp ?? 0,
+    extraPoints: data.extraPoints ?? 0,
+    level: data.level ?? 1
+  },{ merge:true });
+}
+    if(snap.exists()){
       const data = snap.data();
      if(profileImage)
   profileImage.src = data.avatar || "userpic.jpg";
@@ -1268,6 +1416,7 @@ let currentQuiz = [];
 let currentQuestionIndex = 0;
 let score = 0;
 let combo = 0;
+let extraPoints = 0;
 let timer;
 let timeLeft = 20;
 let categoryTime = 20;
@@ -1395,17 +1544,63 @@ function shuffle(array) {
   return arr;
 }
 async function updateUserScoreOnline(points) {
+
   if (!window.firebaseUser) return;
+
   const userRef = doc(db, "users", window.firebaseUser.uid);
+
   const snap = await getDoc(userRef);
+
   let currentScore = 0;
+  let currentXP = 0;
+  let currentExtra = 0;
+
   if (snap.exists()) {
+
     currentScore = snap.data().score || 0;
+    currentXP = snap.data().xp || 0;
+    currentExtra = snap.data().extraPoints || 0;
+
   }
+
   await updateDoc(userRef, {
-    score: currentScore + points
+    score: currentScore + points,
+    xp: currentXP + (points * 0.5),
+    extraPoints: currentExtra + extraPoints
   });
+
 }
+
+async function updateLevel(uid){
+
+  const refUser = doc(db,"users",uid);
+  const snap = await getDoc(refUser);
+
+  if(!snap.exists()) return;
+
+  const xp = snap.data().xp || 0;
+
+  let level = 1;
+
+     if(xp >= 150000) level = 15;
+else if(xp >= 100000) level = 14;
+else if(xp >= 50000) level = 13;     
+else if(xp >= 20000) level = 12;
+else if(xp >= 10000) level = 11;
+else if(xp >= 5000) level = 10;
+else if(xp >= 3000) level = 9;
+else if(xp >= 2000) level = 8;
+else if(xp >= 1500) level = 7;
+else if(xp >= 1000) level = 6;
+else if(xp >= 700) level = 5;
+else if(xp >= 500) level = 4;
+else if(xp >= 300) level = 3;
+else if(xp >= 100) level = 2;
+
+  await updateDoc(refUser,{ level });
+
+}
+
 /* ===== START QUIZ ===== */
 function startQuiz(level){
   document.getElementById("finishBtn").style.display = "inline-block";
@@ -1687,7 +1882,7 @@ function getRank(percent){
   return "F <br> &nbsp; &nbsp; Try Again ❌";
 }
 /* ===== RESULT & RANK ===== */
-let extraPoints = 0;
+
 function showResult() {
   document.getElementById("finishBtn").style.display = "none";
   const totalPointsAnswered = currentQuiz
@@ -1852,6 +2047,26 @@ backBtn.addEventListener('click', () => {
     return;
   }
 });
+
+
+function formatNumber(num){
+
+  if(num >= 1000000000){
+    return (num / 1000000000).toFixed(1).replace(".0","") + "B";
+  }
+
+  if(num >= 1000000){
+    return (num / 1000000).toFixed(1).replace(".0","") + "M";
+  }
+
+  if(num >= 1000){
+    return (num / 1000).toFixed(1).replace(".0","") + "K";
+  }
+
+  return num;
+
+}
+
 </script>
 <button id="scrollTopBtn">⬆</button>
 <div id="authModal" class="auth-modal">
@@ -2111,7 +2326,7 @@ once:true
 });
 </script>
 <script>
-fetch("/api/visit",{method:"POST"}).catch(()=>{});
+fetch("/api/visit",{method:"POST"});
 </script>
 </body>
 </html>
