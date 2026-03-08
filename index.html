@@ -1719,19 +1719,24 @@ window.addEventListener('online', () => {
   sendPendingScoreUpdates().catch(e => console.warn(e));
 });
 
-// 2) لما اليوزر يسجل الدخول، نجرب نرسل المعلّقات
-// عندك أصلاً onAuthStateChanged في الكود — لو فيه واحد فقط ضع هذا السطر هناك
+
 onAuthStateChanged(auth, (user) => {
   if (user) {
 
-    // 🔥 هذا السطر هو المهم
+    // حفظ المستخدم عالمياً
     window.firebaseUser = user;
 
-    // إرسال النقاط المعلقة
+    console.log("User logged:", user.uid);
+
     sendPendingScoreUpdates().catch(e => console.warn(e));
+
+  } else {
+
+    window.firebaseUser = null;
 
   }
 });
+
 async function updateLevel(uid){
 
   const refUser = doc(db,"users",uid);
