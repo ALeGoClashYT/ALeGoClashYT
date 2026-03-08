@@ -1061,7 +1061,6 @@ const profileCardDate = document.getElementById("profileCardDate");
 onAuthStateChanged(auth, async (user)=>{
   if(user){
     window.firebaseUser = user;
-       sendPendingScoreUpdates().catch(e => console.warn(e));
     const snap = await getDoc(doc(db,"users",user.uid));
     if(snap.exists()){
   const data = snap.data();
@@ -1535,10 +1534,7 @@ async function updateUserScoreOnline(points, bonus = 0) {
 
   // حماية إضافية
   if (points > 50) points = 50;
-if (points < 0) points = 0;
-
 if (bonus > 20) bonus = 20;
-if (bonus < 0) bonus = 0;
 
   // helper داخلي لحفظ التحديثات محلياً لو فشل الاتصال
   function pushPendingUpdate(item) {
@@ -1578,7 +1574,6 @@ if (bonus < 0) bonus = 0;
       score: increment(points),
       xp: increment(points),
       extraPoints: increment(bonus),
-      updatedAt: serverTimestamp()
     });
 
     // تحديث المستوى
@@ -2483,3 +2478,4 @@ fetch("/api/visit",{method:"POST"});
 </script>
 </body>
 </html>
+  
