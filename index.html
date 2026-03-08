@@ -452,11 +452,10 @@ async function showUserPanel(){
 
   // 🔥 Migration للمستخدمين القدامى
   await setDoc(userRef,{
-    xp: data.xp ?? 0,
-    extraPoints: data.extraPoints ?? 0,
-    level: data.level ?? 1,
-    joinDate: data.joinDate ?? serverTimestamp()
-  },{merge:true});
+  extraPoints: data.extraPoints ?? 0,
+  level: data.level ?? 1,
+  joinDate: data.joinDate ?? serverTimestamp()
+},{merge:true});
 
   // تحديث البيانات بعد الميجريشن
   const updatedSnap = await getDoc(userRef);
@@ -1062,16 +1061,16 @@ const profileCardDate = document.getElementById("profileCardDate");
 onAuthStateChanged(auth, async (user)=>{
   if(user){
     window.firebaseUser = user;
+       sendPendingScoreUpdates().catch(e => console.warn(e));
     const snap = await getDoc(doc(db,"users",user.uid));
     if(snap.exists()){
   const data = snap.data();
 
   // FIX OLD USERS DATA
   await setDoc(doc(db,"users",user.uid),{
-    xp: data.xp ?? 0,
-    extraPoints: data.extraPoints ?? 0,
-    level: data.level ?? 1
-  },{ merge:true });
+  extraPoints: data.extraPoints ?? 0,
+  level: data.level ?? 1
+},{ merge:true });
 }
     if(snap.exists()){
       const data = snap.data();
@@ -1096,23 +1095,6 @@ if(profileCardDate && data.createdAt)
   if(profileCardImage)
     profileCardImage.src = "userpic.jpg";
 }
-});
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    const userStatusRef = rRef(rtdb, "onlineUsers/" + user.uid);
-    const connectedRef = rRef(rtdb, ".info/connected");
-    onValue(connectedRef, (snapshot) => {
-      if (snapshot.val() === true) {
-        // المستخدم Online
-        set(userStatusRef, {
-          email: user.email,
-          lastActive: Date.now()
-        });
-        // لما يخرج أو يقفل التاب
-        onDisconnect(userStatusRef).remove();
-      }
-    });
-  }
 });
 </script>
 <script src="questions.js" defer></script>
@@ -1553,7 +1535,10 @@ async function updateUserScoreOnline(points, bonus = 0) {
 
   // حماية إضافية
   if (points > 50) points = 50;
-  if (bonus > 20) bonus = 20;
+if (points < 0) points = 0;
+
+if (bonus > 20) bonus = 20;
+if (bonus < 0) bonus = 0;
 
   // helper داخلي لحفظ التحديثات محلياً لو فشل الاتصال
   function pushPendingUpdate(item) {
@@ -1591,7 +1576,7 @@ async function updateUserScoreOnline(points, bonus = 0) {
     // تحديث النقاط
     await updateDoc(userRef, {
       score: increment(points),
-      xp: currentXP + points,
+      xp: increment(points),
       extraPoints: increment(bonus),
       updatedAt: serverTimestamp()
     });
@@ -1661,12 +1646,6 @@ async function updateUserScoreOnline(points, bonus = 0) {
   }
 
 }
-
-
-// ======================
-// إرسال التحديثات المعلقة (pending) إلى Firestore
-// ضع هذه الدالة مباشرة بعد updateUserScoreOnline
-// ======================
 async function sendPendingScoreUpdates() {
   try {
     const key = 'pendingScoreUpdates';
@@ -1677,49 +1656,34 @@ async function sendPendingScoreUpdates() {
       console.warn("sendPendingScoreUpdates: no firebaseUser, aborting");
       return;
     }
-
     const uid = window.firebaseUser.uid;
     const userRef = doc(db, "users", uid);
-
     const remaining = [];
-
     for (const item of pending) {
-
       if (item.uid && item.uid !== uid) {
         remaining.push(item);
         continue;
       }
-
       try {
-
-        // 🔹 نقرأ الـ XP الحالي
-        const snap = await getDoc(userRef);
-        const currentXP = snap.data()?.xp || 0;
-
-        // 🔹 نحدث البيانات
         await updateDoc(userRef, {
           score: increment(item.points || 0),
-          xp: currentXP + (item.points || 0),
+          xp: increment(item.points || 0),
           extraPoints: increment(item.bonus || 0),
           updatedAt: serverTimestamp()
         });
-
         await updateLevel(uid);
-
       } catch (err) {
         console.warn("Failed to send pending item, will retry later:", err, item);
         remaining.push(item);
         break;
       }
     }
-
     if (remaining.length) {
       localStorage.setItem(key, JSON.stringify(remaining));
     } else {
       localStorage.removeItem(key);
       console.log("All pending score updates sent.");
     }
-
     try {
       const profilePanel = document.querySelector('.pro-profile');
       if (profilePanel && typeof showUserPanel === 'function') {
@@ -1728,48 +1692,20 @@ async function sendPendingScoreUpdates() {
     } catch(e) {
       console.warn("refresh profile DOM failed:", e);
     }
-
   } catch (err) {
     console.error("sendPendingScoreUpdates error:", err);
   }
 }
 
-
-// ربط الأحداث:
-// 1) لما يرجع الاتصال (online) نجرّب نرسل المعلّقات
 window.addEventListener('online', () => {
   sendPendingScoreUpdates().catch(e => console.warn(e));
 });
-
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-
-    // حفظ المستخدم عالمياً
-    window.firebaseUser = user;
-
-    console.log("User logged:", user.uid);
-
-    sendPendingScoreUpdates().catch(e => console.warn(e));
-
-  } else {
-
-    window.firebaseUser = null;
-
-  }
-});
-
 async function updateLevel(uid){
-
   const refUser = doc(db,"users",uid);
   const snap = await getDoc(refUser);
-
   if(!snap.exists()) return;
-
   const xp = snap.data().xp || 0;
-
   let level = 1;
-
      if(xp >= 150000) level = 15;
 else if(xp >= 100000) level = 14;
 else if(xp >= 50000) level = 13;     
@@ -1784,11 +1720,8 @@ else if(xp >= 700) level = 5;
 else if(xp >= 500) level = 4;
 else if(xp >= 300) level = 3;
 else if(xp >= 100) level = 2;
-
-  await updateDoc(refUser,{ level });
-
+  await updateDoc(refUser,{ level,});
 }
-
 /* ===== START QUIZ ===== */
 function startQuiz(level){
   document.getElementById("finishBtn").style.display = "inline-block";
