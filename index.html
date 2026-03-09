@@ -981,20 +981,26 @@ async function getLocationData(){
   }
 }
 
-function getDeviceType(){
+async function getDeviceType(){
 
-  const parser = new UAParser();
-  const result = parser.getResult();
+  if(navigator.userAgentData){
 
-  const vendor = result.device.vendor || "";
-  const model = result.device.model || "";
+    const ua = await navigator.userAgentData.getHighEntropyValues([
+      "model",
+      "platform",
+      "platformVersion"
+    ]);
 
-  if(vendor || model){
-    return `${vendor} ${model}`;
+    if(ua.model){
+      return ua.model;
+    }
+
+    return ua.platform;
   }
 
-  return result.os.name || "Unknown Device";
+  return navigator.userAgent;
 }
+
 
 
 async function registerUser(){
