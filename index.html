@@ -1527,7 +1527,8 @@ function shuffle(array) {
 }
 // استبدل الدالة القديمة بها
 async function updateUserScoreOnline(points, bonus = 0) {
-
+  
+  
   // تأكد أن القيم أرقام
   points = Number(points) || 0;
   bonus = Number(bonus) || 0;
@@ -1570,11 +1571,25 @@ if (bonus > 20) bonus = 20;
     const userRef = doc(db, "users", uid);
 
     // تحديث النقاط
-    await updateDoc(userRef, {
-      score: increment(points),
-      xp: increment(points),
-      extraPoints: increment(bonus),
-    });
+   // تحديث النقاط مع تحقق وإعادة محاولة
+if (!window.firebaseUser) {
+  console.error("User not logged in");
+  return;
+}
+
+try {
+  await updateDoc(userRef, {
+    score: increment(points),
+    xp: increment(points),
+    extraPoints: increment(bonus),
+  });
+  // بعد التحديث اعمل تحديث للبروفايل
+  await showUserPanel();
+} catch (error) {
+  console.error("Update failed, retrying...", error);
+  await sendPendingScoreUpdates();
+}
+
 
     // تحديث المستوى
     if (typeof updateLevel === "function") {
@@ -2478,4 +2493,3 @@ fetch("/api/visit",{method:"POST"});
 </script>
 </body>
 </html>
-  
