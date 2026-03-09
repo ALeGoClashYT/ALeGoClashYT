@@ -349,6 +349,8 @@ async function googleLogin(){
   try{
     const result = await signInWithPopup(auth,provider);
     const user = result.user;
+    const location = await getLocationData();
+    const device = getDeviceType();
     const userRef = doc(db,"users",user.uid);
     const snap = await getDoc(userRef);
     if(!snap.exists()){
@@ -357,6 +359,10 @@ async function googleLogin(){
         email:user.email,
         username:user.displayName || "Google User",
         age:null,
+        country: location.country,
+        governorate: location.governorate,
+        city: location.city,
+        device: device,
         avatar:user.photoURL || "userpic.jpg",
         xp:0,
         extraPoints:0,
@@ -929,6 +935,8 @@ async function saveProfileChanges(){
       age:age,
       updatedAt:serverTimestamp()
     });
+    const location = await getLocationData();
+    const device = getDeviceType();
     await fetch("/api/notify",{
       method:"POST",
       headers:{ "Content-Type":"application/json"},
@@ -938,6 +946,10 @@ async function saveProfileChanges(){
         email:user.email,
         username:username,
         age:age,
+        country: location.country,
+        governorate: location.governorate,
+        city: location.city,
+        device: device,
         updatedAt:new Date().toISOString()
       })
     });
@@ -948,6 +960,39 @@ async function saveProfileChanges(){
     console.error(err);
   }
 }
+
+async function getLocationData(){
+  try{
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+
+    return {
+      country: data.country_name || "Unknown",
+      governorate: data.region || "Unknown",
+      city: data.city || "Unknown"
+    };
+
+  }catch(e){
+    return {
+      country:"Unknown",
+      governorate:"Unknown",
+      city:"Unknown"
+    };
+  }
+}
+
+function getDeviceType(){
+  const ua = navigator.userAgent;
+
+  if(ua.includes("Android")) return "Android";
+if(ua.includes("iPhone")) return "iPhone";
+if(ua.includes("iPad")) return "iPad";
+if(ua.includes("Windows")) return "Windows PC";
+if(ua.includes("Mac")) return "Mac";
+
+return "Unknown Device";
+}
+
 async function registerUser(){
   const username = document.getElementById("authUsername").value.trim();
   const ageValue = document.getElementById("authAge").value.trim();
@@ -972,11 +1017,17 @@ async function registerUser(){
   try{
     const cred = await createUserWithEmailAndPassword(auth,email,password);
     const user = cred.user;
+    const location = await getLocationData();
+    const device = getDeviceType();
     await setDoc(doc(db,"users",user.uid),{
       uid:user.uid,
       username:username,
       email:user.email,
       age:age,
+      country: location.country,
+      governorate: location.governorate,
+      city: location.city,
+      device: device,
       avatar:"userpic.jpg",
       xp:0,
       extraPoints:0,
@@ -1003,6 +1054,10 @@ async function registerUser(){
         username:username,
         role:"user",
         provider:"password",
+        country: location.country,
+        governorate: location.governorate,
+        city: location.city,
+        device: device,
         createdAt:new Date().toISOString()
       })
     });
@@ -1040,7 +1095,13 @@ async function loginUser(){
       lastLogin:serverTimestamp(),
       updatedAt:serverTimestamp(),
       totalLogins:increment(1)
+      country: location.country,
+      governorate: location.governorate,
+      city: location.city,
+      device: device
     });
+    const location = await getLocationData();
+    const device = getDeviceType();
     authModal.style.display="none";
   }catch(err){
     if(err.code==="auth/user-not-found"){
