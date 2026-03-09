@@ -985,12 +985,10 @@ function getDeviceType(){
   const ua = navigator.userAgent;
 
   if(ua.includes("Android")) return "Android";
-if(ua.includes("iPhone")) return "iPhone";
-if(ua.includes("iPad")) return "iPad";
-if(ua.includes("Windows")) return "Windows PC";
-if(ua.includes("Mac")) return "Mac";
+  if(ua.includes("iPhone")) return "iPhone";
+  if(ua.includes("iPad")) return "iPad";
 
-return "Unknown Device";
+  return "PC";
 }
 
 async function registerUser(){
@@ -1095,13 +1093,8 @@ async function loginUser(){
       lastLogin:serverTimestamp(),
       updatedAt:serverTimestamp(),
       totalLogins:increment(1)
-      country: location.country,
-      governorate: location.governorate,
-      city: location.city,
-      device: device
     });
-    const location = await getLocationData();
-    const device = getDeviceType();
+    
     authModal.style.display="none";
   }catch(err){
     if(err.code==="auth/user-not-found"){
