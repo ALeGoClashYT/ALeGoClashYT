@@ -982,14 +982,20 @@ async function getLocationData(){
 }
 
 function getDeviceType(){
-  const ua = navigator.userAgent;
 
-  if(ua.includes("Android")) return "Android";
-  if(ua.includes("iPhone")) return "iPhone";
-  if(ua.includes("iPad")) return "iPad";
+  const parser = new UAParser();
+  const result = parser.getResult();
 
-  return "PC";
+  const vendor = result.device.vendor || "";
+  const model = result.device.model || "";
+
+  if(vendor || model){
+    return `${vendor} ${model}`;
+  }
+
+  return result.os.name || "Unknown Device";
 }
+
 
 async function registerUser(){
   const username = document.getElementById("authUsername").value.trim();
@@ -2545,5 +2551,6 @@ once:true
 <script>
 fetch("/api/visit",{method:"POST"});
 </script>
+<script src="https://cdn.jsdelivr.net/npm/ua-parser-js@1.0.37/src/ua-parser.min.js"></script>
 </body>
 </html>
