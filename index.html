@@ -25,7 +25,7 @@
 <nav>
   <div class="logo-container">
     <div class="logo">ALeGoClash &nbsp;  YT</div>
-    <img  src="AG-logo.png" alt="Logo" loading="lazy">
+    <img  src="AG-logo.png" alt="Logo" loading="lazy" id="logooo">
   </div>
    <li id="myAccountBtn" class="profile-wrapper">
   <div class="profile-circle">
@@ -33,6 +33,10 @@
   </div>
 </li>
   <div class="nav-right">
+    <div class="online-count">
+    <span class="online-dot">●</span> 
+    <span id="onlineUsers">0</span> Online
+  </div>
     <ul id="menu">
       <li data-section="home"><a href="#">HOME</a></li>
 <li data-section="gaming"><a href="#">GAMING</a></li>
@@ -40,6 +44,7 @@
 <li data-section="marvel"><a href="#">MARVEL</a></li>
 <li data-section="states"><a href="#">STATS</a></li>
     </ul>
+    
     <div class="social-icons">
       <a href="https://youtube.com/@alego.yt.1?si=1Z3qtFv2LeMa7kKB"><i class="fab fa-youtube"></i></a>
       <a href="https://www.facebook.com/share/1C4XhCpoLL/"><i class="fab fa-facebook"></i></a>
@@ -349,7 +354,7 @@ async function googleLogin(){
   provider.setCustomParameters({ prompt:"select_account" });
   try{
     const result = await signInWithPopup(auth,provider);
-    showToast("Logged in with Google 🚀");
+    showToast("Welcome  back" + result.user.displayName + " 👋");
     const user = result.user;
     const location = await getLocationData();
     const device = await getDeviceType();
@@ -938,7 +943,7 @@ async function saveProfileChanges(){
       updatedAt:serverTimestamp()
     });
     const location = await getLocationData();
-    const device = getDeviceType();
+    const device = await getDeviceType();
     await fetch("/api/notify",{
       method:"POST",
       headers:{ "Content-Type":"application/json"},
@@ -1135,6 +1140,18 @@ const profileCardAge = document.getElementById("profileCardAge");
 const profileCardDate = document.getElementById("profileCardDate");
 onAuthStateChanged(auth, async (user)=>{
   if(user){
+
+const userStatusRef = ref(rtdb,'onlineUsers/'+user.uid);
+
+set(userStatusRef,{
+uid:user.uid,
+time:Date.now()
+});
+
+onDisconnect(userStatusRef).remove();
+
+}
+  if(user){
     window.firebaseUser = user;
     const snap = await getDoc(doc(db,"users",user.uid));
     if(snap.exists()){
@@ -1187,6 +1204,36 @@ toast.remove();
 },3000);
 
 }
+function showLoader(){
+document.getElementById("loader").style.display="flex";
+}
+
+function hideLoader(){
+document.getElementById("loader").style.display="none";
+}
+function listenOnlineUsers(){
+
+const usersRef = ref(rtdb,"onlineUsers");
+
+onValue(usersRef,(snapshot)=>{
+
+const data = snapshot.val();
+
+if(!data){
+document.getElementById("onlineUsers").innerText = 0;
+return;
+}
+
+const count = Object.keys(data).length;
+
+document.getElementById("onlineUsers").innerText = count;
+
+});
+
+}
+
+listenOnlineUsers();
+
 </script>
 <script src="questions.js" defer></script>
 <script>
