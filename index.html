@@ -231,7 +231,8 @@ const firebaseConfig = {
   apiKey: "AIzaSyDHa6ehG1vQoodbxNDfJuEN0UUg2Ymv-1s",
   authDomain: "alegoclashyt.firebaseapp.com",
   projectId: "alegoclashyt",
-  storageBucket: "alegoclashyt.appspot.com"
+  storageBucket: "alegoclashyt.appspot.com",
+  databaseURL: "https://alegoclashyt-default-rtdb.firebaseio.com"
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -657,9 +658,6 @@ async function showUserPanel(){
 
   });
 
-  // =========================
-  // Logout
-  // =========================
 
   document.getElementById("logoutBtn").onclick = async ()=>{
     await signOut(auth);
@@ -684,7 +682,8 @@ async function showAdminPanel(){
       users.push({ id:d.id, ...d.data() });
     });
     // Online users from Realtime DB
-    const onlineRef = rRef(rtdb, "onlineUsers");
+    
+    const onlineRef = rRef(rtdb,"onlineUsers");
     const onlineSnap = await get(onlineRef);
     const onlineUsers = onlineSnap.exists() ? onlineSnap.val() : {};
     const onlineCount = Object.keys(onlineUsers).length;
@@ -1141,7 +1140,7 @@ const profileCardDate = document.getElementById("profileCardDate");
 onAuthStateChanged(auth, async (user)=>{
   if(user){
 
-const userStatusRef = ref(rtdb,'onlineUsers/'+user.uid);
+const userStatusRef = rRef(rtdb,'onlineUsers/'+user.uid);
 
 set(userStatusRef,{
 uid:user.uid,
@@ -1151,6 +1150,12 @@ time:Date.now()
 onDisconnect(userStatusRef).remove();
 
 }
+window.addEventListener("beforeunload", () => {
+  if(window.firebaseUser){
+    const userStatusRef = rRef(rtdb,'onlineUsers/'+window.firebaseUser.uid);
+    set(userStatusRef,null);
+  }
+});
   if(user){
     window.firebaseUser = user;
     const snap = await getDoc(doc(db,"users",user.uid));
@@ -1213,7 +1218,7 @@ document.getElementById("loader").style.display="none";
 }
 function listenOnlineUsers(){
 
-const usersRef = ref(rtdb,"onlineUsers");
+const usersRef = rRef(rtdb,"onlineUsers");
 
 onValue(usersRef,(snapshot)=>{
 
