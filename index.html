@@ -183,6 +183,7 @@ loading="lazy">
     </div>
   </div>
 </div>
+<div id="loader" class="loader"></div>
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -348,9 +349,10 @@ async function googleLogin(){
   provider.setCustomParameters({ prompt:"select_account" });
   try{
     const result = await signInWithPopup(auth,provider);
+    showToast("Logged in with Google 🚀");
     const user = result.user;
     const location = await getLocationData();
-    const device = getDeviceType();
+    const device = await getDeviceType();
     const userRef = doc(db,"users",user.uid);
     const snap = await getDoc(userRef);
     if(!snap.exists()){
@@ -381,7 +383,7 @@ async function googleLogin(){
       const data = snap.data();
       if(data.isBlocked){
         await signOut(auth);
-        alert("Your account has been blocked.");
+        showToast("Your account has been blocked.");
         return;
       }
       await updateDoc(userRef,{
@@ -472,7 +474,7 @@ async function showUserPanel(){
   // 🔴 لو الحساب متعمله بلوك
   if(data.isBlocked){
     await signOut(auth);
-    alert("Your account has been blocked.");
+    showToast("Your account has been blocked.");
     return;
   }
 
@@ -598,12 +600,12 @@ async function showUserPanel(){
     if(!file) return;
 
     if(!file.type.startsWith("image/")){
-      alert("Please upload an image file.");
+      showToast("Please upload an image file.");
       return;
     }
 
     if(file.size > 2 * 1024 * 1024){
-      alert("Image must be less than 2MB.");
+      showToast("Image must be less than 2MB.");
       return;
     }
 
@@ -641,7 +643,7 @@ async function showUserPanel(){
     }catch(err){
 
       console.error(err);
-      alert("Upload failed.");
+      showToast("Upload failed.");
 
     }
 
@@ -665,10 +667,10 @@ async function showUserPanel(){
 async function showAdminPanel(){
   try{
     const currentUser = window.firebaseUser;
-    if(!currentUser) return alert("Login required.");
+    if(!currentUser) return showToast("Login required.");
     const snap = await getDoc(doc(db,"users",currentUser.uid));
     if(!snap.exists() || snap.data().role !== "admin"){
-      return alert("Admins only.");
+      return showToast("Admins only.");
     }
     // Firestore users
     const usersSnap = await getDocs(collection(db,"users"));
@@ -807,89 +809,89 @@ async function showAdminPanel(){
     renderPanel(users);
   }catch(err){
   console.error("ADMIN ERROR FULL:", err);
-  alert(err.message);
+  showToast(err.message);
 }
 }
 async function changeUserRole(uid, newRole){
   try{
     const currentUser = window.firebaseUser;
     if(!currentUser){
-      alert("You must be logged in.");
+      showToast("You must be logged in.");
       return;
     }
     const snap = await getDoc(doc(db,"users",currentUser.uid));
     if(!snap.exists() || snap.data().role !== "admin"){
-      alert("Not authorized.");
+      showToast("Not authorized.");
       return;
     }
     // منع الأدمن يغير نفسه
     if(uid === currentUser.uid){
-      alert("You cannot change your own role.");
+      showToast("You cannot change your own role.");
       return;
     }
     // السماح فقط برتب معينة
     const allowedRoles = ["user","vip","worker"];
     if(!allowedRoles.includes(newRole)){
-      alert("Invalid role.");
+      showToast("Invalid role.");
       return;
     }
     await updateDoc(doc(db,"users",uid),{
       role:newRole,
       updatedAt:serverTimestamp()
     });
-    alert("Role updated successfully.");
+    showToast("Role updated successfully.");
   }catch(err){
     console.error(err);
-    alert("Failed to update role.");
+    showToast("Failed to update role.");
   }
 }
 async function blockUser(uid){
   try{
     const currentUser = window.firebaseUser;
     if(!currentUser){
-      alert("You must be logged in.");
+      showToast("You must be logged in.");
       return;
     }
     const snap = await getDoc(doc(db,"users",currentUser.uid));
     if(!snap.exists() || snap.data().role !== "admin"){
-      alert("Not authorized.");
+      showToast("Not authorized.");
       return;
     }
     // منع الأدمن يعمل بلوك لنفسه
     if(uid === currentUser.uid){
-      alert("You cannot block yourself.");
+      showToast("You cannot block yourself.");
       return;
     }
     await updateDoc(doc(db,"users",uid),{
       isBlocked:true,
       updatedAt:serverTimestamp()
     });
-    alert("User blocked successfully.");
+    showToast("User blocked successfully.");
   }catch(err){
     console.error(err);
-    alert("Failed to block user.");
+    showToast("Failed to block user.");
   }
 }
 async function unblockUser(uid){
   try{
     const currentUser = window.firebaseUser;
     if(!currentUser){
-      alert("You must be logged in.");
+      showToast("You must be logged in.");
       return;
     }
     const snap = await getDoc(doc(db,"users",currentUser.uid));
     if(!snap.exists() || snap.data().role !== "admin"){
-      alert("Not authorized.");
+      showToast("Not authorized.");
       return;
     }
     await updateDoc(doc(db,"users",uid),{
       isBlocked:false,
       updatedAt:serverTimestamp()
     });
-    alert("User unblocked successfully.");
+    showToast("User unblocked successfully.");
   }catch(err){
     console.error(err);
-    alert("Failed to unblock user.");
+    showToast("Failed to unblock user.");
   }
 }
 function showEditProfilePanel(data){
@@ -1028,7 +1030,7 @@ async function registerUser(){
     const cred = await createUserWithEmailAndPassword(auth,email,password);
     const user = cred.user;
     const location = await getLocationData();
-    const device = getDeviceType();
+    const device = await getDeviceType();
     await setDoc(doc(db,"users",user.uid),{
       uid:user.uid,
       username:username,
@@ -1053,6 +1055,12 @@ async function registerUser(){
       updatedAt:serverTimestamp(),
       lastLogin:serverTimestamp()
     });
+    showToast("Account created successfully 🎉");
+
+setTimeout(()=>{
+showUserPanel();
+},1200);
+
     // إشعار للبوت
     await fetch("/api/notify",{
       method:"POST",
@@ -1088,6 +1096,7 @@ async function loginUser(){
   }
   try{
     const cred = await signInWithEmailAndPassword(auth,email,password);
+    showToast("Login successful 👋");
     const user = cred.user;
     const userRef = doc(db,"users",user.uid);
     const snap = await getDoc(userRef);
@@ -1161,6 +1170,23 @@ if(profileCardDate && data.createdAt)
     profileCardImage.src = "userpic.jpg";
 }
 });
+function showToast(msg){
+
+const toast = document.createElement("div");
+toast.className = "toast";
+toast.innerText = msg;
+
+document.body.appendChild(toast);
+
+setTimeout(()=>{
+toast.classList.add("show");
+},100);
+
+setTimeout(()=>{
+toast.remove();
+},3000);
+
+}
 </script>
 <script src="questions.js" defer></script>
 <script>
